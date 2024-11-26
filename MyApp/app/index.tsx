@@ -12,9 +12,7 @@ function Index() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
           <Text style={styles.title}>Welcome to the HTC app</Text>
-          <Link href= "/Welcomescreen">
-          <Button title="Tap to get Started"/>
-          </Link>
+          <Link href= "/WelcomeScreen/Welcomescreen">Tap to get Started </Link>
         </View>
       </ThemeProvider>
   );
