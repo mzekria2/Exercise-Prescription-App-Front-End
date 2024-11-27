@@ -1,13 +1,17 @@
-import { Stack } from "expo-router";
 import { Link } from "expo-router";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { blue } from "react-native-reanimated/lib/typescript/Colors";
+import { View, Text, Dimensions, Button, StyleSheet } from "react-native";
 
+const { width, height } = Dimensions.get("screen");
 export default function RootStack() {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome to the Exercise App</Text>
-      <Link href="/video/videos">
+      <Link
+        href={{
+          pathname: "/video/videos",
+          params: { title: "Videos" },
+        }}
+      >
         <Text style={styles.videosButton}>Go to Videos</Text>
       </Link>
     </View>
@@ -19,7 +23,9 @@ const styles = StyleSheet.create({
     backgroundColor: "darkblue",
     color: "whitesmoke",
     padding: 10,
-    margin: 10,
+    marginTop: 20,
+    width: 100,
+    height: 80,
   },
   container: {
     flex: 1,

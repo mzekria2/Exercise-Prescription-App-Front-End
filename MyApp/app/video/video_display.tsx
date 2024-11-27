@@ -10,8 +10,8 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import { Video } from "expo-av";
 
-// const apiURLBackend = "http://localhost:3000/videos"; //for web
-const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
+const apiURLBackend = "http://localhost:3000/videos"; //for web
+//const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
 const { width, height } = Dimensions.get("screen");
 
 const Videos = () => {
@@ -32,6 +32,7 @@ const Videos = () => {
           source={{ uri: `${apiURLBackend}/video/${parsedData._id}` }}
           useNativeControls
           style={styles.video}
+          resizeMode="contain"
         />
       </View>
       <Text style={styles.videoTitle}>{parsedData.title}</Text>
@@ -47,6 +48,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 100,
     textAlign: "center",
+    marginTop: 30,
   },
   videoContainer: {
     flex: 1,
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFAFA",
   },
   videoView: {
-    height: height / 2,
+    height: height / 2.5,
     width: "100%",
     backgroundColor: "black",
   },
