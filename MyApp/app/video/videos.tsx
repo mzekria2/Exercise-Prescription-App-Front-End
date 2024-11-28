@@ -6,16 +6,17 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Alert, // Import Alert for confirmation
 } from "react-native";
 import { Link } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Entypo from "@expo/vector-icons/Entypo";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 const { width, height } = Dimensions.get("screen");
 const Videos = () => {
   const [videoList, setVideoList] = useState<{ [key: string]: any }[]>([]);
-  const [uploadVideoBtn, setUploadVideoBtn] = useState(false);
   const apiURLBackend = "http://localhost:3000/videos"; //for web
   //const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
 
@@ -56,6 +57,25 @@ const Videos = () => {
       });
   };
 
+  // Handle delete video
+  const deleteVideo = async (videoId: string) => {
+    try {
+      const response = await fetch(`${apiURLBackend}/delete_video/${videoId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.message === "Video deleted successfully") {
+        // Remove video from state (UI)
+        setVideoList((prevList) =>
+          prevList.filter((video) => video._id !== videoId)
+        );
+      }
+      console.log(data.message);
+    } catch (error) {
+      console.error("Error deleting video:", error);
+    }
+  };
+
   useEffect(() => {
     getVideos();
   }, []);
@@ -74,34 +94,45 @@ const Videos = () => {
         <FlatList
           data={videoList}
           renderItem={({ item }) => (
-            <Link
-              href={{
-                pathname: "/video/video_display",
-                params: { data: JSON.stringify(item) },
-              }}
-              style={styles.eachVideo}
-            >
+            <View style={styles.eachVideo}>
               <View style={styles.videoContent}>
                 <Text style={styles.videoTitle}>{item.title}</Text>
                 <Text style={styles.videoSubText}>{item.description}</Text>
-                <View style={styles.playButton}>
+                <Link
+                  href={{
+                    pathname: "/video/video_display",
+                    params: { data: JSON.stringify(item) },
+                  }}
+                  style={styles.playButton}
+                >
                   <Entypo name="controller-play" size={24} color="white" />
-                </View>
+                </Link>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => deleteVideo(item._id)}
+                >
+                  <AntDesign name="close" size={24} color="black" />
+                </TouchableOpacity>
               </View>
-            </Link>
+            </View>
           )}
           keyExtractor={(item) => item._id.toString()}
           numColumns={1}
         />
         <TouchableOpacity>
-          <View style={styles.uploadButtonContainer}>
-            <AntDesign
-              name="pluscircle"
+          <Link
+            href={{
+              pathname: "/video/upload_video",
+            }}
+            style={styles.uploadButtonContainer}
+          >
+            <FontAwesome
+              name="video-camera"
               size={58}
               color="#D62B1F" // Red color
               style={styles.uploadButton}
             />
-          </View>
+          </Link>
         </TouchableOpacity>
       </View>
     </View>
@@ -151,18 +182,22 @@ const styles = StyleSheet.create({
     padding: 10, // Added padding for spacing
   },
   videoContent: {
+    flex: 1, // Take up available space in the container
     justifyContent: "center", // Center the content vertically
     alignItems: "center", // Center the content horizontally
-    flex: 1, // Take up available space in the container
     textAlign: "center", // Ensure text is centered
   },
   videoTitle: {
+    alignItems: "center",
+    justifyContent: "center",
     color: "#333", // Dark gray for readability
     fontSize: 20,
     fontWeight: "600",
     marginTop: 10,
   },
   videoSubText: {
+    alignItems: "center",
+    justifyContent: "center",
     color: "#666", // Lighter text for descriptions
     fontSize: 14,
     marginTop: 5,
@@ -188,5 +223,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 4 },
+  },
+  closeButton: {
+    position: "absolute", // Absolute positioning to place the button in the top-right corner
+    bottom: height / 13.5, // Adjust as needed to fit the layout
+    left: width / 1.18, // Adjust as needed for spacing from the right edge
+    zIndex: 0, // Ensures it stays on top of other elements
   },
 });
