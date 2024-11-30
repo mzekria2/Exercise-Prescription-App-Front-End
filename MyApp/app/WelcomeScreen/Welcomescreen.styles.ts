@@ -52,6 +52,12 @@ export const welcomeScreenStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#00AEEF',
   },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 10,
+    textAlign: 'center',
+  },
   welcomeSignUpText: {
     color: '#00AEEF',
     fontSize: 16,
