@@ -1,21 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useColorScheme } from '@/hooks/useColorScheme'; 
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Link } from 'expo-router';
 
 function Index() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome to the HTC App</Text>
-        <Link href="/WelcomeScreen/Welcomescreen" style={styles.link}>
-          Get Started
+    <View style={styles.container}>
+      <Text style={styles.title}>Hand Therapy Canada</Text>
+      <Image
+        source={require('../assets/images/hand.jpg')} // Local image
+        style={styles.backgroundPhoto}
+      />
+      
+      <Text style={styles.subtitle}>Empowering Your Recovery Journey</Text>
+
+      <TouchableOpacity style={styles.button}>
+        <Link href="/WelcomeScreen/Welcomescreen" style={styles.buttonText}>
+          Log In
         </Link>
-      </View>
-    </ThemeProvider>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <Link href="/Sign_Up/Sign_up" style={styles.buttonText}>
+          Sign Up
+        </Link>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -24,29 +32,52 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#EAF6FF', // Light blue background for consistency
+    backgroundColor: '#F5F5F5', 
+    paddingHorizontal: 20,
+  },
+  backgroundPhoto: {
+    paddingVertical: 40 ,
+    width: '90%',
+    height: 300,
+    resizeMode: 'cover',
+    borderRadius: 15, 
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5, 
   },
   title: {
-    fontSize: 28, // Slightly larger for emphasis
+    fontSize: 40,
     fontWeight: 'bold',
-    color: '#005A9C', // Darker blue for branding consistency
-    marginBottom: 30,
+    color: '#FF6F00', 
     textAlign: 'center',
+    marginBottom: 10,
   },
-  link: {
-    paddingHorizontal: 25,
-    paddingVertical: 12,
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#555555', 
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  button: {
+    width: '85%',
+    paddingVertical: 15,
     borderRadius: 8,
-    backgroundColor: '#007ACC', // Branded blue color
-    color: '#ffffff',
+    backgroundColor: '#ffae1a', 
+    alignItems: 'center',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  buttonText: {
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 4, // Android shadow
   },
 });
 

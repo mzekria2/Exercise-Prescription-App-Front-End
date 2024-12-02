@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
+
 
 export const welcomeScreenStyles = StyleSheet.create({
   welcomeContainer: {
     flex: 1,
-    backgroundColor: '#EAF6FF', // Light blue background
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -11,11 +12,8 @@ export const welcomeScreenStyles = StyleSheet.create({
   welcomeTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#005A9C', 
-    position: 'absolute',
-    top: 60,
-    paddingTop: 40,
+    color: '#FF6F00', // Orange branding
+    marginBottom: 20,
   },
   welcomeInput: {
     width: '90%',
@@ -24,67 +22,46 @@ export const welcomeScreenStyles = StyleSheet.create({
     borderColor: '#B0C4DE',
     borderRadius: 8,
     paddingHorizontal: 15,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-    color: '#333',
+    marginBottom: 15,
+    backgroundColor: '#F7F7F7', // Light gray input fields
     fontSize: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3, // Android shadow
   },
   welcomeForgotPassword: {
-    alignSelf: 'flex-end',
     color: '#007ACC',
-    fontSize: 14,
-    marginTop: -10,
-    marginBottom: 20,
     textDecorationLine: 'underline',
+    marginBottom: 20,
   },
   welcomeLoginButton: {
-    backgroundColor: '#007ACC',
+    backgroundColor: '#FF6F00', // Orange primary button
     paddingVertical: 14,
-    width: '50%',
+    width: '90%',
     borderRadius: 8,
-    marginBottom: 12,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
+    marginBottom: 12,
   },
   welcomeButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
   },
   welcomeSignUpButton: {
     paddingVertical: 14,
-    width: '50%',
+    width: '90%',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#007ACC',
-    backgroundColor: '#fff',
+    borderColor: '#FF6F00',
+    backgroundColor: '#FFFFFF', // White secondary button
     alignItems: 'center',
   },
   welcomeSignUpText: {
-    color: '#007ACC',
+    color: '#FF6F00', // Orange for secondary action text
     fontSize: 18,
     fontWeight: '600',
   },
-  indexTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#555',
+  indexSubtitle: {
+    fontSize: 16,
+    color: '#555555', // Subtle gray for description text
     textAlign: 'center',
     marginBottom: 30,
-    paddingHorizontal: 10,
-  },
-  indexSubtitle: {
-    fontSize: 14,
-    color: '#555',
-    textAlign: 'center',
-    marginTop: 20,
-    paddingHorizontal: 30,
   },
 });
