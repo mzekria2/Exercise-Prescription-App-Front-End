@@ -20,9 +20,9 @@ const WelcomeScreen = () => {
         placeholderTextColor="#888"
         secureTextEntry
       />
-      <Link href="/ForgotPassword" style={welcomeScreenStyles.welcomeForgotPassword}>
+      {/* <Link href="/ForgotPassword" style={welcomeScreenStyles.welcomeForgotPassword}>
         Forgot Password?
-      </Link>
+      </Link> */}
 
       <TouchableOpacity style={welcomeScreenStyles.welcomeLoginButton}>
         <Text style={welcomeScreenStyles.welcomeButtonText}>Log In</Text>
