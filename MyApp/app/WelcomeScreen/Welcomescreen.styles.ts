@@ -49,14 +49,45 @@ export const welcomeScreenStyles = StyleSheet.create({
     width: '90%',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#FF6F00',
-    backgroundColor: '#FFFFFF', // White secondary button
-    alignItems: 'center',
+    borderColor: '#00AEEF',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 10,
+    textAlign: 'center',
   },
   welcomeSignUpText: {
-    color: '#FF6F00', // Orange for secondary action text
-    fontSize: 18,
-    fontWeight: '600',
+    color: '#00AEEF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  welcomeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
+
+export const indexPageStyles = StyleSheet.create({
+  indexContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  indexLogo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  indexTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   indexSubtitle: {
     fontSize: 16,

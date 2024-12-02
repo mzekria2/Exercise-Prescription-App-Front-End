@@ -1,52 +1,52 @@
 import { StyleSheet } from "react-native";
 
 export const signUpScreenStyles = StyleSheet.create({
-  container: {
+  signUpContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
     padding: 20,
   },
-  title: {
-    fontSize: 28,
+  signUpTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#FF6F00',
+    color: '#333',
     marginBottom: 20,
   },
-  input: {
+  signUpInput: {
     width: '90%',
-    height: 50,
+    padding: 10,
+    marginVertical: 8,
     borderWidth: 1,
-    borderColor: '#B0C4DE',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    backgroundColor: '#F7F7F7',
-    fontSize: 16,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    color: '#333',
   },
-  button: {
-    backgroundColor: '#FF6F00',
-    paddingVertical: 14,
+  signUpButton: {
+    backgroundColor: '#0066cc',
     width: '90%',
-    borderRadius: 8,
+    padding: 10,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 5,
     marginTop: 20,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   signInRedirectText: {
     fontSize: 16,
     marginTop: 20,
-    color: '#555555',
-    textAlign: 'center',
+    color: '#666',
   },
   signInLink: {
-    color: '#FF6F00',
+    color: '#0066cc',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    alignSelf: 'flex-start',
+    marginLeft: '5%',
+    marginTop: -5,
+    marginBottom: 10,
   },
 });
