@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { homePageStyles } from './HomePage.style';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { homePageStyles } from "./HomePage.style";
+import { Link } from "expo-router";
 
 const HomePage: React.FC = () => {
   return (
@@ -9,41 +10,40 @@ const HomePage: React.FC = () => {
       <View style={homePageStyles.header}>
         <View style={homePageStyles.userInfo}>
           <Text style={homePageStyles.greeting}>Welcome back!</Text>
-          <Text style={homePageStyles.subtitle}>Continue your hand therapy journey.</Text>
+          <Text style={homePageStyles.subtitle}>
+            Continue your hand therapy journey.
+          </Text>
         </View>
       </View>
 
-      {/* Feature Cards */}
+      {/* Cards Section - Improved Layout */}
       <View style={homePageStyles.cardsContainer}>
-        <TouchableOpacity style={homePageStyles.card}>
-          <Text style={homePageStyles.cardTitle}>Upload a Video</Text>
-          <Text style={homePageStyles.cardSubtitle}>
-            Share progress videos with your therapist.
-          </Text>
-        </TouchableOpacity>
+        <View style={homePageStyles.row}>
+          <TouchableOpacity style={homePageStyles.card}>
+            <Link href="/video/upload_video">
+              <Text style={homePageStyles.cardTitle}>Upload a Video</Text>
+            </Link>
+          </TouchableOpacity>
+          <TouchableOpacity style={homePageStyles.card}>
+            <Link href="/video/video_list">
+              <Text style={homePageStyles.cardTitle}>View Videos</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={homePageStyles.card}>
-          <Text style={homePageStyles.cardTitle}>Watch Videos</Text>
-          <Text style={homePageStyles.cardSubtitle}>
-            Review prescribed exercises.
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={homePageStyles.card}>
-          <Text style={homePageStyles.cardTitle}>Delete Videos</Text>
-          <Text style={homePageStyles.cardSubtitle}>
-            Manage your uploaded content.
-          </Text>
-        </TouchableOpacity>
+        <View style={homePageStyles.row}>
+          <TouchableOpacity style={homePageStyles.cardFull}>
+            <Link href="/video/delete_video">
+              <Text style={homePageStyles.cardTitle}>Delete Videos</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Bottom Navigation Bar */}
       <View style={homePageStyles.navBar}>
         <TouchableOpacity style={homePageStyles.navItem}>
           <Text style={homePageStyles.navTextActive}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={homePageStyles.navItem}>
-          <Text style={homePageStyles.navText}>Videos</Text>
         </TouchableOpacity>
         <TouchableOpacity style={homePageStyles.navItem}>
           <Text style={homePageStyles.navText}>Profile</Text>

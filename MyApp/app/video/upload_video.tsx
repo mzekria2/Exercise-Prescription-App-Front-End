@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 const UploadVideos = () => {
   const [video, setVideo] = useState<string | null>(null);
@@ -16,8 +16,8 @@ const UploadVideos = () => {
   const [displayVidForm, setDisplayVidForm] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false); // Track upload status
 
-  const apiURLBackend = "http://localhost:3000/videos"; // for web
-  //const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
+  const router = useRouter(); // Use router to navigate
+  const apiURLBackend = "http://10.0.0.61:3000/videos"; // for web
 
   const uploadVideo = async () => {
     if (!video) {
@@ -25,11 +25,11 @@ const UploadVideos = () => {
       return;
     }
     try {
-      console.log("in try");
       const response = await fetch(video);
       const blob = await response.blob();
+
       const formData = new FormData();
-      formData.append("file", blob, "video.mp4");
+      formData.append("video", blob, "video.mp4");
       formData.append("title", title);
       formData.append("description", description);
 
@@ -37,18 +37,41 @@ const UploadVideos = () => {
         method: "POST",
         body: formData,
       });
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(errorText);
+      }
+
       const result = await uploadResponse.json();
+      console.log("Upload successful:", result);
       setDisplayVidForm(false);
       setIsUploaded(true); // Set the upload status to true
-
-      // router.replace("/video/videos");
     } catch (error) {
       console.error("Error uploading video: ", error);
       alert("Failed to upload video. Please try again.");
     }
   };
 
-  const pickVideo = async () => {
+  const pickVideoFromGallery = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("Permission to access media library is required!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+    });
+
+    if (!result.canceled) {
+      setVideo(result.assets[0].uri);
+      setDisplayVidForm(true);
+    }
+  };
+
+  const recordVideo = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (!permissionResult.granted) {
       alert("Permission to access camera is required!");
@@ -58,18 +81,35 @@ const UploadVideos = () => {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
     });
+
     if (!result.canceled) {
       setVideo(result.assets[0].uri);
       setDisplayVidForm(true);
     }
   };
 
-  useEffect(() => {
-    pickVideo();
-  }, []);
-
   return (
     <View style={styles.container}>
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>← Back</Text>
+      </TouchableOpacity>
+
+      {!displayVidForm && !isUploaded && (
+        <>
+          <Text style={styles.label}>Choose an option:</Text>
+          <TouchableOpacity style={styles.button} onPress={recordVideo}>
+            <Text style={styles.buttonText}>Record a Video</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton]}
+            onPress={pickVideoFromGallery}
+          >
+            <Text style={styles.buttonText}>Upload from Gallery</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
       {displayVidForm ? (
         <>
           <Text style={styles.label}>Upload a New Video:</Text>
@@ -95,13 +135,9 @@ const UploadVideos = () => {
             <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>
         </>
-      ) : (
-        // Redirect using Link after upload
-        // <Link href="/video/videos" style={styles.redirectLink}>
-        //   <Text style={styles.redirectText}>Return to Your Videos</Text>
-        // </Link>
-        <Text>Video Uploaded. Return to your videos.</Text>
-      )}
+      ) : isUploaded ? (
+        <Text>Video Uploaded. You can go back to view it.</Text>
+      ) : null}
     </View>
   );
 };
@@ -115,9 +151,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  backButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: "#004D40",
+    fontWeight: "bold",
+  },
   label: {
     fontSize: 18,
     marginBottom: 10,
+    textAlign: "center",
   },
   input: {
     height: 40,
@@ -128,45 +175,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
   },
-  uploadButton: {
-    backgroundColor: "#D62B1F",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-  },
-  uploadButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  showFormButton: {
-    backgroundColor: "#D62B1F",
-    padding: 10,
-    borderRadius: 5,
-  },
-  showFormButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
   button: {
-    backgroundColor: "#D62B1F", // Button background color
+    backgroundColor: "#D62B1F",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 15,
+    alignItems: "center",
+    width: "80%",
+  },
+  secondaryButton: {
+    backgroundColor: "#004D40", // Different color for the secondary button
   },
   buttonText: {
-    color: "#fff", // White text color
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  redirectLink: {
-    marginTop: 20,
-    backgroundColor: "#D62B1F",
-    padding: 10,
-    borderRadius: 5,
-  },
-  redirectText: {
-    color: "white",
+    color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
   },

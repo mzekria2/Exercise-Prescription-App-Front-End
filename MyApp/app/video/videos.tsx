@@ -17,7 +17,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 const { width, height } = Dimensions.get("screen");
 const Videos = () => {
   const [videoList, setVideoList] = useState<{ [key: string]: any }[]>([]);
-  const apiURLBackend = "http://localhost:3000/videos"; //for web
+  const apiURLBackend = "http://10.0.0.61:3000/videos"; //for web
   //const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
 
   type Video = {
