@@ -32,24 +32,20 @@ export const welcomeScreenStyles = StyleSheet.create({
     marginBottom: 20,
   },
   welcomeLoginButton: {
-    backgroundColor: '#FF6F00', // Orange primary button
+    backgroundColor: '#ffae1a', 
     paddingVertical: 14,
     width: '90%',
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 12,
   },
-  welcomeButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
   welcomeSignUpButton: {
     paddingVertical: 14,
     width: '90%',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#00AEEF',
+    alignItems: 'center',
+    borderColor: '#ffae1a',
   },
   errorText: {
     color: 'red',
@@ -58,7 +54,7 @@ export const welcomeScreenStyles = StyleSheet.create({
     textAlign: 'center',
   },
   welcomeSignUpText: {
-    color: '#00AEEF',
+    color: '#ffae1a',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -91,7 +87,7 @@ export const indexPageStyles = StyleSheet.create({
   },
   indexSubtitle: {
     fontSize: 16,
-    color: '#555555', // Subtle gray for description text
+    color: '#555555', 
     textAlign: 'center',
     marginBottom: 30,
   },

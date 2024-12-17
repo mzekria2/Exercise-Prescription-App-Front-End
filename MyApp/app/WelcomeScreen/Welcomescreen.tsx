@@ -1,37 +1,42 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { welcomeScreenStyles } from './Welcomescreen.styles';
-import { Link } from 'expo-router';
+import { indexPageStyles, welcomeScreenStyles } from './Welcomescreen.styles';
+import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 
 const WelcomeScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const params = useLocalSearchParams(); 
+  const router = useRouter(); 
 
   const handleLogin = async () => {
     setErrorMessage(''); // Reset error message
 
+    // Convert email to lowercase
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Check if email or password is empty
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       setErrorMessage('Please fill in both email and password.');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+      const response = await fetch('http://10.0.0.61:3000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: normalizedEmail, password }), // Use normalized email
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setIsLoggedIn(true);
         console.log('Login successful:', data.token);
+        // Navigate to home page upon successful login
+        router.push('/HomePage/HomePage');
       } else {
         setErrorMessage(data.message || 'Invalid email or password.');
       }
@@ -40,51 +45,46 @@ const WelcomeScreen = () => {
     }
   };
 
-  if (isLoggedIn) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'green' }}>
-          Login Successful!
-        </Text>
-        <TouchableOpacity
-          style={{
-            marginTop: 20,
-            padding: 10,
-            backgroundColor: '#0066cc',
-            borderRadius: 5,
-          }}
-          onPress={() => setIsLoggedIn(false)} 
-        >
-          <Text style={{ color: '#fff' }}>Back to Login</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
     <View style={welcomeScreenStyles.welcomeContainer}>
+      {/* Success Message from Sign-Up */}
+      {params.success === 'true' && (
+        <Text style={{ color: 'green', marginBottom: 10, fontWeight: 'bold' }}>
+          Registration successful! Please log in.
+        </Text>
+      )}
+
       <Text style={welcomeScreenStyles.welcomeTitle}>Welcome Back</Text>
-      <Text style={welcomeScreenStyles.indexSubtitle}>Log in to access your account</Text>
+      <Text style={indexPageStyles.indexSubtitle}>Log in to access your account</Text>
 
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
-        placeholder="Username"
+        placeholder="Email"
         placeholderTextColor="#888"
+        onChangeText={setEmail} // Update email state
       />
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
         placeholder="Password"
         placeholderTextColor="#888"
         secureTextEntry
+        onChangeText={setPassword} // Update password state
       />
-      {/* <Link href="/ForgotPassword" style={welcomeScreenStyles.welcomeForgotPassword}>
-        Forgot Password?
-      </Link> */}
 
-      <TouchableOpacity style={welcomeScreenStyles.welcomeLoginButton}>
+      {/* Display Error Message */}
+      {errorMessage ? (
+        <Text style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</Text>
+      ) : null}
+
+      {/* Login Button */}
+      <TouchableOpacity
+        style={welcomeScreenStyles.welcomeLoginButton}
+        onPress={handleLogin}
+      >
         <Text style={welcomeScreenStyles.welcomeButtonText}>Log In</Text>
       </TouchableOpacity>
 
+      {/* Sign Up Link */}
       <TouchableOpacity style={welcomeScreenStyles.welcomeSignUpButton}>
         <Link href="/Sign_Up/Sign_up">
           <Text style={welcomeScreenStyles.welcomeSignUpText}>Sign Up</Text>
@@ -95,4 +95,3 @@ const WelcomeScreen = () => {
 };
 
 export default WelcomeScreen;
-

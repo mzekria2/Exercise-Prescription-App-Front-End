@@ -1,44 +1,34 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { homePageStyles } from './HomePage.style';
 
-function HomePage() {
+const HomePage: React.FC = () => {
   return (
     <View style={homePageStyles.container}>
       {/* Header Section */}
       <View style={homePageStyles.header}>
         <View style={homePageStyles.userInfo}>
-          <Text style={homePageStyles.greeting}>Welcome back, Amy</Text>
-          <Text style={homePageStyles.subtitle}>Your hand therapy journey continues!</Text>
-        </View>
-        <View style={homePageStyles.avatar}>
-          {/* Placeholder for user avatar
-          <Image
-            source={require('../assets/images/avatar-placeholder.png')} // Replace with user avatar
-            style={homePageStyles.avatarImage}
-          /> */}
+          <Text style={homePageStyles.greeting}>Welcome back!</Text>
+          <Text style={homePageStyles.subtitle}>Continue your hand therapy journey.</Text>
         </View>
       </View>
 
-      {/* Card Section */}
+      {/* Feature Cards */}
       <View style={homePageStyles.cardsContainer}>
-        {/* Upload Video Card */}
         <TouchableOpacity style={homePageStyles.card}>
           <Text style={homePageStyles.cardTitle}>Upload a Video</Text>
           <Text style={homePageStyles.cardSubtitle}>
-            Share your progress and exercises with your therapist.
+            Share progress videos with your therapist.
           </Text>
         </TouchableOpacity>
 
-        {/* Watch Videos Card */}
         <TouchableOpacity style={homePageStyles.card}>
           <Text style={homePageStyles.cardTitle}>Watch Videos</Text>
           <Text style={homePageStyles.cardSubtitle}>
-            Review your prescribed exercises.
+            Review prescribed exercises.
           </Text>
         </TouchableOpacity>
 
-        {/* Delete Videos Card */}
         <TouchableOpacity style={homePageStyles.card}>
           <Text style={homePageStyles.cardTitle}>Delete Videos</Text>
           <Text style={homePageStyles.cardSubtitle}>
@@ -50,7 +40,7 @@ function HomePage() {
       {/* Bottom Navigation Bar */}
       <View style={homePageStyles.navBar}>
         <TouchableOpacity style={homePageStyles.navItem}>
-          <Text style={homePageStyles.navText}>Home</Text>
+          <Text style={homePageStyles.navTextActive}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={homePageStyles.navItem}>
           <Text style={homePageStyles.navText}>Videos</Text>
@@ -61,6 +51,6 @@ function HomePage() {
       </View>
     </View>
   );
-}
+};
 
 export default HomePage;
