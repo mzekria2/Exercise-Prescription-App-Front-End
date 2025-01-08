@@ -4,38 +4,36 @@ import { indexPageStyles, welcomeScreenStyles } from './Welcomescreen.styles';
 import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 
 const WelcomeScreen = () => {
+  const backendUrl = 'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'; // Define the backend URL here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const params = useLocalSearchParams(); 
-  const router = useRouter(); 
+  const params = useLocalSearchParams();
+  const router = useRouter();
 
   const handleLogin = async () => {
     setErrorMessage(''); // Reset error message
 
-    // Convert email to lowercase
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Check if email or password is empty
     if (!normalizedEmail || !password) {
       setErrorMessage('Please fill in both email and password.');
       return;
     }
 
     try {
-      const response = await fetch('http://10.0.0.61:3000/api/auth/login', {
+      const response = await fetch(`${backendUrl}/api/auth/login`, { // Use the backend URL variable
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: normalizedEmail, password }), // Use normalized email
+        body: JSON.stringify({ email: normalizedEmail, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         console.log('Login successful:', data.token);
-        // Navigate to home page upon successful login
         router.push('/HomePage/HomePage');
       } else {
         setErrorMessage(data.message || 'Invalid email or password.');
@@ -47,7 +45,6 @@ const WelcomeScreen = () => {
 
   return (
     <View style={welcomeScreenStyles.welcomeContainer}>
-      {/* Success Message from Sign-Up */}
       {params.success === 'true' && (
         <Text style={{ color: 'green', marginBottom: 10, fontWeight: 'bold' }}>
           Registration successful! Please log in.
@@ -61,22 +58,20 @@ const WelcomeScreen = () => {
         style={welcomeScreenStyles.welcomeInput}
         placeholder="Email"
         placeholderTextColor="#888"
-        onChangeText={setEmail} // Update email state
+        onChangeText={setEmail}
       />
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
         placeholder="Password"
         placeholderTextColor="#888"
         secureTextEntry
-        onChangeText={setPassword} // Update password state
+        onChangeText={setPassword}
       />
 
-      {/* Display Error Message */}
       {errorMessage ? (
         <Text style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</Text>
       ) : null}
 
-      {/* Login Button */}
       <TouchableOpacity
         style={welcomeScreenStyles.welcomeLoginButton}
         onPress={handleLogin}
@@ -84,7 +79,6 @@ const WelcomeScreen = () => {
         <Text style={welcomeScreenStyles.welcomeButtonText}>Log In</Text>
       </TouchableOpacity>
 
-      {/* Sign Up Link */}
       <TouchableOpacity style={welcomeScreenStyles.welcomeSignUpButton}>
         <Link href="/Sign_Up/Sign_up">
           <Text style={welcomeScreenStyles.welcomeSignUpText}>Sign Up</Text>

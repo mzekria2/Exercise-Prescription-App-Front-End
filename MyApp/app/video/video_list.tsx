@@ -19,7 +19,7 @@ const VideoList: React.FC = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch("http://10.0.0.61:3000/videos/allVideos");
+        const response = await fetch("https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos/allVideos");
         const data: Video[] = await response.json();
         setVideos(data);
       } catch (error) {

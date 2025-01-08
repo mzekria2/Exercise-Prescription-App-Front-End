@@ -17,24 +17,31 @@ const UploadVideos = () => {
   const [isUploaded, setIsUploaded] = useState(false); // Track upload status
 
   const router = useRouter(); // Use router to navigate
-  const apiURLBackend = "http://10.0.0.61:3000/videos"; // for web
+  const backendUrl = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app"; // Backend URL
 
   const uploadVideo = async () => {
     if (!video) {
       alert("No video selected!");
       return;
     }
-    try {
-      const response = await fetch(video);
-      const blob = await response.blob();
 
+    try {
+      // Prepare FormData with video file
       const formData = new FormData();
-      formData.append("video", blob, "video.mp4");
+      formData.append("video", {
+        uri: video,
+        name: "video.mp4",
+        type: "video/mp4", // Ensure the type matches your video format
+      });
       formData.append("title", title);
       formData.append("description", description);
 
-      const uploadResponse = await fetch(`${apiURLBackend}/upload`, {
+      // Upload video
+      const uploadResponse = await fetch(`${backendUrl}/videos/upload`, {
         method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         body: formData,
       });
 
@@ -46,16 +53,15 @@ const UploadVideos = () => {
       const result = await uploadResponse.json();
       console.log("Upload successful:", result);
       setDisplayVidForm(false);
-      setIsUploaded(true); // Set the upload status to true
+      setIsUploaded(true); // Set upload status
     } catch (error) {
-      console.error("Error uploading video: ", error);
+      console.error("Error uploading video:", error);
       alert("Failed to upload video. Please try again.");
     }
   };
 
   const pickVideoFromGallery = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert("Permission to access media library is required!");
       return;
@@ -185,7 +191,7 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   secondaryButton: {
-    backgroundColor: "#004D40", // Different color for the secondary button
+    backgroundColor: "#004D40", 
   },
   buttonText: {
     color: "#fff",

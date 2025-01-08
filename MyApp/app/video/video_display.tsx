@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-nati
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Video } from "expo-av";
 
-const apiURLBackend = "http://10.0.0.61:3000/videos"; // for web
+const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos"; // for web
 const { width, height } = Dimensions.get("screen");
 
 const Videos = () => {
