@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { signUpScreenStyles } from './Sign_up.styles';
+import { useRouter } from 'expo-router'; // Import useRouter for navigation
 
 const SignUp = () => {
+  const backendUrl = 'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'; // Define the backend URL here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
   const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
 
-  const validateEmail = (email: string) => {
+  const router = useRouter(); // Initialize router for navigation
+
+  const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const validatePassword = (password: string) => {
+  const validatePassword = (password) => {
     const strongPasswordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return strongPasswordRegex.test(password);
@@ -49,7 +52,7 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch(`${backendUrl}/api/auth/register`, { // Use the backend URL variable
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +63,7 @@ const SignUp = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setIsSuccess(true);
+        router.push('/WelcomeScreen/Welcomescreen?success=true');
       } else {
         setErrors({ ...errors, email: data.message || 'Something went wrong.' });
       }
@@ -68,27 +71,6 @@ const SignUp = () => {
       setErrors({ ...errors, email: 'Unable to register. Please try again.' });
     }
   };
-
-  if (isSuccess) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'green' }}>
-          User Created Successfully!
-        </Text>
-        <TouchableOpacity
-          style={{
-            marginTop: 20,
-            padding: 10,
-            backgroundColor: '#0066cc',
-            borderRadius: 5,
-          }}
-          onPress={() => setIsSuccess(false)}
-        >
-          <Text style={{ color: '#fff' }}>Back to Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   return (
     <View style={signUpScreenStyles.signUpContainer}>

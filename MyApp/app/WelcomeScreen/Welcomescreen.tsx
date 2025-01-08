@@ -1,37 +1,40 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button } from 'react-native';
-import { welcomeScreenStyles, indexPageStyles } from './Welcomescreen.styles';  
-import { Link } from 'expo-router';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { indexPageStyles, welcomeScreenStyles } from './Welcomescreen.styles';
+import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 
 const WelcomeScreen = () => {
+  const backendUrl = 'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'; // Define the backend URL here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const params = useLocalSearchParams();
+  const router = useRouter();
 
   const handleLogin = async () => {
     setErrorMessage(''); // Reset error message
 
-    // Check if email or password is empty
-    if (!email || !password) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
       setErrorMessage('Please fill in both email and password.');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+      const response = await fetch(`${backendUrl}/api/auth/login`, { // Use the backend URL variable
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: normalizedEmail, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setIsLoggedIn(true);
         console.log('Login successful:', data.token);
+        router.push('/HomePage/HomePage');
       } else {
         setErrorMessage(data.message || 'Invalid email or password.');
       }
@@ -40,70 +43,47 @@ const WelcomeScreen = () => {
     }
   };
 
-  if (isLoggedIn) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'green' }}>
-          Login Successful!
-        </Text>
-        <TouchableOpacity
-          style={{
-            marginTop: 20,
-            padding: 10,
-            backgroundColor: '#0066cc',
-            borderRadius: 5,
-          }}
-          onPress={() => setIsLoggedIn(false)} 
-        >
-          <Text style={{ color: '#fff' }}>Back to Login</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
-    <View style={welcomeScreenStyles.welcomeContainer}>    
-      <Text style={indexPageStyles.indexTitle}>
-        Welcome to the Hand Therapy Canada Exercise Prescription App!
-      </Text>
-      <Text style={indexPageStyles.indexSubtitle}>
-        Helping you recover with personalized exercise routines.
-      </Text>
-      <Text style={welcomeScreenStyles.welcomeTitle}>HTC APP</Text>
+    <View style={welcomeScreenStyles.welcomeContainer}>
+      {params.success === 'true' && (
+        <Text style={{ color: 'green', marginBottom: 10, fontWeight: 'bold' }}>
+          Registration successful! Please log in.
+        </Text>
+      )}
 
-      {/* Input fields */}
+      <Text style={welcomeScreenStyles.welcomeTitle}>Welcome Back</Text>
+      <Text style={indexPageStyles.indexSubtitle}>Log in to access your account</Text>
+
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
-        placeholder="Enter your Email Address"
-        placeholderTextColor="#666"
+        placeholder="Email"
+        placeholderTextColor="#888"
         onChangeText={setEmail}
-        value={email}
       />
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
-        placeholder="Enter your Password"
-        placeholderTextColor="#666"
+        placeholder="Password"
+        placeholderTextColor="#888"
         secureTextEntry
         onChangeText={setPassword}
-        value={password}
       />
 
-      {/* Error message */}
       {errorMessage ? (
-        <Text style={welcomeScreenStyles.errorText}>{errorMessage}</Text>
+        <Text style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</Text>
       ) : null}
 
-      {/* Forgot password and Login button */}
-      <Text style={welcomeScreenStyles.welcomeForgotPassword}>Forgot Password?</Text>
       <TouchableOpacity
         style={welcomeScreenStyles.welcomeLoginButton}
         onPress={handleLogin}
       >
-        <Text style={{ color: '#fff' }}>Login</Text>
+        <Text style={welcomeScreenStyles.welcomeButtonText}>Log In</Text>
       </TouchableOpacity>
 
-      {/* Link to sign-up */}
-      <Link href="/Sign_Up/Sign_up">Don't have an account? Sign up</Link>
+      <TouchableOpacity style={welcomeScreenStyles.welcomeSignUpButton}>
+        <Link href="/Sign_Up/Sign_up">
+          <Text style={welcomeScreenStyles.welcomeSignUpText}>Sign Up</Text>
+        </Link>
+      </TouchableOpacity>
     </View>
   );
 };

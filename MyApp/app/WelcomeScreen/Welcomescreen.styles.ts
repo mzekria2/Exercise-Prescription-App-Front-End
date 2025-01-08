@@ -1,56 +1,51 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
+
 
 export const welcomeScreenStyles = StyleSheet.create({
   welcomeContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: 20,
   },
   welcomeTitle: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 32,
-    color: '#000',
+    color: '#FF6F00', // Orange branding
+    marginBottom: 20,
   },
   welcomeInput: {
-    width: '80%',
+    width: '90%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#B0C4DE',
     borderRadius: 8,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#f9f9f9',
-    color: '#000',
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    backgroundColor: '#F7F7F7', // Light gray input fields
+    fontSize: 16,
   },
   welcomeForgotPassword: {
-    color: '#00AEEF',
-    alignSelf: 'flex-end',
-    marginRight: '10%',
-    marginBottom: 32,
-    fontSize: 14,
+    color: '#007ACC',
+    textDecorationLine: 'underline',
+    marginBottom: 20,
   },
   welcomeLoginButton: {
-    backgroundColor: '#00AEEF',
-    paddingVertical: 15,
-    paddingHorizontal: 80,
+    backgroundColor: '#ffae1a', 
+    paddingVertical: 14,
+    width: '90%',
     borderRadius: 8,
-    marginBottom: 16,
-  },
-  welcomeLoginText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   welcomeSignUpButton: {
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 80,
+    paddingVertical: 14,
+    width: '90%',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#00AEEF',
+    alignItems: 'center',
+    borderColor: '#ffae1a',
   },
   errorText: {
     color: 'red',
@@ -59,7 +54,7 @@ export const welcomeScreenStyles = StyleSheet.create({
     textAlign: 'center',
   },
   welcomeSignUpText: {
-    color: '#00AEEF',
+    color: '#ffae1a',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -91,22 +86,9 @@ export const indexPageStyles = StyleSheet.create({
     marginBottom: 10,
   },
   indexSubtitle: {
-    fontSize: 20,
-    color: '#555',
+    fontSize: 16,
+    color: '#555555', 
     textAlign: 'center',
-    marginBottom: 20,
-    padding: 20
-  },
-  indexButton: {
-    backgroundColor: '#007BFF',
-    padding: 15,
-    borderRadius: 8,
-    width: '100%',
-  },
-  indexButtonText: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    marginBottom: 30,
   },
 });
