@@ -52,7 +52,7 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch(`${backendUrl}/api/auth/register`, { // Use the backend URL variable
+      const response = await fetch(`http://localhost:3000/api/auth/register`, { // Use the backend URL variable
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
