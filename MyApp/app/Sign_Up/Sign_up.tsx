@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { signUpScreenStyles } from './Sign_up.styles';
-import { useRouter } from 'expo-router'; // Import useRouter for navigation
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { signUpScreenStyles } from "./Sign_up.styles";
+import { useRouter } from "expo-router"; // Import useRouter for navigation
 
 const SignUp = () => {
-  const backendUrl = 'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'; // Define the backend URL here
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
-  const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
+  //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
+  const backendUrl = "http://localhost:3000"; // Define the backend URL here
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const router = useRouter(); // Initialize router for navigation
 
