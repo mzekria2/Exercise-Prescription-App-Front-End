@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { Link, useRouter } from "expo-router";
+
+//https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos
+const apiURLBackend = "http://localhost:3000"; // for web
 
 type Video = {
   _id: string;
@@ -19,7 +28,7 @@ const VideoList: React.FC = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch("https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos/allVideos");
+        const response = await fetch(`${apiURLBackend}/videos/allVideos`);
         const data: Video[] = await response.json();
         setVideos(data);
       } catch (error) {
@@ -39,6 +48,7 @@ const VideoList: React.FC = () => {
 
       <Text style={styles.heading}>Select a Video</Text>
       <FlatList
+        style={styles.videoContainer}
         data={videos}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
@@ -100,5 +110,8 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  videoContainer: {
+    top: 30,
   },
 });

@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Alert, // Import Alert for confirmation
 } from "react-native";
 import { Link } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -17,7 +16,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 const { width, height } = Dimensions.get("screen");
 const Videos = () => {
   const [videoList, setVideoList] = useState<{ [key: string]: any }[]>([]);
-  const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app"; //for web
+  // const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app"; //for web
+  const apiURLBackend = "http://localhost:3000/videos";
   //const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
 
   type Video = {

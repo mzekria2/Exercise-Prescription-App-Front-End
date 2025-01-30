@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos"; // Backend API URL
+//https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos
+const apiURLBackend = "http://localhost:3000"; // Backend API URL
+
 const { width } = Dimensions.get("screen");
 
 const DeleteVideo = () => {
@@ -44,9 +46,12 @@ const DeleteVideo = () => {
           style: "destructive",
           onPress: async () => {
             try {
-              const response = await fetch(`${apiURLBackend}/delete/${videoId}`, {
-                method: "DELETE",
-              });
+              const response = await fetch(
+                `${apiURLBackend}/delete/${videoId}`,
+                {
+                  method: "DELETE",
+                }
+              );
 
               if (response.ok) {
                 setVideoList((prevList) =>
