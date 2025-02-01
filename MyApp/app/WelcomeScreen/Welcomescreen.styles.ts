@@ -63,6 +63,17 @@ export const welcomeScreenStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  welcomeForgotPasswordButton: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  
+  welcomeForgotPasswordText: {
+    fontSize: 14,
+    color: '#0066cc',
+    textDecorationLine: 'underline',
+  },
+  
 });
 
 export const indexPageStyles = StyleSheet.create({
