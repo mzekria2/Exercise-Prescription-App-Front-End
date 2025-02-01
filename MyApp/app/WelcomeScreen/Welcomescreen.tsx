@@ -4,10 +4,10 @@ import { indexPageStyles, welcomeScreenStyles } from "./Welcomescreen.styles";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
 
 const WelcomeScreen = () => {
-  const backendUrl = 'http://localhost:3000'; // Define the backend URL here
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const backendUrl = "http://localhost:3000"; // Define the backend URL here
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const params = useLocalSearchParams();
   const router = useRouter();
 
@@ -75,8 +75,6 @@ const WelcomeScreen = () => {
         <Text style={{ color: "red", marginBottom: 10 }}>{errorMessage}</Text>
       ) : null}
 
-      
-
       <TouchableOpacity
         style={welcomeScreenStyles.welcomeLoginButton}
         onPress={handleLogin}
@@ -90,16 +88,15 @@ const WelcomeScreen = () => {
       >
         <TouchableOpacity>
           <Text style={welcomeScreenStyles.welcomeSignUpText}>Sign Up</Text>
+        </TouchableOpacity>
+      </Link>
+      <TouchableOpacity style={welcomeScreenStyles.welcomeForgotPasswordButton}>
+        <Link href="/ForgotPassword/ForgotPassword">
+          <Text style={welcomeScreenStyles.welcomeForgotPasswordText}>
+            Forgot Password?
+          </Text>
         </Link>
       </TouchableOpacity>
-
-      <TouchableOpacity style={welcomeScreenStyles.welcomeForgotPasswordButton}>
-      <Link href="/ForgotPassword/ForgotPassword">
-        <Text style={welcomeScreenStyles.welcomeForgotPasswordText}>
-          Forgot Password?
-        </Text>
-      </Link>
-    </TouchableOpacity>
     </View>
   );
 };
