@@ -30,14 +30,21 @@ const HomePage: React.FC = () => {
             </Link>
           </TouchableOpacity>
         </View>
-
+        <View style={homePageStyles.row}>
+          <TouchableOpacity style={homePageStyles.cardFull}>
+            <Link href="/progress/progress_display">
+              <Text style={homePageStyles.cardTitle}>View Progress</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
+        {/* 
         <View style={homePageStyles.row}>
           <TouchableOpacity style={homePageStyles.cardFull}>
             <Link href="/video/delete_video">
               <Text style={homePageStyles.cardTitle}>Delete Videos</Text>
             </Link>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       {/* Bottom Navigation Bar */}
