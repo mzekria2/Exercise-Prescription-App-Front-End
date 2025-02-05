@@ -9,7 +9,7 @@ const Progress: React.FC = () => {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
       {
-        data: [2, 3, 1, 4, 2, 5, 3], // Number of videos watched each day
+        data: [3, 3, 1, 4, 2, 5, 3], // Number of videos watched each day
       },
     ],
   };
