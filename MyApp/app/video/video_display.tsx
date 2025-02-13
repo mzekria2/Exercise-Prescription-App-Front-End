@@ -1,14 +1,22 @@
-import React from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { Video } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 
-const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos"; // for web
+const apiURLBackend = "http://localhost:3000"; // for web
+
 const { width, height } = Dimensions.get("screen");
 
 const Videos = () => {
   const { data } = useLocalSearchParams();
   const router = useRouter();
+  const [isPlaying, setIsPlaying] = useState(false);
 
   let parsedData = null;
 
@@ -35,24 +43,44 @@ const Videos = () => {
     );
   }
 
+  const videoSource = `${apiURLBackend}/videos/video/${parsedData._id}`;
+  console.log("Video source:", videoSource);
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+    player.play();
+  });
+
+  useEffect(() => {
+    const subscription = player.addListener(
+      "statusChange",
+      ({ status, error }) => {
+        if (status === "playing") {
+          setIsPlaying(true);
+        } else if (status === "paused") {
+          setIsPlaying(false);
+        }
+        console.log("Player status changed:", status);
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [player]);
+
   return (
     <View style={styles.videoContainer}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backButtonText}>← Back</Text>
       </TouchableOpacity>
-
-      {/* Video Player */}
       <View style={styles.videoView}>
-        <Video
-          source={{ uri: `${apiURLBackend}/video/${parsedData._id}` }}
-          useNativeControls
+        <VideoView
           style={styles.video}
-          resizeMode="contain"
+          player={player}
+          allowsFullscreen
+          allowsPictureInPicture
         />
       </View>
-
-      {/* Video Title */}
       <Text style={styles.videoTitle}>{parsedData.title}</Text>
     </View>
   );
@@ -74,8 +102,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 50, // Ensure it is visible under any potential headers
-    left: 20,
+    top: 20, // Ensure it is visible under any potential headers
+    left: 10,
     zIndex: 10, // Ensures it stays above other elements
     padding: 10,
     backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
@@ -97,6 +125,11 @@ const styles = StyleSheet.create({
   video: {
     width: "100%",
     height: "100%",
+  },
+  controlsContainer: {
+    padding: 10,
+    alignItems: "center",
+    marginTop: 20,
   },
   errorText: {
     color: "red",

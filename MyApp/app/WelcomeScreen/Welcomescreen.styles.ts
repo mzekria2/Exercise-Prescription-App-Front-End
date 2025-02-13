@@ -1,67 +1,67 @@
 import { StyleSheet } from "react-native";
 
-
 export const welcomeScreenStyles = StyleSheet.create({
   welcomeContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F5F5F5",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   welcomeTitle: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FF6F00', // Orange branding
+    fontWeight: "bold",
+    color: "#FF6F00", // Orange branding
     marginBottom: 20,
   },
   welcomeInput: {
-    width: '90%',
+    width: "90%",
     height: 50,
     borderWidth: 1,
-    borderColor: '#B0C4DE',
+    borderColor: "#B0C4DE",
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    backgroundColor: '#F7F7F7', // Light gray input fields
+    backgroundColor: "#F7F7F7", // Light gray input fields
     fontSize: 16,
   },
   welcomeForgotPassword: {
-    color: '#007ACC',
-    textDecorationLine: 'underline',
+    color: "#007ACC",
+    textDecorationLine: "underline",
     marginBottom: 20,
   },
   welcomeLoginButton: {
-    backgroundColor: '#ffae1a', 
+    backgroundColor: "#ffae1a",
     paddingVertical: 14,
-    width: '90%',
+    width: "90%",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 12,
   },
   welcomeSignUpButton: {
     paddingVertical: 14,
-    width: '90%',
+    width: "90%",
     borderRadius: 8,
     borderWidth: 1,
-    alignItems: 'center',
-    borderColor: '#ffae1a',
+    alignItems: "center",
+    borderColor: "#ffae1a",
+    textAlign: "center",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 14,
     marginTop: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   welcomeSignUpText: {
-    color: '#ffae1a',
+    color: "#ffae1a",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   welcomeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   welcomeForgotPasswordButton: {
     marginTop: 10,
@@ -79,9 +79,9 @@ export const welcomeScreenStyles = StyleSheet.create({
 export const indexPageStyles = StyleSheet.create({
   indexContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
     padding: 20,
   },
   indexLogo: {
@@ -91,15 +91,15 @@ export const indexPageStyles = StyleSheet.create({
   },
   indexTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
     marginBottom: 10,
   },
   indexSubtitle: {
     fontSize: 16,
-    color: '#555555', 
-    textAlign: 'center',
+    color: "#555555",
+    textAlign: "center",
     marginBottom: 30,
   },
 });
