@@ -17,7 +17,7 @@ const UploadVideos = () => {
   const [isUploaded, setIsUploaded] = useState(false); // Track upload status
 
   const router = useRouter(); // Use router to navigate
-  const backendUrl = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app"; // Backend URL
+  const backendUrl = "https://ac36-129-100-255-35.ngrok-free.app"; // Backend URL
 
   const uploadVideo = async () => {
     if (!video) {

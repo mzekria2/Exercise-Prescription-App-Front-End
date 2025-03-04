@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos"; // Backend API URL
+const apiURLBackend = "https://ac36-129-100-255-35.ngrok-free.app/videos"; // Backend API URL
 const { width } = Dimensions.get("screen");
 
 const DeleteVideo = () => {

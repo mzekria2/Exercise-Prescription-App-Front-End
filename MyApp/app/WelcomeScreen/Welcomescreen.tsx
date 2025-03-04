@@ -4,7 +4,7 @@ import { indexPageStyles, welcomeScreenStyles } from './Welcomescreen.styles';
 import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 
 const WelcomeScreen = () => {
-  const backendUrl = 'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'; // Define the backend URL here
+  const backendUrl = 'https://ac36-129-100-255-35.ngrok-free.app'; // Define the backend URL here
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
