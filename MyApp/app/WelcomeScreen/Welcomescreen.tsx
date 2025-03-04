@@ -1,46 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { indexPageStyles, welcomeScreenStyles } from "./Welcomescreen.styles";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
+import { useTranslation } from "../TranslationContext"; // Import global translation hook
+
+const backendUrl = "https://34d8-129-100-255-35.ngrok-free.app"; // Define the backend URL here
 
 const WelcomeScreen = () => {
-  const backendUrl = "http://localhost:3000"; // Define the backend URL here
+  const { translate } = useTranslation(); // Use global translation
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const params = useLocalSearchParams();
   const router = useRouter();
 
+  // State for translated text
+  const [translatedTitle, setTranslatedTitle] = useState("Welcome Back");
+  const [translatedSubtitle, setTranslatedSubtitle] = useState("Log in to access your account");
+  const [translatedEmailPlaceholder, setTranslatedEmailPlaceholder] = useState("Email");
+  const [translatedPasswordPlaceholder, setTranslatedPasswordPlaceholder] = useState("Password");
+  const [translatedLogin, setTranslatedLogin] = useState("Log In");
+  const [translatedSignUp, setTranslatedSignUp] = useState("Sign Up");
+  const [translatedForgotPassword, setTranslatedForgotPassword] = useState("Forgot Password?");
+
+  // Translate all text when language changes
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      setTranslatedTitle(await translate("Welcome Back"));
+      setTranslatedSubtitle(await translate("Log in to access your account"));
+      setTranslatedEmailPlaceholder(await translate("Email"));
+      setTranslatedPasswordPlaceholder(await translate("Password"));
+      setTranslatedLogin(await translate("Log In"));
+      setTranslatedSignUp(await translate("Sign Up"));
+      setTranslatedForgotPassword(await translate("Forgot Password?"));
+    };
+    fetchTranslations();
+  }, [translate]);
+
   const handleLogin = async () => {
     setErrorMessage(""); // Reset error message
 
     const normalizedEmail = email.trim().toLowerCase();
     if (!normalizedEmail || !password) {
-      setErrorMessage("Please fill in both email and password.");
+      setErrorMessage(await translate("Please fill in both email and password."));
       return;
     }
 
     try {
       console.log("in try");
       const response = await fetch(`${backendUrl}/api/auth/login`, {
-        // Use the backend URL variable
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: normalizedEmail, password }),
       });
-      console.log(response.status, "resposne status");
+
+      console.log(response.status, "response status");
       const data = await response.json();
 
       if (response.ok) {
         console.log("Login successful:", data.token);
         router.push("/HomePage/HomePage");
       } else {
-        setErrorMessage(data.message || "Invalid email or password.");
+        setErrorMessage(await translate(data.message || "Invalid email or password."));
       }
     } catch (error) {
-      setErrorMessage("Unable to login. Please try again later.");
+      setErrorMessage(await translate("Unable to login. Please try again later."));
     }
   };
 
@@ -48,24 +74,22 @@ const WelcomeScreen = () => {
     <View style={welcomeScreenStyles.welcomeContainer}>
       {params.success === "true" && (
         <Text style={{ color: "green", marginBottom: 10, fontWeight: "bold" }}>
-          Registration successful! Please log in.
+          {translatedTitle}
         </Text>
       )}
 
-      <Text style={welcomeScreenStyles.welcomeTitle}>Welcome Back</Text>
-      <Text style={indexPageStyles.indexSubtitle}>
-        Log in to access your account
-      </Text>
+      <Text style={welcomeScreenStyles.welcomeTitle}>{translatedTitle}</Text>
+      <Text style={indexPageStyles.indexSubtitle}>{translatedSubtitle}</Text>
 
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
-        placeholder="Email"
+        placeholder={translatedEmailPlaceholder}
         placeholderTextColor="#888"
         onChangeText={setEmail}
       />
       <TextInput
         style={welcomeScreenStyles.welcomeInput}
-        placeholder="Password"
+        placeholder={translatedPasswordPlaceholder}
         placeholderTextColor="#888"
         secureTextEntry
         onChangeText={setPassword}
@@ -75,25 +99,20 @@ const WelcomeScreen = () => {
         <Text style={{ color: "red", marginBottom: 10 }}>{errorMessage}</Text>
       ) : null}
 
-      <TouchableOpacity
-        style={welcomeScreenStyles.welcomeLoginButton}
-        onPress={handleLogin}
-      >
-        <Text style={welcomeScreenStyles.welcomeButtonText}>Log In</Text>
+      <TouchableOpacity style={welcomeScreenStyles.welcomeLoginButton} onPress={handleLogin}>
+        <Text style={welcomeScreenStyles.welcomeButtonText}>{translatedLogin}</Text>
       </TouchableOpacity>
 
-      <Link
-        href="/Sign_Up/Sign_up"
-        style={welcomeScreenStyles.welcomeSignUpButton}
-      >
+      <Link href="/Sign_Up/Sign_up" style={welcomeScreenStyles.welcomeSignUpButton}>
         <TouchableOpacity>
-          <Text style={welcomeScreenStyles.welcomeSignUpText}>Sign Up</Text>
+          <Text style={welcomeScreenStyles.welcomeSignUpText}>{translatedSignUp}</Text>
         </TouchableOpacity>
       </Link>
+
       <TouchableOpacity style={welcomeScreenStyles.welcomeForgotPasswordButton}>
         <Link href="/ForgotPassword/ForgotPassword">
           <Text style={welcomeScreenStyles.welcomeForgotPasswordText}>
-            Forgot Password?
+            {translatedForgotPassword}
           </Text>
         </Link>
       </TouchableOpacity>
