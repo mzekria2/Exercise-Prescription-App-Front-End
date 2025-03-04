@@ -1,65 +1,70 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import RNPickerSelect from "react-native-picker-select";
-import { useTranslation } from "./TranslationContext"; // Import global translation hook
+import ModalSelector from "react-native-modal-selector"; 
+import { useTranslation } from "./TranslationContext"; 
 
 const supportedLanguages = [
-  { label: "🇺🇸 English", value: "en" },
-  { label: "🇪🇸 Español", value: "es" },
-  { label: "🇫🇷 Français", value: "fr" },
-  { label: "🇩🇪 Deutsch", value: "de" },
-  { label: "🇮🇹 Italiano", value: "it" },
-  { label: "🇵🇹 Português", value: "pt" },
+  { key: "en", label: "🇺🇸 English", value: "en" },
+  { key: "es", label: "🇪🇸 Español", value: "es" },
+  { key: "fr", label: "🇫🇷 Français", value: "fr" },
+  { key: "de", label: "🇩🇪 Deutsch", value: "de" },
+  { key: "it", label: "🇮🇹 Italiano", value: "it" },
+  { key: "pt", label: "🇵🇹 Português", value: "pt" },
 ];
 
 export default function Index() {
   const { language, setLanguage, translate } = useTranslation();
-  const [title, setTitle] = useState("Hand Therapy Canada");
-  const [subtitle, setSubtitle] = useState("Empowering Your Recovery Journey");
-  const [loginText, setLoginText] = useState("Log In");
-  const [signUpText, setSignUpText] = useState("Sign Up");
+  const [translatedText, setTranslatedText] = useState({
+    title: "Hand Therapy Canada",
+    subtitle: "Empowering Your Recovery Journey",
+    loginText: "Log In",
+    signUpText: "Sign Up",
+  });
+
+  const fetchTranslations = useCallback(async () => {
+    setTranslatedText({
+      title: await translate("Hand Therapy Canada"),
+      subtitle: await translate("Empowering Your Recovery Journey"),
+      loginText: await translate("Log In"),
+      signUpText: await translate("Sign Up"),
+    });
+  }, [translate]);
 
   useEffect(() => {
-    const fetchTranslations = async () => {
-      setTitle(await translate("Hand Therapy Canada"));
-      setSubtitle(await translate("Empowering Your Recovery Journey"));
-      setLoginText(await translate("Log In"));
-      setSignUpText(await translate("Sign Up"));
-    };
     fetchTranslations();
-  }, [language]);
+  }, [language, fetchTranslations]);
 
   return (
     <LinearGradient colors={["#F8D6A9", "#EFA550"]} style={styles.gradientBackground}>
-      <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        <Image source={require("../assets/images/hand.jpg")} style={styles.backgroundPhoto} />
-        <Text style={styles.subtitle}>{subtitle}</Text>
-
-        <TouchableOpacity style={styles.loginbutton}>
-          <Link href="/WelcomeScreen/Welcomescreen" style={styles.loginbuttonText}>
-            {loginText}
-          </Link>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpbutton}>
-          <Link href="/Sign_Up/Sign_up" style={styles.signUpbuttonText}>
-            {signUpText}
-          </Link>
-        </TouchableOpacity>
-
-        {/* Language Selector */}
-        <View style={styles.languageSelector}>
-          <Text style={styles.languageLabel}>🌍 Select Language:</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setLanguage(value)}
-            items={supportedLanguages}
-            value={language}
-            placeholder={{ label: "Choose Language...", value: null }}
-            style={pickerSelectStyles}
+      <View style={styles.languageContainer}>
+        <TouchableOpacity style={styles.languageButton}>
+          <ModalSelector
+            data={supportedLanguages}
+            initValue="🌍 Select Language"
+            onChange={(option) => setLanguage(option.value)}
+            selectStyle={styles.pickerStyle}
+            selectTextStyle={styles.pickerText}
           />
-        </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.container}>
+        <Text style={styles.title}>{translatedText.title}</Text>
+        <Image source={require("../assets/images/hand.jpg")} style={styles.backgroundPhoto} />
+        <Text style={styles.subtitle}>{translatedText.subtitle}</Text>
+
+        <TouchableOpacity style={styles.loginButton}>
+          <Link href="/WelcomeScreen/Welcomescreen" style={styles.loginButtonText}>
+            {translatedText.loginText}
+          </Link>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.signUpButton}>
+          <Link href="/Sign_Up/Sign_up" style={styles.signUpButtonText}>
+            {translatedText.signUpText}
+          </Link>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -67,19 +72,17 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   gradientBackground: { flex: 1 },
-  container: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20, overflowY: "scroll" },
-  backgroundPhoto: { paddingVertical: 40, width: "90%", height: 300, resizeMode: "cover", borderRadius: 15, marginBottom: 20 },
+  container: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20 },
+  backgroundPhoto: { width: "90%", height: 300, resizeMode: "cover", borderRadius: 15, marginBottom: 20 },
   title: { fontSize: 40, fontWeight: "bold", color: "#FF6F00", textAlign: "center", marginBottom: 10 },
   subtitle: { fontSize: 16, fontWeight: "500", color: "#555555", textAlign: "center", marginBottom: 30 },
-  loginbutton: { width: "85%", paddingVertical: 15, borderRadius: 8, backgroundColor: "#F8D6A9", alignItems: "center", marginVertical: 10 },
-  signUpbutton: { width: "85%", paddingVertical: 15, borderRadius: 8, backgroundColor: "#F8D6A9", alignItems: "center", marginVertical: 10 },
-  loginbuttonText: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold", textAlign: "center" },
-  signUpbuttonText: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold", textAlign: "center" },
-  languageSelector: { marginTop: 20, alignItems: "center" },
-  languageLabel: { fontSize: 18, fontWeight: "bold", marginBottom: 5 },
-});
+  loginButton: { width: "85%", paddingVertical: 15, borderRadius: 8, backgroundColor: "#F8D6A9", alignItems: "center", marginVertical: 10 },
+  signUpButton: { width: "85%", paddingVertical: 15, borderRadius: 8, backgroundColor: "#F8D6A9", alignItems: "center", marginVertical: 10 },
+  loginButtonText: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold", textAlign: "center" },
+  signUpButtonText: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold", textAlign: "center" },
 
-const pickerSelectStyles = {
-  inputIOS: { fontSize: 16, padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5, width: 200, textAlign: "center" },
-  inputAndroid: { fontSize: 16, padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5, width: 200, textAlign: "center" },
-};
+  languageContainer: { position: "absolute", top: 55, right: 10, zIndex: 10, color: "#000000"},
+  languageButton: { backgroundColor: "#EFA550", padding: 1, borderRadius: 10, elevation: 1, shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 100 },
+  pickerStyle: { backgroundColor: "#EFA550", borderRadius: 10, paddingVertical: 10, borderColor:"#EFA550",  },
+  pickerText: { fontSize: 15, fontWeight: "bold", textAlign: "center" }, 
+});
