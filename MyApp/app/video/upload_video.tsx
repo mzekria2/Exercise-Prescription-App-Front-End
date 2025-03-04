@@ -17,7 +17,24 @@ const UploadVideos = () => {
   const [isUploaded, setIsUploaded] = useState(false); // Track upload status
 
   const router = useRouter(); // Use router to navigate
-  const backendUrl = "https://ac36-129-100-255-35.ngrok-free.app"; // Backend URL
+  //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
+  const backendUrl = "http://localhost:3000"; // Backend URL
+
+  const base64ToBlob = (base64Data, contentType) => {
+    const byteCharacters = atob(base64Data.split(",")[1]); // Decoding base64
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+      const slice = byteCharacters.slice(offset, offset + 1024);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      byteArrays.push(new Uint8Array(byteNumbers));
+    }
+
+    return new Blob(byteArrays, { type: contentType });
+  };
 
   const uploadVideo = async () => {
     if (!video) {
@@ -26,22 +43,21 @@ const UploadVideos = () => {
     }
 
     try {
-      // Prepare FormData with video file
+      const videoBlob = base64ToBlob(video, "video/mp4");
+
       const formData = new FormData();
-      formData.append("video", {
-        uri: video,
-        name: "video.mp4",
-        type: "video/mp4", // Ensure the type matches your video format
-      });
+      formData.append("video", videoBlob, "video.mp4"); // Ensure correct file name
       formData.append("title", title);
       formData.append("description", description);
+
+      // Log form data to check contents
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
 
       // Upload video
       const uploadResponse = await fetch(`${backendUrl}/videos/upload`, {
         method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
         body: formData,
       });
 
@@ -61,7 +77,8 @@ const UploadVideos = () => {
   };
 
   const pickVideoFromGallery = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert("Permission to access media library is required!");
       return;
@@ -191,7 +208,7 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   secondaryButton: {
-    backgroundColor: "#004D40", 
+    backgroundColor: "#004D40",
   },
   buttonText: {
     color: "#fff",

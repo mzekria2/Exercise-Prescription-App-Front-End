@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Alert, // Import Alert for confirmation
 } from "react-native";
 import { Link } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -17,7 +16,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 const { width, height } = Dimensions.get("screen");
 const Videos = () => {
   const [videoList, setVideoList] = useState<{ [key: string]: any }[]>([]);
-  const apiURLBackend = "https://ac36-129-100-255-35.ngrok-free.app"; //for web
+  // const apiURLBackend = "https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app"; //for web
+  const apiURLBackend = "http://localhost:3000/videos";
   //const apiURLBackend = "http://10.0.2.2:3000/videos"; //for android emulator
 
   type Video = {
@@ -58,23 +58,23 @@ const Videos = () => {
   };
 
   // Handle delete video
-  const deleteVideo = async (videoId: string) => {
-    try {
-      const response = await fetch(`${apiURLBackend}/delete_video/${videoId}`, {
-        method: "DELETE",
-      });
-      const data = await response.json();
-      if (data.message === "Video deleted successfully") {
-        // Remove video from state (UI)
-        setVideoList((prevList) =>
-          prevList.filter((video) => video._id !== videoId)
-        );
-      }
-      console.log(data.message);
-    } catch (error) {
-      console.error("Error deleting video:", error);
-    }
-  };
+  // const deleteVideo = async (videoId: string) => {
+  //   try {
+  //     const response = await fetch(`${apiURLBackend}/delete_video/${videoId}`, {
+  //       method: "DELETE",
+  //     });
+  //     const data = await response.json();
+  //     if (data.message === "Video deleted successfully") {
+  //       // Remove video from state (UI)
+  //       setVideoList((prevList) =>
+  //         prevList.filter((video) => video._id !== videoId)
+  //       );
+  //     }
+  //     console.log(data.message);
+  //   } catch (error) {
+  //     console.error("Error deleting video:", error);
+  //   }
+  // };
 
   useEffect(() => {
     getVideos();
@@ -107,12 +107,12 @@ const Videos = () => {
                 >
                   <Entypo name="controller-play" size={24} color="white" />
                 </Link>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => deleteVideo(item._id)}
                 >
                   <AntDesign name="close" size={24} color="black" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
           )}
@@ -224,10 +224,10 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 4 },
   },
-  closeButton: {
-    position: "absolute", // Absolute positioning to place the button in the top-right corner
-    bottom: height / 13.5, // Adjust as needed to fit the layout
-    left: width / 1.18, // Adjust as needed for spacing from the right edge
-    zIndex: 0, // Ensures it stays on top of other elements
-  },
+  // closeButton: {
+  //   position: "absolute", // Absolute positioning to place the button in the top-right corner
+  //   bottom: height / 13.5, // Adjust as needed to fit the layout
+  //   left: width / 1.18, // Adjust as needed for spacing from the right edge
+  //   zIndex: 0, // Ensures it stays on top of other elements
+  // },
 });
