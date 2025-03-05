@@ -21,7 +21,6 @@ const WelcomeScreen = () => {
     }
 
     try {
-      console.log("in try");
       const response = await fetch(`${backendUrl}/api/auth/login`, {
         // Use the backend URL variable
         method: "POST",
@@ -29,9 +28,10 @@ const WelcomeScreen = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: normalizedEmail, password }),
+        credentials: "include", // Ensures cookies are sent with the request
       });
-      console.log(response.status, "resposne status");
       const data = await response.json();
+      console.log(data, "data");
 
       if (response.ok) {
         console.log("Login successful:", data.token);

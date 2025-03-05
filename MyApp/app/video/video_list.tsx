@@ -34,8 +34,18 @@ const VideoList: React.FC = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch(`${apiURLBackend}/videos/allVideos`);
+        const response = await fetch(`${apiURLBackend}/videos/allVideos`, {
+          // Use the backend URL variable
+          method: "GET",
+          credentials: "include", // Ensures cookies are sent with the request
+        });
+        if (!response.ok) {
+          // If the response status code is not in the 200 range, throw an error
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Unauthorized");
+        }
         const data: Video[] = await response.json();
+
         setVideos(data);
       } catch (error) {
         console.error("Error fetching videos:", error);
