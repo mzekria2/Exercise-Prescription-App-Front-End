@@ -64,12 +64,11 @@ const VideoList: React.FC = () => {
   const confirmDelete = async () => {
     if (!selectedVideo) return;
     try {
-      console.log("Deleting:", selectedVideo._id);
-
       const response = await fetch(
         `${apiURLBackend}/videos/delete/${selectedVideo._id}`,
         {
           method: "DELETE",
+          credentials: "include",
         }
       );
 
@@ -77,6 +76,20 @@ const VideoList: React.FC = () => {
         setVideos((prevVideos) =>
           prevVideos.filter((video) => video._id !== selectedVideo._id)
         );
+
+        const deleteProgressResponse = await fetch(
+          `${apiURLBackend}/progress/delete/${selectedVideo._id}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+
+        if (deleteProgressResponse.ok) {
+          console.log("Progress deleted");
+        } else {
+          console.error("Failed to delete progress.");
+        }
       } else {
         console.error("Failed to delete video.");
       }

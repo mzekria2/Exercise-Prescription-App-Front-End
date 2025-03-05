@@ -15,12 +15,12 @@ const UploadVideos = () => {
   const [description, setDescription] = useState("");
   const [displayVidForm, setDisplayVidForm] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false); // Track upload status
-
+  const [frequencyCompletion, setFrequencyCompletion] = useState("1");
   const router = useRouter(); // Use router to navigate
   //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
   const backendUrl = "http://localhost:3000"; // Backend URL
 
-  const base64ToBlob = (base64Data, contentType) => {
+  const base64ToBlob = (base64Data: string, contentType: any) => {
     const byteCharacters = atob(base64Data.split(",")[1]); // Decoding base64
     const byteArrays = [];
 
@@ -43,12 +43,16 @@ const UploadVideos = () => {
     }
 
     try {
-      const videoBlob = base64ToBlob(video, "video/mp4");
+      const mimeType = determineMimeType(video); // Custom function to determine MIME type
+      const videoBlob = base64ToBlob(video, mimeType);
 
       const formData = new FormData();
-      formData.append("video", videoBlob, "video.mp4"); // Ensure correct file name
+      formData.append("video", videoBlob, `video.${mimeType.split("/")[1]}`); // Ensure correct file name
       formData.append("title", title);
       formData.append("description", description);
+      if (frequencyCompletion !== "1") {
+        formData.append("frequencyCompletion", frequencyCompletion);
+      }
 
       // Log form data to check contents
       for (let pair of formData.entries()) {
@@ -59,6 +63,7 @@ const UploadVideos = () => {
       const uploadResponse = await fetch(`${backendUrl}/videos/upload`, {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       if (!uploadResponse.ok) {
@@ -93,7 +98,11 @@ const UploadVideos = () => {
       setDisplayVidForm(true);
     }
   };
-
+  function determineMimeType(vid) {
+    console.log(vid);
+    const matches = vid.match(/^data:(.+);base64,/);
+    return matches ? matches[1] : "application/octet-stream"; // Fallback MIME type
+  }
   const recordVideo = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (!permissionResult.granted) {
@@ -152,6 +161,15 @@ const UploadVideos = () => {
               placeholder="Type here..."
               value={description}
               onChangeText={(value) => setDescription(value)}
+            />
+          </View>
+          <View>
+            <Text style={styles.label}>Frequency per Day:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Type here...(Leave empty if Frequency = 1)"
+              value={frequencyCompletion}
+              onChangeText={(value) => setFrequencyCompletion(value)}
             />
           </View>
           <TouchableOpacity style={styles.button} onPress={uploadVideo}>

@@ -71,7 +71,7 @@ const ProgressChart = () => {
   };
   const maxYValue = Math.max(
     ...daysOfWeek.map((day) => countsByDay[day] || 0),
-    1
+    2
   );
 
   console.log("Chart Data:", chartData); // Add this to debug
@@ -81,6 +81,7 @@ const ProgressChart = () => {
       <Text style={styles.title}>Progress Over Time</Text>
       <View>
         <BarChart
+          showValuesOnTopOfBars={true}
           data={chartData}
           width={screenWidth * 0.8}
           yAxisSuffix=""
@@ -91,7 +92,7 @@ const ProgressChart = () => {
             backgroundColor: "#ffffff",
             backgroundGradientFrom: "#fff",
             backgroundGradientTo: "#fff",
-            decimalPlaces: 0,
+            decimalPlaces: 1,
             color: (opacity = 1) => `rgba(0, 0, 139, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: { borderRadius: 16 },
