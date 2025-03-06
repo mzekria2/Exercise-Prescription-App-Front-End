@@ -5,76 +5,33 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
+import { LinearGradient } from "expo-linear-gradient"; // For fun background
 
 const UploadVideos = () => {
   const [video, setVideo] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [displayVidForm, setDisplayVidForm] = useState(false);
-  const [isUploaded, setIsUploaded] = useState(false); // Track upload status
+  const [isUploaded, setIsUploaded] = useState(false);
+  const router = useRouter();
+  const { isKidMode } = useKidMode(); // Get Kid Mode state
 
-  const router = useRouter(); // Use router to navigate
-  //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
   const backendUrl = "http://localhost:3000"; // Backend URL
+  //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
 
-  const base64ToBlob = (base64Data, contentType) => {
-    const byteCharacters = atob(base64Data.split(",")[1]); // Decoding base64
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-      const slice = byteCharacters.slice(offset, offset + 1024);
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-      byteArrays.push(new Uint8Array(byteNumbers));
-    }
-
-    return new Blob(byteArrays, { type: contentType });
-  };
-
-  const uploadVideo = async () => {
-    if (!video) {
-      alert("No video selected!");
-      return;
-    }
-
-    try {
-      const videoBlob = base64ToBlob(video, "video/mp4");
-
-      const formData = new FormData();
-      formData.append("video", videoBlob, "video.mp4"); // Ensure correct file name
-      formData.append("title", title);
-      formData.append("description", description);
-
-      // Log form data to check contents
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
-      // Upload video
-      const uploadResponse = await fetch(`${backendUrl}/videos/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(errorText);
-      }
-
-      const result = await uploadResponse.json();
-      console.log("Upload successful:", result);
-      setDisplayVidForm(false);
-      setIsUploaded(true); // Set upload status
-    } catch (error) {
-      console.error("Error uploading video:", error);
-      alert("Failed to upload video. Please try again.");
-    }
-  };
+  // Fun animation for Kid Mode buttons
+  const bounceAnim = new Animated.Value(1);
+  Animated.loop(
+    Animated.sequence([
+      Animated.timing(bounceAnim, { toValue: 1.1, duration: 500, useNativeDriver: true }),
+      Animated.timing(bounceAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+    ])
+  ).start();
 
   const pickVideoFromGallery = async () => {
     const permissionResult =
@@ -112,30 +69,48 @@ const UploadVideos = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={isKidMode ? ["#ff6b6b", "#ffa502", "#f9ca24", "#7bed9f"] : ["#ffffff", "#ffffff"]}
+      style={styles.container}
+    >
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => router.back()}
+      >
         <Text style={styles.backButtonText}>← Back</Text>
       </TouchableOpacity>
 
       {!displayVidForm && !isUploaded && (
         <>
-          <Text style={styles.label}>Choose an option:</Text>
-          <TouchableOpacity style={styles.button} onPress={recordVideo}>
-            <Text style={styles.buttonText}>Record a Video</Text>
-          </TouchableOpacity>
+          <Text style={isKidMode ? styles.kidLabel : styles.label}>
+            {isKidMode ? "🎉 Pick an Option, Superstar! 🎬" : "Choose an option:"}
+          </Text>
+
+          <Animated.View style={{ transform: [{ scale: isKidMode ? bounceAnim : 1 }] }}>
+            <TouchableOpacity style={isKidMode ? styles.kidButton : styles.button} onPress={recordVideo}>
+              <Text style={styles.buttonText}>
+                {isKidMode ? "🎥 Record a Super Cool Video!" : "Record a Video"}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+
           <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
+            style={isKidMode ? styles.kidButton : [styles.button, styles.secondaryButton]}
             onPress={pickVideoFromGallery}
           >
-            <Text style={styles.buttonText}>Upload from Gallery</Text>
+            <Text style={styles.buttonText}>
+              {isKidMode ? "📺 Pick an Awesome Video!" : "Upload from Gallery"}
+            </Text>
           </TouchableOpacity>
         </>
       )}
 
       {displayVidForm ? (
         <>
-          <Text style={styles.label}>Upload a New Video:</Text>
+          <Text style={isKidMode ? styles.kidLabel : styles.label}>
+            {isKidMode ? "🎨 Add Some Magic to Your Video!" : "Upload a New Video:"}
+          </Text>
           <View>
             <Text style={styles.label}>Video Title:</Text>
             <TextInput
@@ -154,14 +129,18 @@ const UploadVideos = () => {
               onChangeText={(value) => setDescription(value)}
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={uploadVideo}>
-            <Text style={styles.buttonText}>Upload</Text>
+          <TouchableOpacity style={isKidMode ? styles.kidButton : styles.button}>
+            <Text style={styles.buttonText}>
+              {isKidMode ? "🚀 Blast Off! Upload Now!" : "Upload"}
+            </Text>
           </TouchableOpacity>
         </>
       ) : isUploaded ? (
-        <Text>Video Uploaded. You can go back to view it.</Text>
+        <Text style={styles.label}>
+          {isKidMode ? "🎊 Your Video is Live! 🎬" : "Video Uploaded. You can go back to view it."}
+        </Text>
       ) : null}
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -189,6 +168,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
+  kidLabel: {
+    fontSize: 22,
+    marginBottom: 10,
+    textAlign: "center",
+    color: "#ff4757",
+    fontWeight: "bold",
+  },
   input: {
     height: 40,
     borderColor: "gray",
@@ -203,6 +189,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 15,
+    alignItems: "center",
+    width: "80%",
+  },
+  kidButton: {
+    backgroundColor: "#ff4757",
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 20,
+    borderWidth: 4,
+    borderColor: "#ffcc00",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
     marginBottom: 15,
     alignItems: "center",
     width: "80%",

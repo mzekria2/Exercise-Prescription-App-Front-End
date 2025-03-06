@@ -91,4 +91,13 @@ export const homePageStyles = StyleSheet.create({
     color: "#FF6F00",
     fontWeight: "bold",
   },
+  kidModeTitle: {
+    fontSize: 28, 
+    fontWeight: "bold",
+    color: "#ff4757", 
+    textAlign: "center",
+    textShadowColor: "#ffcc00", 
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
 });
