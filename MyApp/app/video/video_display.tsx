@@ -86,11 +86,16 @@ const Videos = () => {
           credentials: "include",
         }
       );
+      if (trackResponse.status === 401 || trackResponse.status === 403) {
+        console.warn("Token expired. Redirecting to sign-up...");
+        router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
+        return;
+      }
       const responseData = await trackResponse.json();
+
       setProgressTrackedMsg(
         "Video completion tracked. Response: " + JSON.stringify(responseData)
       );
-      console.log(responseData, "Video completion tracked.");
     } catch (error) {
       console.error("Error tracking video completion:", error);
     }

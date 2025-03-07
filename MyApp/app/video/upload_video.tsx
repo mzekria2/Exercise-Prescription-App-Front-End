@@ -65,6 +65,11 @@ const UploadVideos = () => {
         body: formData,
         credentials: "include",
       });
+      if (uploadResponse.status === 401 || uploadResponse.status === 403) {
+        console.warn("Token expired. Redirecting to sign-up...");
+        router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
+        return;
+      }
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
@@ -72,7 +77,7 @@ const UploadVideos = () => {
       }
 
       const result = await uploadResponse.json();
-      console.log("Upload successful:", result);
+
       setDisplayVidForm(false);
       setIsUploaded(true); // Set upload status
     } catch (error) {

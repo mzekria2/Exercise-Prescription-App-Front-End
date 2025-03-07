@@ -39,6 +39,13 @@ const VideoList: React.FC = () => {
           method: "GET",
           credentials: "include", // Ensures cookies are sent with the request
         });
+
+        if (response.status === 401 || response.status === 403) {
+          console.warn("Token expired. Redirecting to sign-up...");
+          router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
+          return;
+        }
+
         if (!response.ok) {
           // If the response status code is not in the 200 range, throw an error
           const errorData = await response.json();
