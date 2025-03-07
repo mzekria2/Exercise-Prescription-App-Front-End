@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { BarChart } from "react-native-chart-kit";
+import { useKidMode } from "../context/KidModeContext";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router"; // Import useRouter for navigation
 import {
   startOfWeek,

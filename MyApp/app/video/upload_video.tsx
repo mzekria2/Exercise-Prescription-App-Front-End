@@ -5,15 +5,23 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
+import { LinearGradient } from "expo-linear-gradient"; // For fun background
 
 const UploadVideos = () => {
   const [video, setVideo] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [displayVidForm, setDisplayVidForm] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const router = useRouter();
+  const { isKidMode } = useKidMode(); // Get Kid Mode state
+
+  const backendUrl = "http://localhost:3000"; // Backend URL
   const [isUploaded, setIsUploaded] = useState(false); // Track upload status
   const [frequencyCompletion, setFrequencyCompletion] = useState("1");
   const router = useRouter(); // Use router to navigate
@@ -126,7 +134,14 @@ const UploadVideos = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={
+        isKidMode
+          ? ["#ff6b6b", "#ffa502", "#f9ca24", "#7bed9f"]
+          : ["#ffffff", "#ffffff"]
+      }
+      style={styles.container}
+    >
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backButtonText}>← Back</Text>
@@ -134,22 +149,47 @@ const UploadVideos = () => {
 
       {!displayVidForm && !isUploaded && (
         <>
-          <Text style={styles.label}>Choose an option:</Text>
-          <TouchableOpacity style={styles.button} onPress={recordVideo}>
-            <Text style={styles.buttonText}>Record a Video</Text>
-          </TouchableOpacity>
+          <Text style={isKidMode ? styles.kidLabel : styles.label}>
+            {isKidMode
+              ? "🎉 Pick an Option, Superstar! 🎬"
+              : "Choose an option:"}
+          </Text>
+
+          <Animated.View
+            style={{ transform: [{ scale: isKidMode ? bounceAnim : 1 }] }}
+          >
+            <TouchableOpacity
+              style={isKidMode ? styles.kidButton : styles.button}
+              onPress={recordVideo}
+            >
+              <Text style={styles.buttonText}>
+                {isKidMode ? "🎥 Record a Super Cool Video!" : "Record a Video"}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+
           <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
+            style={
+              isKidMode
+                ? styles.kidButton
+                : [styles.button, styles.secondaryButton]
+            }
             onPress={pickVideoFromGallery}
           >
-            <Text style={styles.buttonText}>Upload from Gallery</Text>
+            <Text style={styles.buttonText}>
+              {isKidMode ? "📺 Pick an Awesome Video!" : "Upload from Gallery"}
+            </Text>
           </TouchableOpacity>
         </>
       )}
 
       {displayVidForm ? (
         <>
-          <Text style={styles.label}>Upload a New Video:</Text>
+          <Text style={isKidMode ? styles.kidLabel : styles.label}>
+            {isKidMode
+              ? "🎨 Add Some Magic to Your Video!"
+              : "Upload a New Video:"}
+          </Text>
           <View>
             <Text style={styles.label}>Video Title:</Text>
             <TextInput
@@ -182,9 +222,13 @@ const UploadVideos = () => {
           </TouchableOpacity>
         </>
       ) : isUploaded ? (
-        <Text>Video Uploaded. You can go back to view it.</Text>
+        <Text style={styles.label}>
+          {isKidMode
+            ? "🎊 Your Video is Live! 🎬"
+            : "Video Uploaded. You can go back to view it."}
+        </Text>
       ) : null}
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -212,6 +256,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
+  kidLabel: {
+    fontSize: 22,
+    marginBottom: 10,
+    textAlign: "center",
+    color: "#ff4757",
+    fontWeight: "bold",
+  },
   input: {
     height: 40,
     borderColor: "gray",
@@ -226,6 +277,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 15,
+    alignItems: "center",
+    width: "80%",
+  },
+  kidButton: {
+    backgroundColor: "#ff4757",
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 20,
+    borderWidth: 4,
+    borderColor: "#ffcc00",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
     marginBottom: 15,
     alignItems: "center",
     width: "80%",

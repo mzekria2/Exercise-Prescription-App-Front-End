@@ -1,5 +1,11 @@
-import React, { Stack } from "expo-router";
+import React from 'react';
+import { Stack } from "expo-router"; 
+import { KidModeProvider } from "./context/KidModeContext"; 
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <KidModeProvider> 
+      <Stack />
+    </KidModeProvider>
+  );
 }
