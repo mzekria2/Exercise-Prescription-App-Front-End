@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Dimensions, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { useRouter } from "expo-router"; // Import useRouter for navigation
+import {
+  startOfWeek,
+  endOfWeek,
+  subWeeks,
+  isWithinInterval,
+  parseISO,
+} from "date-fns";
+import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -16,34 +30,40 @@ const ProgressChart = () => {
   }
 
   const [progressData, setProgressData] = useState<ProgressItem[]>([]);
+  const [weekOffset, setWeekOffset] = useState(0);
 
   useEffect(() => {
-    const getProgress = async () => {
-      try {
-        const response = await fetch(`${apiURLBackend}/progress/progressData`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
-
-        if (response.status === 401 || response.status === 403) {
-          console.warn("Token expired. Redirecting to sign-up...");
-          router.replace("/sign-up"); // Redirect user to sign-up page
-          return;
-        }
-
-        const progressDataResponse = await response.json();
-        console.log("Fetched Progress Data:", progressDataResponse);
-        setProgressData(progressDataResponse);
-      } catch (error) {
-        console.error("Error fetching progress data:", error);
-      }
-    };
-
     getProgress();
-  }, []);
+  }, [weekOffset]);
+
+  const getProgress = async () => {
+    try {
+      const response = await fetch(`${apiURLBackend}/progress/progressData`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        console.warn("Token expired. Redirecting to sign-up...");
+        router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
+        return;
+      }
+
+      const progressDataResponse = await response.json();
+      setProgressData(progressDataResponse);
+    } catch (error) {
+      console.error("Error fetching progress data:", error);
+    }
+  };
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  //calculate current week range
+  const today = new Date();
+  const start = startOfWeek(subWeeks(today, weekOffset));
+  const end = endOfWeek(subWeeks(today, weekOffset));
+
   const countsByDay = daysOfWeek.reduce(
     (acc, day) => ({ ...acc, [day]: 0 }),
     {}
@@ -52,16 +72,14 @@ const ProgressChart = () => {
   progressData.forEach((item) => {
     if (item.dateCompleted && Array.isArray(item.dateCompleted)) {
       item.dateCompleted.forEach((date) => {
-        const dateObj = new Date(date);
-        if (!isNaN(dateObj.getTime())) {
+        const dateObj = parseISO(date);
+        if (isWithinInterval(dateObj, { start, end })) {
           const dayOfWeek = daysOfWeek[dateObj.getUTCDay()];
           countsByDay[dayOfWeek] += 1;
         }
       });
     }
   });
-
-  console.log("Counts by Day:", countsByDay);
 
   const chartData = {
     labels: daysOfWeek,
@@ -73,8 +91,6 @@ const ProgressChart = () => {
     ...daysOfWeek.map((day) => countsByDay[day] || 0),
     2
   );
-
-  console.log("Chart Data:", chartData); // Add this to debug
 
   return (
     <View style={styles.container}>
@@ -104,10 +120,29 @@ const ProgressChart = () => {
           yAxisInterval={1} // Ensure even spacing
           segments={maxYValue} // Force even y-axis divisions
         />
-        <View style={{ alignItems: "center", marginTop: 10 }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-            Days of the Week
+        <Text style={styles.titleDaysWeek}>Days of the Week</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => setWeekOffset(weekOffset + 1)}>
+            <FontAwesomeIcon name="arrow-left" size={16} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.titleWeek}>
+            Week of {start.toDateString()} - {end.toDateString()}
           </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              if (weekOffset > 0) {
+                setWeekOffset(weekOffset - 1);
+              }
+            }}
+            disabled={weekOffset === 0}
+          >
+            <FontAwesomeIcon
+              name="arrow-right"
+              size={16}
+              color={weekOffset === 0 ? "gray" : "black"}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -119,12 +154,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
   },
+  titleDaysWeek: {
+    fontSize: 16,
+    fontWeight: "bold",
+    width: screenWidth * 0.8,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  titleWeek: {
+    textAlign: "center",
+  },
   title: {
     textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
     color: "#0d47a1",
+  },
+  buttonContainer: {
+    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    textAlign: "center",
   },
 });
 
