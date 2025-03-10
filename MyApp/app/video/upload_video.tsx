@@ -21,12 +21,26 @@ const UploadVideos = () => {
   const router = useRouter();
   const { isKidMode } = useKidMode(); // Get Kid Mode state
 
-  const backendUrl = "http://localhost:3000"; // Backend URL
-  const [isUploaded, setIsUploaded] = useState(false); // Track upload status
   const [frequencyCompletion, setFrequencyCompletion] = useState("1");
-  const router = useRouter(); // Use router to navigate
+
   //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
   const backendUrl = "http://localhost:3000"; // Backend URL
+
+  const bounceAnim = new Animated.Value(1);
+  Animated.loop(
+    Animated.sequence([
+      Animated.timing(bounceAnim, {
+        toValue: 1.1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(bounceAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ])
+  ).start();
 
   const base64ToBlob = (base64Data: string, contentType: any) => {
     const byteCharacters = atob(base64Data.split(",")[1]); // Decoding base64

@@ -25,6 +25,7 @@ const apiURLBackend = "http://localhost:3000"; // Replace with actual backend UR
 
 const ProgressChart = () => {
   const router = useRouter(); // Get router for navigation
+  const { isKidMode } = useKidMode();
 
   interface ProgressItem {
     nameVideo: string;
@@ -59,7 +60,9 @@ const ProgressChart = () => {
     }
   };
 
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = isKidMode
+    ? ["🌞 Sun", "🚀 Mon", "🎨 Tue", "📚 Wed", "🎶 Thu", "🎮 Fri", "🌈 Sat"]
+    : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   //calculate current week range
   const today = new Date();
@@ -95,8 +98,17 @@ const ProgressChart = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Progress Over Time</Text>
+    <LinearGradient
+      colors={
+        isKidMode
+          ? ["#ff9ff3", "#feca57", "#ff6b6b", "#48dbfb"]
+          : ["#ffffff", "#ffffff"]
+      }
+      style={styles.container}
+    >
+      <Text style={isKidMode ? styles.kidTitle : styles.title}>
+        {isKidMode ? "🎯 Your Amazing Progress! 🚀" : "Progress Over Time"}
+      </Text>
       <View>
         <BarChart
           showValuesOnTopOfBars={true}
@@ -147,7 +159,7 @@ const ProgressChart = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -179,6 +191,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     textAlign: "center",
+  },
+  kidTitle: {
+    textAlign: "center",
+    fontSize: 22,
+    marginBottom: 10,
+    fontWeight: "bold",
+    color: "#ff4757",
+    textShadowColor: "#ffcc00",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
   },
 });
 
