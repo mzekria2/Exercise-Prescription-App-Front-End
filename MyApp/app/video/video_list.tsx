@@ -12,7 +12,7 @@ import { Link, useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos
-const apiURLBackend = "http://localhost:3000"; // for web
+const apiURLBackend = "https://tarpon-intent-uniformly.ngrok-free.app"; // for web
 
 type Video = {
   _id: string;

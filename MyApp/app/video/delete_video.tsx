@@ -11,7 +11,7 @@ import {
 import { useRouter } from "expo-router";
 
 //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos
-const apiURLBackend = "http://localhost:3000"; // Backend API URL
+const apiURLBackend = "https://tarpon-intent-uniformly.ngrok-free.app"; // Backend API URL
 
 const { width } = Dimensions.get("screen");
 
