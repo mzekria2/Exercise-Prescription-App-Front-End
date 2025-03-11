@@ -7,13 +7,17 @@ import {
   StyleSheet,
   Modal,
   Animated,
+  Dimensions,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
 import { LinearGradient } from "expo-linear-gradient"; // Fun background
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 const apiURLBackend = "http://localhost:3000"; // for web
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 type Video = {
   _id: string;
@@ -107,50 +111,71 @@ const VideoList: React.FC = () => {
     setModalVisible(false);
   };
 
-
   return (
     <LinearGradient
-      colors={isKidMode ? ["#ff9ff3", "#feca57", "#ff6b6b", "#48dbfb"] : ["#ffffff", "#ffffff"]}
+      colors={
+        isKidMode
+          ? ["#ff9ff3", "#feca57", "#ff6b6b", "#48dbfb"]
+          : ["#ffffff", "#ffffff"]
+      }
       style={styles.container}
     >
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backButtonText}>← Back</Text>
       </TouchableOpacity>
-
-      <Text style={isKidMode ? styles.kidHeading : styles.heading}>
-        {isKidMode ? "🎬 Pick a Super Cool Video!" : "Select a Video"}
-      </Text>
-
+      <View style={styles.leafAndTitle}>
+        <FontAwesome5
+          style={styles.leafIcon}
+          name="canadian-maple-leaf"
+          size={26}
+          color="red"
+        />
+        <Text style={isKidMode ? styles.kidHeading : styles.heading}>
+          {isKidMode ? "🎬 Pick a Super Cool Video!" : "Select a Video"}
+        </Text>
+      </View>
       <FlatList
-        style={styles.videoContainer}
+        contentContainerStyle={{
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         data={videos}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.card, isKidMode && styles.kidCard]}
+          <TouchableOpacity style={[styles.card, isKidMode && styles.kidCard]}>
+            <Link
+              href={{
+                pathname: "/video/video_display",
+                params: { data: JSON.stringify(item) },
+              }}
             >
-              <TouchableOpacity onPress={() => handleDelete(item)} style={styles.deleteIcon}>
-                <AntDesign name="close" size={16} color={isKidMode ? "#ff4757" : "red"} />
-              </TouchableOpacity>
-              <Link
-                href={{
-                  pathname: "/video/video_display",
-                  params: { data: JSON.stringify(item) },
-                }}
-              >
-                <Text style={isKidMode ? styles.kidCardTitle : styles.cardTitle}>
-                  {isKidMode ? `📺 ${item.title} 🎉` : item.title}
-                </Text>
-              </Link>
+              <Text style={isKidMode ? styles.kidCardTitle : styles.cardTitle}>
+                {isKidMode ? `📺 ${item.title} 🎉` : item.title}
+              </Text>
+            </Link>
+            <TouchableOpacity
+              onPress={() => handleDelete(item)}
+              style={styles.deleteIcon}
+            >
+              <AntDesign
+                name="close"
+                size={16}
+                color={isKidMode ? "#ff4757" : "red"}
+              />
             </TouchableOpacity>
+          </TouchableOpacity>
         )}
       />
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, isKidMode && styles.kidModalContent]}>
+          <View
+            style={[styles.modalContent, isKidMode && styles.kidModalContent]}
+          >
             <Text style={isKidMode ? styles.kidModalText : styles.modalText}>
-              {isKidMode ? `🚨 Are you sure? 😱\nSay bye to "${selectedVideo?.title}"?` : `Are you sure you want to delete "${selectedVideo?.title}"?`}
+              {isKidMode
+                ? `🚨 Are you sure? 😱\nSay bye to "${selectedVideo?.title}"?`
+                : `Are you sure you want to delete "${selectedVideo?.title}"?`}
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -182,11 +207,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 40,
+    top: 4,
     left: 20,
     zIndex: 10,
     padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 245, 245, 0.8)",
     borderRadius: 5,
   },
   backButtonText: {
@@ -197,10 +222,12 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 20,
     fontWeight: "bold",
+    marginTop: 15,
     marginBottom: 20,
     textAlign: "center",
   },
   kidHeading: {
+    marginTop: 15,
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
@@ -211,21 +238,38 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
   },
   card: {
+    flex: 1,
+    alignItems: "center", // Aligns content vertically
+    justifyContent: "space-between", // Pushes elements to the edges
     padding: 15,
     backgroundColor: "#fff",
     marginBottom: 10,
     borderRadius: 10,
     elevation: 3,
+    borderWidth: 2,
+    borderColor: "red",
+    width: "100%",
+    minWidth: screenWidth * 0.8,
   },
   kidCard: {
-    backgroundColor: "#ffcc00",
+    flexDirection: "row",
+    backgroundColor: "#ffdb4d",
     borderWidth: 5,
     borderColor: "#ff4757",
     borderRadius: 20,
   },
+  leafAndTitle: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  leafIcon: {
+    marginTop: 20,
+  },
   cardTitle: {
     fontSize: 16,
     fontWeight: "bold",
+    textAlign: "center",
   },
   kidCardTitle: {
     fontSize: 20,
@@ -237,8 +281,9 @@ const styles = StyleSheet.create({
   },
   deleteIcon: {
     position: "absolute",
+    padding: 10, // Adds touch area
     right: 10,
-    top: 10,
+    top: 8,
   },
   modalOverlay: {
     flex: 1,
@@ -266,5 +311,27 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#ff4757",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    marginTop: 20,
+  },
+  modalButton: {
+    flex: 1,
+    padding: 12,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  modalButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+  cancelButton: {
+    backgroundColor: "#cccccc",
+  },
+  deleteConfirmButton: {
+    backgroundColor: "red",
   },
 });
