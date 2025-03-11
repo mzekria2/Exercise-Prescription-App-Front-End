@@ -47,17 +47,18 @@ const WelcomeScreen = () => {
     }
 
     try {
-      console.log("in try");
       const response = await fetch(`${backendUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: normalizedEmail, password }),
+        credentials: "include", // Ensures cookies are sent with the request
       });
 
       console.log(response.status, "response status");
       const data = await response.json();
+      console.log(data, "data");
 
       if (response.ok) {
         console.log("Login successful:", data.token);

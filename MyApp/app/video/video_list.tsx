@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Modal,
+  Animated,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
+import { LinearGradient } from "expo-linear-gradient"; // Fun background
 
 //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos
 const apiURLBackend = "https://tarpon-intent-uniformly.ngrok-free.app"; // for web
@@ -27,15 +29,32 @@ type Video = {
 const VideoList: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const router = useRouter();
-  const [dimensionsVid, setDimensionsVid] = useState({ width: 0, height: 0 });
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const { isKidMode } = useKidMode(); // Get Kid Mode state
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch(`${apiURLBackend}/videos/allVideos`);
+        const response = await fetch(`${apiURLBackend}/videos/allVideos`, {
+          // Use the backend URL variable
+          method: "GET",
+          credentials: "include", // Ensures cookies are sent with the request
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          console.warn("Token expired. Redirecting to sign-up...");
+          router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
+          return;
+        }
+
+        if (!response.ok) {
+          // If the response status code is not in the 200 range, throw an error
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Unauthorized");
+        }
         const data: Video[] = await response.json();
+
         setVideos(data);
       } catch (error) {
         console.error("Error fetching videos:", error);
@@ -50,16 +69,14 @@ const VideoList: React.FC = () => {
     setSelectedVideo(video);
   };
 
-  // Separate function for async delete request
   const confirmDelete = async () => {
     if (!selectedVideo) return;
     try {
-      console.log("Deleting:", selectedVideo._id);
-
       const response = await fetch(
         `${apiURLBackend}/videos/delete/${selectedVideo._id}`,
         {
           method: "DELETE",
+          credentials: "include",
         }
       );
 
@@ -67,6 +84,20 @@ const VideoList: React.FC = () => {
         setVideos((prevVideos) =>
           prevVideos.filter((video) => video._id !== selectedVideo._id)
         );
+
+        const deleteProgressResponse = await fetch(
+          `${apiURLBackend}/progress/delete/${selectedVideo._id}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
+
+        if (deleteProgressResponse.ok) {
+          console.log("Progress deleted");
+        } else {
+          console.error("Failed to delete progress.");
+        }
       } else {
         console.error("Failed to delete video.");
       }
@@ -77,51 +108,50 @@ const VideoList: React.FC = () => {
     setModalVisible(false);
   };
 
+
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={isKidMode ? ["#ff9ff3", "#feca57", "#ff6b6b", "#48dbfb"] : ["#ffffff", "#ffffff"]}
+      style={styles.container}
+    >
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backButtonText}>← Back</Text>
       </TouchableOpacity>
-      <Text style={styles.heading}>Select a Video</Text>
+
+      <Text style={isKidMode ? styles.kidHeading : styles.heading}>
+        {isKidMode ? "🎬 Pick a Super Cool Video!" : "Select a Video"}
+      </Text>
+
       <FlatList
         style={styles.videoContainer}
         data={videos}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onLayout={(event) => {
-              const { width, height } = event.nativeEvent.layout;
-              setDimensionsVid({ width, height });
-            }}
-          >
             <TouchableOpacity
-              style={[{ left: dimensionsVid.width - 40 }]}
-              onPress={() => handleDelete(item)}
+              style={[styles.card, isKidMode && styles.kidCard]}
             >
-              <AntDesign name="close" size={12} color="red" />
+              <TouchableOpacity onPress={() => handleDelete(item)} style={styles.deleteIcon}>
+                <AntDesign name="close" size={16} color={isKidMode ? "#ff4757" : "red"} />
+              </TouchableOpacity>
+              <Link
+                href={{
+                  pathname: "/video/video_display",
+                  params: { data: JSON.stringify(item) },
+                }}
+              >
+                <Text style={isKidMode ? styles.kidCardTitle : styles.cardTitle}>
+                  {isKidMode ? `📺 ${item.title} 🎉` : item.title}
+                </Text>
+              </Link>
             </TouchableOpacity>
-            <Link
-              href={{
-                pathname: "/video/video_display",
-                params: { data: JSON.stringify(item) },
-              }}
-            >
-              <Text style={styles.cardTitle}>{item.title}</Text>
-            </Link>
-          </TouchableOpacity>
         )}
       />
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Are you sure you want to delete "{selectedVideo?.title}"?
+          <View style={[styles.modalContent, isKidMode && styles.kidModalContent]}>
+            <Text style={isKidMode ? styles.kidModalText : styles.modalText}>
+              {isKidMode ? `🚨 Are you sure? 😱\nSay bye to "${selectedVideo?.title}"?` : `Are you sure you want to delete "${selectedVideo?.title}"?`}
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -140,7 +170,7 @@ const VideoList: React.FC = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -150,7 +180,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#FAFAFA",
   },
   backButton: {
     position: "absolute",
@@ -172,23 +201,45 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  kidHeading: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#ff4757",
+    textShadowColor: "#ffcc00",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
   card: {
     padding: 15,
     backgroundColor: "#fff",
     marginBottom: 10,
     borderRadius: 10,
     elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
+  },
+  kidCard: {
+    backgroundColor: "#ffcc00",
+    borderWidth: 5,
+    borderColor: "#ff4757",
+    borderRadius: 20,
   },
   cardTitle: {
     fontSize: 16,
     fontWeight: "bold",
   },
-  videoContainer: {
-    top: 30,
+  kidCardTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#ffffff",
+    textShadowColor: "#000",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+  deleteIcon: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
   modalOverlay: {
     flex: 1,
@@ -203,32 +254,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  kidModalContent: {
+    backgroundColor: "#ffcc00",
+    borderColor: "#ff4757",
+    borderWidth: 5,
+  },
   modalText: {
     fontSize: 18,
-    marginBottom: 20,
     textAlign: "center",
   },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  modalButton: {
-    flex: 1,
-    padding: 10,
-    marginHorizontal: 10,
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#ccc",
-  },
-  deleteConfirmButton: {
-    backgroundColor: "red",
-  },
-  modalButtonText: {
-    color: "white",
-    fontSize: 16,
+  kidModalText: {
+    fontSize: 20,
     fontWeight: "bold",
+    color: "#ff4757",
   },
 });

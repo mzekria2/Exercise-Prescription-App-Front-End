@@ -1,11 +1,14 @@
 import React from "react";
 import { Stack } from "expo-router";
-import { TranslationProvider } from "./TranslationContext"; 
+import { KidModeProvider } from "./context/KidModeContext";
+import { TranslationProvider } from "./TranslationContext";
 
 export default function RootLayout() {
   return (
     <TranslationProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <KidModeProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </KidModeProvider>
     </TranslationProvider>
   );
 }
