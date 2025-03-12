@@ -30,11 +30,11 @@ const HomePage: React.FC = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("token"); // Remove token from storage
-      Alert.alert("Logged Out", "You have been signed out successfully!");
+      window.alert("You have successfuly logged Out");
       router.push("/WelcomeScreen/Welcomescreen"); // Redirect to login screen
     } catch (error) {
       console.error("Error logging out:", error);
-      Alert.alert("Error", "Something went wrong. Try again.");
+      window.alert("Error: Something went wrong. Try again.");
     }
   };
 
