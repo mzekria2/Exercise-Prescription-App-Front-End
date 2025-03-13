@@ -6,6 +6,8 @@ import { useRouter } from "expo-router"; // Import useRouter for navigation
 const SignUp = () => {
   //'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'
   const backendUrl = "http://localhost:3000"; // Define the backend URL here
+  // const backendUrl = "http://10.0.0.86:3000";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

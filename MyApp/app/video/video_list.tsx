@@ -16,6 +16,8 @@ import { LinearGradient } from "expo-linear-gradient"; // Fun background
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 const apiURLBackend = "http://localhost:3000"; // for web
+// const apiURLBackend = "http://10.0.0.86:3000";
+
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 

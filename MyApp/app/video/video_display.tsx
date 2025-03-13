@@ -11,6 +11,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 
 const apiURLBackend = "http://localhost:3000"; // for web
+// const apiURLBackend = "http://10.0.0.86:3000";
 
 const { width, height } = Dimensions.get("screen");
 

@@ -21,10 +21,11 @@ const UploadVideos = () => {
   const router = useRouter();
   const { isKidMode } = useKidMode(); // Get Kid Mode state
 
-  const [frequencyCompletion, setFrequencyCompletion] = useState("1");
+  // const [frequencyCompletion, setFrequencyCompletion] = useState("1");
 
   //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
   const backendUrl = "http://localhost:3000"; // Backend URL
+  // const backendUrl = "http://10.0.0.86:3000";
 
   const bounceAnim = new Animated.Value(1);
   Animated.loop(
@@ -58,6 +59,17 @@ const UploadVideos = () => {
     return new Blob(byteArrays, { type: contentType });
   };
 
+  const getVideoBlob = async (video, mimeType) => {
+    if (video.startsWith("data:video")) {
+      // If Base64, convert it to Blob
+      return base64ToBlob(video, mimeType);
+    } else {
+      // Otherwise, assume it's a URL and fetch it
+      const response = await fetch(video);
+      return await response.blob();
+    }
+  };
+
   const uploadVideo = async () => {
     if (!video) {
       alert("No video selected!");
@@ -66,15 +78,15 @@ const UploadVideos = () => {
 
     try {
       const mimeType = determineMimeType(video); // Custom function to determine MIME type
-      const videoBlob = base64ToBlob(video, mimeType);
+      const videoBlob = await getVideoBlob(video, mimeType);
 
       const formData = new FormData();
       formData.append("video", videoBlob, `video.${mimeType.split("/")[1]}`); // Ensure correct file name
       formData.append("title", title);
       formData.append("description", description);
-      if (frequencyCompletion !== "1") {
-        formData.append("frequencyCompletion", frequencyCompletion);
-      }
+      // if (frequencyCompletion !== "1") {
+      //   formData.append("frequencyCompletion", frequencyCompletion);
+      // }
 
       // Log form data to check contents
       for (let pair of formData.entries()) {
@@ -92,11 +104,12 @@ const UploadVideos = () => {
         router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
         return;
       }
-
+      console.log("Uploading video...");
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
         throw new Error(errorText);
       }
+      console.log("Uploading video...");
 
       const result = await uploadResponse.json();
 
@@ -222,7 +235,7 @@ const UploadVideos = () => {
               onChangeText={(value) => setDescription(value)}
             />
           </View>
-          <View>
+          {/* <View>
             <Text style={styles.label}>Frequency per Day:</Text>
             <TextInput
               style={styles.input}
@@ -230,7 +243,7 @@ const UploadVideos = () => {
               value={frequencyCompletion}
               onChangeText={(value) => setFrequencyCompletion(value)}
             />
-          </View>
+          </View> */}
           <TouchableOpacity style={styles.button} onPress={uploadVideo}>
             <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>

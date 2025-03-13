@@ -21,7 +21,8 @@ import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-const apiURLBackend = "http://localhost:3000"; // Replace with actual backend URL
+// const apiURLBackend = "http://localhost:3000"; // Replace with actual backend URL
+const apiURLBackend = "http://10.0.0.86:3000";
 
 const ProgressChart = () => {
   const router = useRouter(); // Get router for navigation

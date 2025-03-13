@@ -13,6 +13,9 @@ const ResetPassword = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  //const backendUrl = "http://10.0.0.86:3000";
+  const backendUrl = `http://localhost:3000`;
+
   const handleResetPassword = async () => {
     setSuccessMessage("");
     setErrorMessage("");
@@ -29,7 +32,7 @@ const ResetPassword = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/auth/reset-password?token=${token}&email=${email}`,
+        `${backendUrl}/api/auth/reset-password?token=${token}&email=${email}`,
         {
           method: "POST",
           headers: {

@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { forgotPasswordStyles } from './ForgotPassword.styles';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { forgotPasswordStyles } from "./ForgotPassword.styles";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
+  //const backendUrl = "http://10.0.0.86:3000";
+  const backendUrl = `http://localhost:3000`;
 
   const handleForgotPassword = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/forgot-password', {
-        method: 'POST',
+      const response = await fetch(`${backendUrl}/api/auth/forgot-password`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
@@ -18,12 +20,18 @@ const ForgotPassword = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', 'Password reset email sent. Please check your inbox.');
+        Alert.alert(
+          "Success",
+          "Password reset email sent. Please check your inbox."
+        );
       } else {
-        Alert.alert('Error', data.message || 'Something went wrong.');
+        Alert.alert("Error", data.message || "Something went wrong.");
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to send reset email. Please try again later.');
+      Alert.alert(
+        "Error",
+        "Unable to send reset email. Please try again later."
+      );
     }
   };
 
@@ -35,8 +43,11 @@ const ForgotPassword = () => {
         placeholder="Enter your Email Address"
         onChangeText={setEmail}
       />
-      <TouchableOpacity style={forgotPasswordStyles.button} onPress={handleForgotPassword}>
-        <Text style={{ color: '#fff' }}>Send Reset Email</Text>
+      <TouchableOpacity
+        style={forgotPasswordStyles.button}
+        onPress={handleForgotPassword}
+      >
+        <Text style={{ color: "#fff" }}>Send Reset Email</Text>
       </TouchableOpacity>
     </View>
   );

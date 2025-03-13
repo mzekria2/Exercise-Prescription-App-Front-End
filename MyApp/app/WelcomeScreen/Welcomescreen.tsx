@@ -5,6 +5,8 @@ import { Link, useRouter, useLocalSearchParams } from "expo-router";
 
 const WelcomeScreen = () => {
   const backendUrl = "http://localhost:3000"; // Define the backend URL here
+  // const backendUrl = "http://10.0.0.86:3000";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
