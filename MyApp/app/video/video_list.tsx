@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
-  Animated,
   Dimensions,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
@@ -144,16 +143,28 @@ const VideoList: React.FC = () => {
         data={videos}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={[styles.card, isKidMode && styles.kidCard]}>
+          <View>
             <Link
               href={{
                 pathname: "/video/video_display",
                 params: { data: JSON.stringify(item) },
               }}
+              asChild
+              style={[styles.card, isKidMode && styles.kidCard]}
             >
-              <Text style={isKidMode ? styles.kidCardTitle : styles.cardTitle}>
-                {isKidMode ? `📺 ${item.title} 🎉` : item.title}
-              </Text>
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                }}
+              >
+                <View style={{ width: "100%" }}>
+                  <Text
+                    style={isKidMode ? styles.kidCardTitle : styles.cardTitle}
+                  >
+                    {isKidMode ? `📺 ${item.title} 🎉` : item.title}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </Link>
             <TouchableOpacity
               onPress={() => handleDelete(item)}
@@ -165,7 +176,7 @@ const VideoList: React.FC = () => {
                 color={isKidMode ? "#ff4757" : "red"}
               />
             </TouchableOpacity>
-          </TouchableOpacity>
+          </View>
         )}
       />
 
