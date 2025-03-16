@@ -8,12 +8,12 @@ export const homePageStyles = StyleSheet.create({
     paddingVertical: 20,
   },
   header: {
-    marginTop:50,
-    justifyContent: "center"
+    marginTop: 50,
+    justifyContent: "center",
   },
   userInfo: {
     marginBottom: 10,
-    alignItems: "center", 
+    alignItems: "center",
   },
   greeting: {
     fontSize: 28,
@@ -70,6 +70,9 @@ export const homePageStyles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FF6F00",
     textAlign: "center",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   navBar: {
     flexDirection: "row",
@@ -92,11 +95,11 @@ export const homePageStyles = StyleSheet.create({
     fontWeight: "bold",
   },
   kidModeTitle: {
-    fontSize: 28, 
+    fontSize: 28,
     fontWeight: "bold",
-    color: "#ff4757", 
+    color: "#ff4757",
     textAlign: "center",
-    textShadowColor: "#ffcc00", 
+    textShadowColor: "#ffcc00",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
   },

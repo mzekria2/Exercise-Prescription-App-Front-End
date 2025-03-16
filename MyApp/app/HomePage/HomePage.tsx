@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, Animated, Alert } from "react-native";
 import { homePageStyles } from "./HomePage.style";
 import { Link, useRouter } from "expo-router";
 import { useKidMode } from "../context/KidModeContext";
-import { LinearGradient } from "expo-linear-gradient"; 
-import ConfettiCannon from "react-native-confetti-cannon"; 
+import { LinearGradient } from "expo-linear-gradient";
+import ConfettiCannon from "react-native-confetti-cannon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const WigglyText = ({ text }) => {
@@ -13,14 +13,44 @@ const WigglyText = ({ text }) => {
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(wiggle, { toValue: 10, duration: 200, useNativeDriver: true }),
-        Animated.timing(wiggle, { toValue: -10, duration: 200, useNativeDriver: true }),
-        Animated.timing(wiggle, { toValue: 0, duration: 200, useNativeDriver: true }),
+        Animated.timing(wiggle, {
+          toValue: 10,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(wiggle, {
+          toValue: -10,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(wiggle, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
       ])
     ).start();
   }, []);
 
-  return <Animated.Text style={[homePageStyles.kidModeTitle, { transform: [{ rotate: wiggle.interpolate({ inputRange: [-10, 10], outputRange: ["-5deg", "5deg"] }) }] }]}>{text}</Animated.Text>;
+  return (
+    <Animated.Text
+      style={[
+        homePageStyles.kidModeTitle,
+        {
+          transform: [
+            {
+              rotate: wiggle.interpolate({
+                inputRange: [-10, 10],
+                outputRange: ["-5deg", "5deg"],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      {text}
+    </Animated.Text>
+  );
 };
 
 const HomePage: React.FC = () => {
@@ -30,77 +60,132 @@ const HomePage: React.FC = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("token"); // Remove token from storage
-      window.alert("You have successfuly logged Out");
+      Alert.alert("You have successfuly logged Out");
       router.push("/WelcomeScreen/Welcomescreen"); // Redirect to login screen
     } catch (error) {
       console.error("Error logging out:", error);
-      window.alert("Error: Something went wrong. Try again.");
+      Alert.alert("Error: Something went wrong. Try again.");
     }
   };
 
   return (
     <LinearGradient
-      colors={isKidMode ? ["#ff6b6b", "#ffa502", "#f9ca24", "#7bed9f", "#70a1ff", "#d980fa"] : ["#ffffff", "#ffffff"]}
+      colors={
+        isKidMode
+          ? ["#ff6b6b", "#ffa502", "#f9ca24", "#7bed9f", "#70a1ff", "#d980fa"]
+          : ["#ffffff", "#ffffff"]
+      }
       style={{ flex: 1 }}
     >
       <View style={homePageStyles.container}>
         <View style={homePageStyles.header}>
           <View style={homePageStyles.userInfo}>
-            {isKidMode ? <WigglyText text="🎈 Welcome to the FUN ZONE! 🎉" /> : <Text style={homePageStyles.greeting}>Welcome back!</Text>}
-            <Text style={homePageStyles.subtitle}>{isKidMode ? "Get ready for an adventure! 🚀" : "Continue your journey."}</Text>
+            {isKidMode ? (
+              <WigglyText text="🎈 Welcome to the FUN ZONE! 🎉" />
+            ) : (
+              <Text style={homePageStyles.greeting}>Welcome back!</Text>
+            )}
+            <Text style={homePageStyles.subtitle}>
+              {isKidMode
+                ? "Get ready for an adventure! 🚀"
+                : "Continue your journey."}
+            </Text>
           </View>
         </View>
-
 
         <View style={homePageStyles.cardsContainer}>
           <View style={homePageStyles.row}>
-            <TouchableOpacity
+            <Link
+              href="/video/upload_video"
               style={[
                 homePageStyles.card,
-                isKidMode && { backgroundColor: "#ff4757", borderColor: "#ff7f50", borderWidth: 5, borderRadius: 20 },
+                isKidMode && {
+                  backgroundColor: "#ff4757",
+                  borderColor: "#ff7f50",
+                  borderWidth: 5,
+                  borderRadius: 20,
+                },
               ]}
+              asChild
             >
-              <Link href="/video/upload_video">
-                <Text style={[homePageStyles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
-                  {isKidMode ? "🎥 Upload a Super Cool Video!" : "Upload a Video"}
+              <TouchableOpacity>
+                <Text
+                  style={[
+                    homePageStyles.cardTitle,
+                    { color: isKidMode ? "#fff" : "#000" },
+                  ]}
+                >
+                  {isKidMode
+                    ? "🎥 Upload a Super Cool Video!"
+                    : "Upload a Video"}
                 </Text>
-              </Link>
-            </TouchableOpacity>
-
-            <TouchableOpacity
+              </TouchableOpacity>
+            </Link>
+            <Link
+              href="/video/video_list"
               style={[
                 homePageStyles.card,
-                isKidMode && { backgroundColor: "#1e90ff", borderColor: "#00a8ff", borderWidth: 5, borderRadius: 20 },
+                isKidMode && {
+                  backgroundColor: "#1e90ff",
+                  borderColor: "#00a8ff",
+                  borderWidth: 5,
+                  borderRadius: 20,
+                },
               ]}
+              asChild
             >
-              <Link href="/video/video_list">
-                <Text style={[homePageStyles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+              <TouchableOpacity>
+                <Text
+                  style={[
+                    homePageStyles.cardTitle,
+                    { color: isKidMode ? "#fff" : "#000" },
+                  ]}
+                >
                   {isKidMode ? "📺 Watch Amazing Videos!" : "View Videos"}
                 </Text>
-              </Link>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Link>
           </View>
 
           <View style={homePageStyles.row}>
-            <TouchableOpacity
+            <Link
+              href="/progress/progress_display"
               style={[
                 homePageStyles.cardFull,
-                isKidMode && { backgroundColor: "#ffcc00", borderColor: "#ffde59", borderWidth: 5, borderRadius: 20 },
+                isKidMode && {
+                  backgroundColor: "#ffcc00",
+                  borderColor: "#ffde59",
+                  borderWidth: 5,
+                  borderRadius: 20,
+                },
               ]}
             >
-              <Link href="/progress/progress_display">
-                <Text style={[homePageStyles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
-                  {isKidMode ? "🏆 See Your Crazy Achievements!" : "View Progress"}
+              <TouchableOpacity
+                style={{
+                  width: `100%`,
+                  alignItems: "center",
+                  alignContent: "center",
+                }}
+              >
+                <Text
+                  style={[
+                    homePageStyles.cardTitle,
+                    { color: isKidMode ? "#fff" : "#000" },
+                  ]}
+                >
+                  {isKidMode
+                    ? "🏆 See Your Crazy Achievements!"
+                    : "View Progress"}
                 </Text>
-              </Link>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Link>
           </View>
         </View>
 
-        
-        {isKidMode && <ConfettiCannon count={50} origin={{ x: 200, y: -10 }} fadeOut />}
+        {isKidMode && (
+          <ConfettiCannon count={50} origin={{ x: 200, y: -10 }} fadeOut />
+        )}
 
-      
         <TouchableOpacity
           style={{
             backgroundColor: isKidMode ? "#ffcc00" : "#007BFF",

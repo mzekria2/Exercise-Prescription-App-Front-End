@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 
 function Index() {
@@ -17,18 +17,17 @@ function Index() {
         />
         <Text style={styles.subtitle}>Empowering Your Recovery Journey</Text>
 
-        <TouchableOpacity style={styles.loginbutton}>
-          <Link
-            href="/WelcomeScreen/Welcomescreen"
-            style={styles.loginbuttonText}
-          >
-            Log In
-          </Link>
+        <TouchableOpacity
+          style={styles.loginbutton}
+          onPress={() => router.push("/WelcomeScreen/Welcomescreen")}
+        >
+          Log In
         </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpbutton}>
-          <Link href="/Sign_Up/Sign_up" style={styles.signUpbuttonText}>
-            Sign Up
-          </Link>
+        <TouchableOpacity
+          style={styles.signUpbutton}
+          onPress={() => router.push("/Sign_Up/Sign_up")}
+        >
+          Sign Up
         </TouchableOpacity>
       </View>
     </LinearGradient>

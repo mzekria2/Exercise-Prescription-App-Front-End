@@ -21,8 +21,8 @@ import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-// const apiURLBackend = "http://localhost:3000"; // Replace with actual backend URL
-const apiURLBackend = "http://10.0.0.86:3000";
+const apiURLBackend = "http://localhost:3000"; // Replace with actual backend URL
+//const apiURLBackend = "http://10.0.0.86:3000";
 
 const ProgressChart = () => {
   const router = useRouter(); // Get router for navigation
@@ -110,7 +110,21 @@ const ProgressChart = () => {
       <Text style={isKidMode ? styles.kidTitle : styles.title}>
         {isKidMode ? "🎯 Your Amazing Progress! 🚀" : "Progress Over Time"}
       </Text>
-      <View>
+
+      <View style={{ position: "relative", alignItems: "center" }}>
+        {/* Y-axis title */}
+        <Text
+          style={{
+            position: "absolute",
+            left: -100, // Adjust this value to position it correctly
+            top: "30%",
+            transform: [{ rotate: "-90deg" }, { translateY: -50 }],
+            fontSize: 16,
+            fontWeight: "bold",
+          }}
+        >
+          Number of Videos Watched
+        </Text>
         <BarChart
           showValuesOnTopOfBars={true}
           data={chartData}
@@ -137,8 +151,17 @@ const ProgressChart = () => {
         />
         <Text style={styles.titleDaysWeek}>Days of the Week</Text>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => setWeekOffset(weekOffset + 1)}>
-            <FontAwesomeIcon name="arrow-left" size={16} color="black" />
+          <TouchableOpacity
+            onPress={() => setWeekOffset(weekOffset + 1)}
+            disabled={weekOffset >= 52}
+            style={{ opacity: weekOffset >= 52 ? 0.5 : 1 }} // Grey out when disabled
+          >
+            <FontAwesomeIcon
+              style={styles.leftIcon}
+              name="arrow-left"
+              size={20}
+              color="black"
+            />
           </TouchableOpacity>
           <Text style={styles.titleWeek}>
             Week of {start.toDateString()} - {end.toDateString()}
@@ -153,8 +176,9 @@ const ProgressChart = () => {
             disabled={weekOffset === 0}
           >
             <FontAwesomeIcon
+              style={styles.rightIcon}
               name="arrow-right"
-              size={16}
+              size={20}
               color={weekOffset === 0 ? "gray" : "black"}
             />
           </TouchableOpacity>
@@ -178,6 +202,7 @@ const styles = StyleSheet.create({
   },
   titleWeek: {
     textAlign: "center",
+    fontSize: 16,
   },
   title: {
     textAlign: "center",
@@ -193,6 +218,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     textAlign: "center",
   },
+  leftIcon: {
+    marginRight: 30,
+  },
+  rightIcon: { marginLeft: 30 },
   kidTitle: {
     textAlign: "center",
     fontSize: 22,

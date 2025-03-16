@@ -6,11 +6,15 @@ import {
   TextInput,
   TouchableOpacity,
   Animated,
+  Dimensions,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
 import { LinearGradient } from "expo-linear-gradient"; // For fun background
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const UploadVideos = () => {
   const [video, setVideo] = useState<string | null>(null);
@@ -104,12 +108,11 @@ const UploadVideos = () => {
         router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
         return;
       }
-      console.log("Uploading video...");
+
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
         throw new Error(errorText);
       }
-      console.log("Uploading video...");
 
       const result = await uploadResponse.json();
 
@@ -212,7 +215,7 @@ const UploadVideos = () => {
 
       {displayVidForm ? (
         <>
-          <Text style={isKidMode ? styles.kidLabel : styles.label}>
+          <Text style={isKidMode ? styles.kidLabel : styles.uploadTitle}>
             {isKidMode
               ? "🎨 Add Some Magic to Your Video!"
               : "Upload a New Video:"}
@@ -235,15 +238,6 @@ const UploadVideos = () => {
               onChangeText={(value) => setDescription(value)}
             />
           </View>
-          {/* <View>
-            <Text style={styles.label}>Frequency per Day:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Type here...(Leave empty if Frequency = 1)"
-              value={frequencyCompletion}
-              onChangeText={(value) => setFrequencyCompletion(value)}
-            />
-          </View> */}
           <TouchableOpacity style={styles.button} onPress={uploadVideo}>
             <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>
@@ -278,13 +272,18 @@ const styles = StyleSheet.create({
     color: "#004D40",
     fontWeight: "bold",
   },
+  uploadTitle: {
+    fontSize: 20,
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
   label: {
     fontSize: 18,
     marginBottom: 10,
     textAlign: "center",
   },
   kidLabel: {
-    fontSize: 22,
+    fontSize: 18,
     marginBottom: 10,
     textAlign: "center",
     color: "#ff4757",
@@ -305,8 +304,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
     marginBottom: 15,
-    alignItems: "center",
-    width: "80%",
+    alignItems: "center", // Ensures text inside is centered
+    alignSelf: "center", // Centers the button in its parent
+    minWidth: 100, // Ensures a reasonable minimum width
   },
   kidButton: {
     backgroundColor: "#ff4757",
@@ -321,7 +321,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 15,
     alignItems: "center",
-    width: "80%",
+    alignSelf: "center",
+    minWidth: 100, // Ensures a reasonable minimum width
   },
   secondaryButton: {
     backgroundColor: "#004D40",

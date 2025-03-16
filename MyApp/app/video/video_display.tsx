@@ -58,7 +58,7 @@ const Videos = () => {
   });
 
   useEffect(() => {
-    if (amountCompleted >= 0.6) {
+    if (amountCompleted >= 0.9) {
       confirmTrack();
     }
   }, [amountCompleted]);
@@ -137,6 +137,7 @@ const Videos = () => {
         />
       </View>
       <Text style={styles.videoTitle}>{parsedData.title}</Text>
+      <Text style={styles.videoDescription}>{parsedData.description}</Text>
       <Modal
         animationType="slide"
         transparent={true}
@@ -181,6 +182,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
+  videoDescription: {},
   videoContainer: {
     flex: 1,
     backgroundColor: "#FAFAFA",

@@ -33,9 +33,10 @@ export const welcomeScreenStyles = StyleSheet.create({
   welcomeLoginButton: {
     backgroundColor: "#ffae1a",
     paddingVertical: 14,
-    width: "90%",
+    width: "90%", // Ensure it takes enough space
     borderRadius: 8,
     alignItems: "center",
+    justifyContent: "center", // Ensures text is centered
     marginBottom: 12,
   },
   welcomeSignUpButton: {
@@ -65,15 +66,14 @@ export const welcomeScreenStyles = StyleSheet.create({
   },
   welcomeForgotPasswordButton: {
     marginTop: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
-  
+
   welcomeForgotPasswordText: {
     fontSize: 14,
-    color: '#0066cc',
-    textDecorationLine: 'underline',
+    color: "#0066cc",
+    textDecorationLine: "underline",
   },
-  
 });
 
 export const indexPageStyles = StyleSheet.create({

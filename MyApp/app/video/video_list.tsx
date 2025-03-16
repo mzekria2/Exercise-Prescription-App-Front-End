@@ -259,6 +259,9 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "#ff4757",
     borderRadius: 20,
+    width: "100%",
+    minWidth: screenWidth * 0.8,
+    alignItems: "center", // Aligns content vertically
   },
   leafAndTitle: {
     flexDirection: "column",
@@ -280,6 +283,10 @@ const styles = StyleSheet.create({
     textShadowColor: "#000",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
+    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   deleteIcon: {
     position: "absolute",
