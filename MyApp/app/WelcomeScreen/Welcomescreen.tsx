@@ -54,7 +54,7 @@ const WelcomeScreen = () => {
         </Text>
       )}
 
-      <Text style={welcomeScreenStyles.welcomeTitle}>Welcome Back</Text>
+      <Text style={welcomeScreenStyles.welcomeTitle}>Log In</Text>
       <Text style={indexPageStyles.indexSubtitle}>
         Log in to access your account
       </Text>

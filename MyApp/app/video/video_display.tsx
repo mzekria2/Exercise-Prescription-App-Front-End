@@ -176,13 +176,23 @@ export default Videos;
 
 const styles = StyleSheet.create({
   videoTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
+    color: "#004D40",
     textAlign: "center",
     marginTop: 20,
   },
-  videoDescription: {},
+  videoDescription: {
+    textAlign: "center",
+    marginHorizontal: 25,
+    marginTop: 12,
+    fontSize: 16,
+    color: "#666",
+    lineHeight: 24,
+    backgroundColor: "#F9F9F9",
+    padding: 12,
+    borderRadius: 10,
+  },
   videoContainer: {
     flex: 1,
     backgroundColor: "#FAFAFA",
@@ -203,11 +213,19 @@ const styles = StyleSheet.create({
   },
   videoView: {
     height: height / 2.5,
-    width: "100%",
+    width: "90%",
     backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 80, // To ensure the back button is not overlapped
+    marginTop: 80,
+    alignSelf: "center",
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 4, // Android shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   video: {
     width: "100%",
@@ -242,19 +260,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  modalButton: {
-    backgroundColor: "#004D40",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    width: "100%",
-    alignItems: "center",
-  },
+
   cancelButton: {
     backgroundColor: "#B0B0B0",
+  },
+  modalButton: {
+    backgroundColor: "#004D40",
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+    width: "100%",
+    alignItems: "center",
   },
   modalButtonText: {
     color: "white",
     fontSize: 16,
+    fontWeight: "600",
   },
 });

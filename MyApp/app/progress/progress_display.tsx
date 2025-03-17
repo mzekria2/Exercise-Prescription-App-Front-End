@@ -55,7 +55,13 @@ const ProgressChart = () => {
       }
 
       const progressDataResponse = await response.json();
-      setProgressData(progressDataResponse);
+      // Ensure progressDataResponse is an array before setting state
+      if (Array.isArray(progressDataResponse)) {
+        setProgressData(progressDataResponse);
+      } else {
+        console.error("Progress data is not an array:", progressDataResponse);
+        setProgressData([]);
+      }
     } catch (error) {
       console.error("Error fetching progress data:", error);
     }

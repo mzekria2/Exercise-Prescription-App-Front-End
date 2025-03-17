@@ -13,9 +13,6 @@ import { useRouter } from "expo-router";
 import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
 import { LinearGradient } from "expo-linear-gradient"; // For fun background
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
-
 const UploadVideos = () => {
   const [video, setVideo] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -172,6 +169,9 @@ const UploadVideos = () => {
       }
       style={styles.container}
     >
+      <Text style={isKidMode ? styles.kidLabel : styles.uploadTitle}>
+        {isKidMode ? "🎨 Add Some Magic to Your Video!" : "Upload a New Video:"}
+      </Text>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backButtonText}>← Back</Text>
@@ -233,7 +233,7 @@ const UploadVideos = () => {
             <Text style={styles.label}>Video Description:</Text>
             <TextInput
               style={styles.input}
-              placeholder="Type here..."
+              placeholder="Type here...(optional)"
               value={description}
               onChangeText={(value) => setDescription(value)}
             />

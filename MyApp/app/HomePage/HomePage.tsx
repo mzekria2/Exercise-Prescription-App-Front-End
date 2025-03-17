@@ -1,11 +1,19 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Alert,
+  Image,
+} from "react-native";
 import { homePageStyles } from "./HomePage.style";
 import { Link, useRouter } from "expo-router";
 import { useKidMode } from "../context/KidModeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfettiCannon from "react-native-confetti-cannon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const robotImage = require("../../assets/images/Robot.png");
 
 const WigglyText = ({ text }) => {
   const wiggle = useRef(new Animated.Value(0)).current;
@@ -14,12 +22,12 @@ const WigglyText = ({ text }) => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(wiggle, {
-          toValue: 10,
+          toValue: 5,
           duration: 200,
           useNativeDriver: true,
         }),
         Animated.timing(wiggle, {
-          toValue: -10,
+          toValue: -5,
           duration: 200,
           useNativeDriver: true,
         }),
@@ -40,8 +48,8 @@ const WigglyText = ({ text }) => {
           transform: [
             {
               rotate: wiggle.interpolate({
-                inputRange: [-10, 10],
-                outputRange: ["-5deg", "5deg"],
+                inputRange: [-5, 5],
+                outputRange: ["-3deg", "3deg"],
               }),
             },
           ],
@@ -72,7 +80,7 @@ const HomePage: React.FC = () => {
     <LinearGradient
       colors={
         isKidMode
-          ? ["#ff6b6b", "#ffa502", "#f9ca24", "#7bed9f", "#70a1ff", "#d980fa"]
+          ? ["#B0E0E6", "#FFD700", "#98FB98"] // Soft pastel colors
           : ["#ffffff", "#ffffff"]
       }
       style={{ flex: 1 }}
@@ -81,11 +89,23 @@ const HomePage: React.FC = () => {
         <View style={homePageStyles.header}>
           <View style={homePageStyles.userInfo}>
             {isKidMode ? (
-              <WigglyText text="🎈 Welcome to the FUN ZONE! 🎉" />
+              <View style={homePageStyles.kidModeHeader}>
+                <Animated.View>
+                  <WigglyText text="🎈 Welcome to the FUN ZONE!" />
+                </Animated.View>
+                <Image
+                  source={robotImage}
+                  style={{ width: 120, height: 120, resizeMode: "contain" }}
+                />
+              </View>
             ) : (
               <Text style={homePageStyles.greeting}>Welcome back!</Text>
             )}
-            <Text style={homePageStyles.subtitle}>
+            <Text
+              style={
+                isKidMode ? homePageStyles.kidSubtitle : homePageStyles.subtitle
+              }
+            >
               {isKidMode
                 ? "Get ready for an adventure! 🚀"
                 : "Continue your journey."}
@@ -100,10 +120,10 @@ const HomePage: React.FC = () => {
               style={[
                 homePageStyles.card,
                 isKidMode && {
-                  backgroundColor: "#ff4757",
-                  borderColor: "#ff7f50",
-                  borderWidth: 5,
-                  borderRadius: 20,
+                  backgroundColor: "#f0f8ff",
+                  borderColor: "#8a2be2",
+                  borderWidth: 3,
+                  borderRadius: 15,
                 },
               ]}
               asChild
@@ -112,11 +132,11 @@ const HomePage: React.FC = () => {
                 <Text
                   style={[
                     homePageStyles.cardTitle,
-                    { color: isKidMode ? "#fff" : "#000" },
+                    { color: isKidMode ? "#4b0082" : "#000" }, // Softer text color
                   ]}
                 >
                   {isKidMode
-                    ? "🎥 Upload a Super Cool Video!"
+                    ? "🎥 Upload Your Amazing Video!"
                     : "Upload a Video"}
                 </Text>
               </TouchableOpacity>
@@ -126,10 +146,10 @@ const HomePage: React.FC = () => {
               style={[
                 homePageStyles.card,
                 isKidMode && {
-                  backgroundColor: "#1e90ff",
-                  borderColor: "#00a8ff",
-                  borderWidth: 5,
-                  borderRadius: 20,
+                  backgroundColor: "#ffebcd",
+                  borderColor: "#ff6347",
+                  borderWidth: 3,
+                  borderRadius: 15,
                 },
               ]}
               asChild
@@ -138,7 +158,7 @@ const HomePage: React.FC = () => {
                 <Text
                   style={[
                     homePageStyles.cardTitle,
-                    { color: isKidMode ? "#fff" : "#000" },
+                    { color: isKidMode ? "#ff4500" : "#000" },
                   ]}
                 >
                   {isKidMode ? "📺 Watch Amazing Videos!" : "View Videos"}
@@ -151,12 +171,11 @@ const HomePage: React.FC = () => {
             <Link
               href="/progress/progress_display"
               style={[
-                homePageStyles.cardFull,
+                homePageStyles.card,
                 isKidMode && {
-                  backgroundColor: "#ffcc00",
-                  borderColor: "#ffde59",
-                  borderWidth: 5,
-                  borderRadius: 20,
+                  backgroundColor: "#ffebcd", // Softer pastel yellow
+                  borderColor: "#ff4500",
+                  borderWidth: 3,
                 },
               ]}
             >
@@ -170,11 +189,11 @@ const HomePage: React.FC = () => {
                 <Text
                   style={[
                     homePageStyles.cardTitle,
-                    { color: isKidMode ? "#fff" : "#000" },
+                    { color: isKidMode ? "#ff4500" : "#000" },
                   ]}
                 >
                   {isKidMode
-                    ? "🏆 See Your Crazy Achievements!"
+                    ? "🏆 See Your Cool Achievements!"
                     : "View Progress"}
                 </Text>
               </TouchableOpacity>
@@ -188,16 +207,16 @@ const HomePage: React.FC = () => {
 
         <TouchableOpacity
           style={{
-            backgroundColor: isKidMode ? "#ffcc00" : "#007BFF",
+            backgroundColor: isKidMode ? "#007BFF" : "#add8e6",
             padding: 15,
             borderRadius: 50,
             alignSelf: "center",
-            marginBottom: 20,
             shadowColor: "#000",
-            shadowOpacity: 0.2,
+            marginTop: 50,
+            shadowOpacity: 0.1,
             shadowRadius: 5,
-            elevation: 5,
-            transform: [{ scale: isKidMode ? 1.1 : 1 }],
+            elevation: 3,
+            transform: [{ scale: isKidMode ? 1.05 : 1 }],
           }}
           onPress={toggleKidMode}
         >
@@ -209,13 +228,14 @@ const HomePage: React.FC = () => {
         {/* Logout Button */}
         <TouchableOpacity
           style={{
-            backgroundColor: isKidMode ? "#ff4444" : "#FF0000",
+            backgroundColor: isKidMode ? "#ffcc00" : "#FF0000", // Softer red
             padding: 15,
             borderRadius: 50,
             alignSelf: "center",
             marginBottom: 20,
             shadowColor: "#000",
-            shadowOpacity: 0.2,
+            marginTop: 20,
+            shadowOpacity: 0.1,
             shadowRadius: 5,
             elevation: 5,
             transform: [{ scale: isKidMode ? 1.1 : 1 }],
@@ -223,7 +243,7 @@ const HomePage: React.FC = () => {
           onPress={handleLogout}
         >
           <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
-            {isKidMode ? "🚪 Bye Bye!" : "🔒 Sign Out"}
+            {isKidMode ? "👋🏼 Bye!" : "🔒 Sign Out"}
           </Text>
         </TouchableOpacity>
       </View>
