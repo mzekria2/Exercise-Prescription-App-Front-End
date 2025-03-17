@@ -29,7 +29,7 @@ const ResetPassword = () => {
 
     try {
       const response = await fetch(
-        `https://tarpon-intent-uniformly.ngrok-free.app/api/auth/reset-password?token=${token}&email=${email}`,
+        `https://exercisebackend.duckdns.org/api/auth/reset-password?token=${token}&email=${email}`,
         {
           method: "POST",
           headers: {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { io } from "socket.io-client";
 
-const socket = io("https://tarpon-intent-uniformly.ngrok-free.app"); // Change to your backend URL
+const socket = io("https://exercisebackend.duckdns.org"); // Change to your backend URL
 
 const LiveCaptions: React.FC = () => {
   const [captions, setCaptions] = useState<string>("...");

@@ -4,7 +4,7 @@ import { indexPageStyles, welcomeScreenStyles } from "./Welcomescreen.styles";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "../TranslationContext"; // Import global translation hook
 
-const backendUrl = "https://tarpon-intent-uniformly.ngrok-free.app"; // Define the backend URL here
+const backendUrl = "https://exercisebackend.duckdns.org"; // Define the backend URL here
 
 const WelcomeScreen = () => {
   const { translate } = useTranslation(); // Use global translation

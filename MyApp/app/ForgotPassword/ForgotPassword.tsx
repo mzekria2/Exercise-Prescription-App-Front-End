@@ -7,7 +7,7 @@ const ForgotPassword = () => {
 
   const handleForgotPassword = async () => {
     try {
-      const response = await fetch('https://tarpon-intent-uniformly.ngrok-free.app/api/auth/forgot-password', {
+      const response = await fetch('https://exercisebackend.duckdns.org/api/auth/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

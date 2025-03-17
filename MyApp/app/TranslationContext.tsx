@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 
 // Replace with your actual backend API URL
-const BACKEND_URL = "https://tarpon-intent-uniformly.ngrok-free.app/api/translation/translate";
+const BACKEND_URL = "https://exercisebackend.duckdns.org/api/translation/translate";
 
 interface TranslationContextProps {
   language: string;
