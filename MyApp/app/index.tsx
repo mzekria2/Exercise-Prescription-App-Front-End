@@ -52,7 +52,15 @@ export default function Index() {
 
       <View style={styles.container}>
         <Text style={styles.title}>{translatedText.title}</Text>
-        <Image source={require("../assets/images/hand.jpg")} style={styles.backgroundPhoto} />
+
+        <View style={styles.imageCircleContainer}>
+          <Image
+            source={require("../assets/images/handremovebg.jpg")}
+            style={styles.backgroundPhoto}
+            resizeMode="contain"
+          />
+        </View>
+
         <Text style={styles.subtitle}>{translatedText.subtitle}</Text>
 
         <TouchableOpacity style={styles.loginButton}>
@@ -71,18 +79,101 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  gradientBackground: { flex: 1 },
-  container: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20 },
-  backgroundPhoto: { width: "90%", height: 300, resizeMode: "cover", borderRadius: 15, marginBottom: 20 },
-  title: { fontSize: 40, fontWeight: "bold", color: "#FF6F00", textAlign: "center", marginBottom: 10 },
-  subtitle: { fontSize: 16, fontWeight: "500", color: "#555555", textAlign: "center", marginBottom: 30 },
-  loginButton: { width: "85%", paddingVertical: 15, borderRadius: 8, backgroundColor: "#F8D6A9", alignItems: "center", marginVertical: 10 },
-  signUpButton: { width: "85%", paddingVertical: 15, borderRadius: 8, backgroundColor: "#F8D6A9", alignItems: "center", marginVertical: 10 },
-  loginButtonText: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold", textAlign: "center" },
-  signUpButtonText: { color: "#FFFFFF", fontSize: 20, fontWeight: "bold", textAlign: "center" },
-
-  languageContainer: { position: "absolute", top: 55, right: 10, zIndex: 10, color: "#000000"},
-  languageButton: { backgroundColor: "#EFA550", padding: 1, borderRadius: 10, elevation: 1, shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 100 },
-  pickerStyle: { backgroundColor: "#EFA550", borderRadius: 10, paddingVertical: 10, borderColor:"#EFA550",  },
-  pickerText: { fontSize: 15, fontWeight: "bold", textAlign: "center" }, 
+  gradientBackground: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 50,
+  },
+  languageContainer: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 10,
+  },
+  languageButton: {
+    backgroundColor: "rgba(255,255,255,0.7)",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  pickerStyle: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+  },
+  pickerText: {
+    color: "#222",
+    fontSize: 14,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#2C3E50",
+    marginBottom: 10,
+    textAlign: 'center'
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "#34495E",
+    marginBottom: 30,
+    textAlign: "center",
+    paddingHorizontal: 10,
+  },
+  imageCircleContainer: {
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    backgroundColor: "#F2F2F2",
+    borderWidth: 3,
+    borderColor: "#EFA560",
+    overflow: "hidden",
+    marginBottom: 20,
+  },
+  backgroundPhoto: {
+    width: "100%",
+    height: "100%",
+  },
+  loginButton: {
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    borderColor:'#000',
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  loginButtonText: {
+    color: "#EFA550",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  // Updated sign up button background to a deep muted navy for contrast
+  signUpButton: {
+    backgroundColor: "#2C3E50",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  signUpButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+  },
 });
