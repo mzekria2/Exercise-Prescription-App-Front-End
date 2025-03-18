@@ -50,3 +50,4 @@ export const signUpScreenStyles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
