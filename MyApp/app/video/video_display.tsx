@@ -113,53 +113,6 @@ const VideoDisplay = () => {
       subscription.remove();
     };
   }, [player]);
-
-  // Fetch captions when the video ID or language changes
-  useEffect(() => {
-    fetchCaptions();
-  }, [parsedData._id, language]);
-
-  const fetchCaptions = async () => {
-    try {
-      setLoading(true);
-      if (!parsedData || !parsedData._id) {
-        console.error("Invalid video data: missing `_id`");
-        setCaptions("Error: Video ID is missing.");
-        setLoading(false);
-        return;
-      }
-
-      console.log("Uploading video for captioning...");
-      const response = await fetch(videoSource);
-      const videoBlob = await response.blob();
-
-      const formData = new FormData();
-      formData.append("video", videoBlob, "video.mp4");
-
-      const captionsResponse = await fetch(
-        `${apiURLBackend}/api/captions/generate-captions`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      console.log("Response Status:", captionsResponse.status);
-      if (!captionsResponse.ok) {
-        const errorText = await captionsResponse.text();
-        throw new Error(`Captions API error: ${errorText}`);
-      }
-
-      const result = await captionsResponse.json();
-      setCaptions(result.captions || "No captions available.");
-    } catch (error) {
-      console.error("Error fetching captions:", error);
-      setCaptions("Error loading captions.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -173,15 +126,6 @@ const VideoDisplay = () => {
           allowsFullscreen
           allowsPictureInPicture
         />
-      </View>
-
-      {/* Display Captions */}
-      <View style={styles.captionsContainer}>
-        {loading ? (
-          <ActivityIndicator size="small" color="#D62B1F" />
-        ) : (
-          <Text style={styles.captions}>{captions}</Text>
-        )}
       </View>
       <Modal
         animationType="slide"
@@ -214,6 +158,7 @@ const VideoDisplay = () => {
     </View>
   );
 };
+
 
 export default VideoDisplay;
 
