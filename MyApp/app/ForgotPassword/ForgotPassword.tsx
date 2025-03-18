@@ -18,12 +18,12 @@ const ForgotPassword = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', 'Password reset email sent. Please check your inbox.');
+        window.alert('Password reset email sent. Please check your inbox.');
       } else {
-        Alert.alert('Error', data.message || 'Something went wrong.');
+        window.alert('Error something went wrong.');
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to send reset email. Please try again later.');
+      window.alert('Error unable to send reset email. Please try again later.');
     }
   };
 
