@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import ModalSelector from "react-native-modal-selector"; 
 import { useTranslation } from "./TranslationContext"; 
@@ -16,9 +16,9 @@ const supportedLanguages = [
 
 export default function Index() {
   const { language, setLanguage, translate } = useTranslation();
+  const router = useRouter();
   const [translatedText, setTranslatedText] = useState({
     title: "Hand Therapy Canada",
-    subtitle: "Empowering Your Recovery Journey",
     loginText: "Log In",
     signUpText: "Sign Up",
   });
@@ -26,7 +26,6 @@ export default function Index() {
   const fetchTranslations = useCallback(async () => {
     setTranslatedText({
       title: await translate("Hand Therapy Canada"),
-      subtitle: await translate("Empowering Your Recovery Journey"),
       loginText: await translate("Log In"),
       signUpText: await translate("Sign Up"),
     });
@@ -61,17 +60,17 @@ export default function Index() {
           />
         </View>
 
-        <Text style={styles.subtitle}>{translatedText.subtitle}</Text>
-
-        <TouchableOpacity style={styles.loginButton}>
-          <Link href="/WelcomeScreen/Welcomescreen" style={styles.loginButtonText}>
-            {translatedText.loginText}
-          </Link>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => router.push("/WelcomeScreen/Welcomescreen")}
+        >
+          <Text style={styles.loginButtonText}>{translatedText.loginText}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpButton}>
-          <Link href="/Sign_Up/Sign_up" style={styles.signUpButtonText}>
-            {translatedText.signUpText}
-          </Link>
+        <TouchableOpacity
+          style={styles.signUpButton}
+          onPress={() => router.push("/Sign_Up/Sign_up")}
+        >
+          <Text style={styles.signUpButtonText}>{translatedText.signUpText}</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -86,12 +85,12 @@ const styles = StyleSheet.create({
   },
   languageContainer: {
     position: "absolute",
-    top: 40,
+    top: 50,
     right: 20,
     zIndex: 10,
   },
   languageButton: {
-    backgroundColor: "rgba(255,255,255,0.7)",
+    backgroundColor: "#EFA560",
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -103,6 +102,7 @@ const styles = StyleSheet.create({
   pickerText: {
     color: "#222",
     fontSize: 14,
+    fontFamily: 'Georgia',
   },
   container: {
     flex: 1,
@@ -111,23 +111,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 40,
+    fontFamily: 'Georgia',
     fontWeight: "700",
     color: "#2C3E50",
     marginBottom: 10,
-    textAlign: 'center'
-  },
-  subtitle: {
-    fontSize: 18,
-    color: "#34495E",
-    marginBottom: 30,
     textAlign: "center",
-    paddingHorizontal: 10,
+    paddingBottom: 30,
   },
   imageCircleContainer: {
-    width: 250,
-    height: 250,
-    borderRadius: 125,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
     backgroundColor: "#F2F2F2",
     borderWidth: 3,
     borderColor: "#EFA560",
@@ -143,21 +138,23 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 30,
-    borderColor:'#000',
+    borderColor: '#000',
     marginBottom: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+    width: "100%",
+    alignItems: "center",
   },
   loginButtonText: {
     color: "#EFA550",
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
+    fontFamily: 'Georgia',
   },
-  // Updated sign up button background to a deep muted navy for contrast
   signUpButton: {
     backgroundColor: "#2C3E50",
     paddingVertical: 15,
@@ -169,11 +166,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+    width: "100%",
+    alignItems: "center",
   },
   signUpButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
+    fontFamily: 'Georgia',
   },
 });
