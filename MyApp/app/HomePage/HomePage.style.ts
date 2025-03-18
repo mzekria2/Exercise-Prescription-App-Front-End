@@ -3,29 +3,30 @@ import { StyleSheet } from "react-native";
 export const homePageStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F9F9",
-    paddingHorizontal: 20,
+    backgroundColor: "#FFF",
+    paddingHorizontal: 15,
     paddingVertical: 20,
   },
   header: {
-    marginTop:50,
-    justifyContent: "center"
+    marginTop: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   userInfo: {
-    marginBottom: 10,
-    alignItems: "center", 
+    marginBottom: 20,
+    alignItems: "center",
   },
   greeting: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#004D40",
+    color: "#FF6F00",
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#666666",
-    marginTop: 5,
     textAlign: "center",
+    marginTop: 5,
   },
   cardsContainer: {
     flex: 1,
@@ -36,14 +37,14 @@ export const homePageStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginBottom: 30,
+    marginBottom: 20,
   },
   card: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingVertical: 20,
-    marginHorizontal: 10,
-    borderRadius: 12,
+    marginHorizontal: 8,
+    borderRadius: 15,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -51,12 +52,13 @@ export const homePageStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FF6F00",
     alignItems: "center",
+    justifyContent: "center",
   },
   cardFull: {
     width: "100%",
     backgroundColor: "#FFFFFF",
     paddingVertical: 25,
-    borderRadius: 12,
+    borderRadius: 15,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -64,6 +66,7 @@ export const homePageStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FF6F00",
     alignItems: "center",
+    justifyContent: "center",
   },
   cardTitle: {
     fontSize: 18,
@@ -74,8 +77,10 @@ export const homePageStyles = StyleSheet.create({
   navBar: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "#F9F9F9",
-    paddingVertical: 12,
+    backgroundColor: "#FFF",
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: "#E0E0E0",
     elevation: 2,
   },
   navItem: {

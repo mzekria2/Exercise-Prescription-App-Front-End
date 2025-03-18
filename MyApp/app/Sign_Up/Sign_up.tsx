@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { signUpScreenStyles } from "./Sign_up.styles";
-import { useRouter } from "expo-router"; // Import useRouter for navigation
+import { useRouter } from "expo-router"; // For navigation
 
 const SignUp = () => {
-  //'https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app'
-  const backendUrl = "http://localhost:3000"; // Define the backend URL here
+  const backendUrl = "https://exercisebackend.duckdns.org";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,7 +15,26 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
-  const router = useRouter(); // Initialize router for navigation
+  const router = useRouter();
+
+  // New state for animated title text
+  const fullAnimatedTitle = "Create Your Account";
+  const [animatedTitle, setAnimatedTitle] = useState("");
+
+  // Animate the title on mount
+  useEffect(() => {
+    setAnimatedTitle(""); // Clear on mount
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      // Use slicing to prevent "undefined" from appending
+      setAnimatedTitle(fullAnimatedTitle.slice(0, i));
+      if (i >= fullAnimatedTitle.length) {
+        clearInterval(interval);
+      }
+    }, 60);
+    return () => clearInterval(interval);
+  }, [fullAnimatedTitle]);
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,14 +69,13 @@ const SignUp = () => {
 
     setErrors(newErrors);
 
-    // If any errors exist, don't submit the form
+    // If any errors exist, do not proceed
     if (newErrors.email || newErrors.password || newErrors.confirmPassword) {
       return;
     }
 
     try {
       const response = await fetch(`${backendUrl}/api/auth/register`, {
-        // Use the backend URL variable
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,15 +100,17 @@ const SignUp = () => {
 
   return (
     <View style={signUpScreenStyles.signUpContainer}>
-      <Text style={signUpScreenStyles.signUpTitle}>Create Your Account</Text>
+      <Text style={signUpScreenStyles.signUpTitle}>{animatedTitle}</Text>
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Enter your Name"
+        placeholderTextColor="#888"
         onChangeText={setName}
       />
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Enter your Email Address"
+        placeholderTextColor="#888"
         onChangeText={setEmail}
       />
       {errors.email ? (
@@ -100,6 +119,7 @@ const SignUp = () => {
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Create a Password"
+        placeholderTextColor="#888"
         secureTextEntry
         onChangeText={setPassword}
       />
@@ -109,6 +129,7 @@ const SignUp = () => {
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Confirm your Password"
+        placeholderTextColor="#888"
         secureTextEntry
         onChangeText={setConfirmPassword}
       />
@@ -121,7 +142,7 @@ const SignUp = () => {
         style={signUpScreenStyles.signUpButton}
         onPress={onSignUp}
       >
-        <Text style={{ color: "#fff" }}>Create Account</Text>
+        <Text style={signUpScreenStyles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
     </View>
   );

@@ -29,7 +29,7 @@ const ResetPassword = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/auth/reset-password?token=${token}&email=${email}`,
+        `https://exercisebackend.duckdns.org/api/auth/reset-password?token=${token}&email=${email}`,
         {
           method: "POST",
           headers: {

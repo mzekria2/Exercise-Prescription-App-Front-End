@@ -13,7 +13,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
 import { LinearGradient } from "expo-linear-gradient"; // Fun background
 
-const apiURLBackend = "http://localhost:3000"; // for web
+//https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app/videos
+const apiURLBackend = "https://exercisebackend.duckdns.org"; // for web
 
 type Video = {
   _id: string;
@@ -38,7 +39,8 @@ const VideoList: React.FC = () => {
         const response = await fetch(`${apiURLBackend}/videos/allVideos`, {
           // Use the backend URL variable
           method: "GET",
-          credentials: "include", // Ensures cookies are sent with the request
+          headers: { "ngrok-skip-browser-warning": "true" },
+          credentials: "include", 
         });
 
         if (response.status === 401 || response.status === 403) {

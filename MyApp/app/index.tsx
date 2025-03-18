@@ -1,34 +1,76 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import ModalSelector from "react-native-modal-selector"; 
+import { useTranslation } from "./TranslationContext"; 
 
-function Index() {
+const supportedLanguages = [
+  { key: "en", label: "🇺🇸 English", value: "en" },
+  { key: "es", label: "🇪🇸 Español", value: "es" },
+  { key: "fr", label: "🇫🇷 Français", value: "fr" },
+  { key: "de", label: "🇩🇪 Deutsch", value: "de" },
+  { key: "it", label: "🇮🇹 Italiano", value: "it" },
+  { key: "pt", label: "🇵🇹 Português", value: "pt" },
+];
+
+export default function Index() {
+  const { language, setLanguage, translate } = useTranslation();
+  const router = useRouter();
+  const [translatedText, setTranslatedText] = useState({
+    title: "Hand Therapy Canada",
+    loginText: "Log In",
+    signUpText: "Sign Up",
+  });
+
+  const fetchTranslations = useCallback(async () => {
+    setTranslatedText({
+      title: await translate("Hand Therapy Canada"),
+      loginText: await translate("Log In"),
+      signUpText: await translate("Sign Up"),
+    });
+  }, [translate]);
+
+  useEffect(() => {
+    fetchTranslations();
+  }, [language, fetchTranslations]);
+
   return (
-    <LinearGradient
-      colors={["#F8D6A9", "#EFA550"]} // Customize these colors to match the gradient
-      style={styles.gradientBackground}
-    >
-      <View style={styles.container}>
-        <Text style={styles.title}>Hand Therapy Canada</Text>
-        <Image
-          source={require("../assets/images/hand.jpg")}
-          style={styles.backgroundPhoto}
-        />
-        <Text style={styles.subtitle}>Empowering Your Recovery Journey</Text>
-
-        <TouchableOpacity style={styles.loginbutton}>
-          <Link
-            href="/WelcomeScreen/Welcomescreen"
-            style={styles.loginbuttonText}
-          >
-            Log In
-          </Link>
+    <LinearGradient colors={["#F8D6A9", "#EFA550"]} style={styles.gradientBackground}>
+      <View style={styles.languageContainer}>
+        <TouchableOpacity style={styles.languageButton}>
+          <ModalSelector
+            data={supportedLanguages}
+            initValue="🌍 Select Language"
+            onChange={(option) => setLanguage(option.value)}
+            selectStyle={styles.pickerStyle}
+            selectTextStyle={styles.pickerText}
+          />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpbutton}>
-          <Link href="/Sign_Up/Sign_up" style={styles.signUpbuttonText}>
-            Sign Up
-          </Link>
+      </View>
+
+      <View style={styles.container}>
+        <Text style={styles.title}>{translatedText.title}</Text>
+
+        <View style={styles.imageCircleContainer}>
+          <Image
+            source={require("../assets/images/handremovebg.jpg")}
+            style={styles.backgroundPhoto}
+            resizeMode="contain"
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => router.push("/WelcomeScreen/Welcomescreen")}
+        >
+          <Text style={styles.loginButtonText}>{translatedText.loginText}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.signUpButton}
+          onPress={() => router.push("/Sign_Up/Sign_up")}
+        >
+          <Text style={styles.signUpButtonText}>{translatedText.signUpText}</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -38,6 +80,29 @@ function Index() {
 const styles = StyleSheet.create({
   gradientBackground: {
     flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 50,
+  },
+  languageContainer: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 10,
+  },
+  languageButton: {
+    backgroundColor: "#EFA560",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  pickerStyle: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+  },
+  pickerText: {
+    color: "#222",
+    fontSize: 14,
+    fontFamily: 'Georgia',
   },
   container: {
     flex: 1,
@@ -45,68 +110,70 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
   },
-  backgroundPhoto: {
-    paddingVertical: 40,
-    width: "90%",
-    height: 300,
-    resizeMode: "cover",
-    borderRadius: 15,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
-  },
   title: {
     fontSize: 40,
-    fontWeight: "bold",
-    color: "#FF6F00",
-    textAlign: "center",
+    fontFamily: 'Georgia',
+    fontWeight: "700",
+    color: "#2C3E50",
     marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#555555",
     textAlign: "center",
-    marginBottom: 30,
+    paddingBottom: 30,
   },
-  loginbutton: {
-    width: "85%",
+  imageCircleContainer: {
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "#F2F2F2",
+    borderWidth: 3,
+    borderColor: "#EFA560",
+    overflow: "hidden",
+    marginBottom: 20,
+  },
+  backgroundPhoto: {
+    width: "100%",
+    height: "100%",
+  },
+  loginButton: {
+    backgroundColor: "#fff",
     paddingVertical: 15,
-    borderRadius: 8,
-    backgroundColor: "#F8D6A9",
-    alignItems: "center",
-    marginVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    borderColor: '#000',
+    marginBottom: 15,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 5,
+    width: "100%",
+    alignItems: "center",
   },
-  signUpbutton: {
-    width: "85%",
+  loginButtonText: {
+    color: "#EFA550",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    fontFamily: 'Georgia',
+  },
+  signUpButton: {
+    backgroundColor: "#2C3E50",
     paddingVertical: 15,
-    borderRadius: 8,
-    backgroundColor: "#F8D6A9",
-    alignItems: "center",
-    marginVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    marginBottom: 15,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 5,
+    width: "100%",
+    alignItems: "center",
   },
-  loginbuttonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
+  signUpButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
     textAlign: "center",
-  },
-  signUpbuttonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontFamily: 'Georgia',
   },
 });
-
-export default Index;

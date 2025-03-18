@@ -1,104 +1,160 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { indexPageStyles, welcomeScreenStyles } from "./Welcomescreen.styles";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
+import { useTranslation } from "../TranslationContext";
+import { welcomeScreenStyles as styles } from "./Welcomescreen.styles";
 
-const WelcomeScreen = () => {
-  const backendUrl = "http://localhost:3000"; // Define the backend URL here
+const backendUrl = "https://exercisebackend.duckdns.org";
+
+export default function WelcomeScreen() {
+  const { translate } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const params = useLocalSearchParams();
   const router = useRouter();
 
-  const handleLogin = async () => {
-    setErrorMessage(""); // Reset error message
+  // Text to animate
+  const fullText = "Together Towards Recovery";
+  const [animatedText, setAnimatedText] = useState("");
 
+  // Translated text states
+  const [translatedTitle, setTranslatedTitle] = useState("Welcome Back");
+  const [translatedSubtitle, setTranslatedSubtitle] = useState("Log in to access your account");
+  const [translatedEmailPlaceholder, setTranslatedEmailPlaceholder] = useState("Email");
+  const [translatedPasswordPlaceholder, setTranslatedPasswordPlaceholder] = useState("Password");
+  const [translatedLogin, setTranslatedLogin] = useState("Log In");
+  const [translatedSignUp, setTranslatedSignUp] = useState("Sign Up");
+  const [translatedForgotPassword, setTranslatedForgotPassword] = useState("Forgot Password?");
+
+  // Responsive layout
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 600; // Adjust as needed
+
+  // Animate text on mount, using slicing to avoid "undefined"
+  useEffect(() => {
+    setAnimatedText("");
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      // Slice the string from 0 to i, ensuring no out-of-range index
+      setAnimatedText(fullText.slice(0, i));
+
+      if (i >= fullText.length) {
+        clearInterval(interval);
+      }
+    }, 60);
+
+    return () => clearInterval(interval);
+  }, [fullText]);
+
+  // Translate text on mount
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      setTranslatedTitle(await translate("Welcome Back"));
+      setTranslatedSubtitle(await translate("Log in to access your account"));
+      setTranslatedEmailPlaceholder(await translate("Email"));
+      setTranslatedPasswordPlaceholder(await translate("Password"));
+      setTranslatedLogin(await translate("Log In"));
+      setTranslatedSignUp(await translate("Sign Up"));
+      setTranslatedForgotPassword(await translate("Forgot Password?"));
+    };
+    fetchTranslations();
+  }, [translate]);
+
+  const handleLogin = async () => {
+    setErrorMessage("");
     const normalizedEmail = email.trim().toLowerCase();
+
     if (!normalizedEmail || !password) {
-      setErrorMessage("Please fill in both email and password.");
+      setErrorMessage(await translate("Please fill in both email and password."));
       return;
     }
 
     try {
       const response = await fetch(`${backendUrl}/api/auth/login`, {
-        // Use the backend URL variable
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: normalizedEmail, password }),
-        credentials: "include", // Ensures cookies are sent with the request
+        credentials: "include",
       });
-      const data = await response.json();
-      console.log(data, "data");
 
+      const data = await response.json();
       if (response.ok) {
-        console.log("Login successful:", data.token);
         router.push("/HomePage/HomePage");
       } else {
-        setErrorMessage(data.message || "Invalid email or password.");
+        setErrorMessage(await translate(data.message || "Invalid email or password."));
       }
     } catch (error) {
-      setErrorMessage("Unable to login. Please try again later.");
+      setErrorMessage(await translate("Unable to login. Please try again later."));
     }
   };
 
   return (
-    <View style={welcomeScreenStyles.welcomeContainer}>
-      {params.success === "true" && (
-        <Text style={{ color: "green", marginBottom: 10, fontWeight: "bold" }}>
-          Registration successful! Please log in.
+    <View
+      style={[
+        styles.mainContainer,
+        { flexDirection: isSmallScreen ? "column" : "row" },
+      ]}
+    >
+      {/* Left side: Animated text */}
+      <View style={[isSmallScreen ? styles.leftContainerSmall : styles.leftContainerLarge]}>
+        {/* On smaller screens, use a smaller font for legibility */}
+        <Text style={isSmallScreen ? styles.animatedTextSmall : styles.animatedTextLarge}>
+          {animatedText}
         </Text>
-      )}
+      </View>
 
-      <Text style={welcomeScreenStyles.welcomeTitle}>Welcome Back</Text>
-      <Text style={indexPageStyles.indexSubtitle}>
-        Log in to access your account
-      </Text>
-
-      <TextInput
-        style={welcomeScreenStyles.welcomeInput}
-        placeholder="Email"
-        placeholderTextColor="#888"
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={welcomeScreenStyles.welcomeInput}
-        placeholder="Password"
-        placeholderTextColor="#888"
-        secureTextEntry
-        onChangeText={setPassword}
-      />
-
-      {errorMessage ? (
-        <Text style={{ color: "red", marginBottom: 10 }}>{errorMessage}</Text>
-      ) : null}
-
-      <TouchableOpacity
-        style={welcomeScreenStyles.welcomeLoginButton}
-        onPress={handleLogin}
-      >
-        <Text style={welcomeScreenStyles.welcomeButtonText}>Log In</Text>
-      </TouchableOpacity>
-
-      <Link
-        href="/Sign_Up/Sign_up"
-        style={welcomeScreenStyles.welcomeSignUpButton}
-      >
-        <TouchableOpacity>
-          <Text style={welcomeScreenStyles.welcomeSignUpText}>Sign Up</Text>
-        </TouchableOpacity>
-      </Link>
-      <TouchableOpacity style={welcomeScreenStyles.welcomeForgotPasswordButton}>
-        <Link href="/ForgotPassword/ForgotPassword">
-          <Text style={welcomeScreenStyles.welcomeForgotPasswordText}>
-            Forgot Password?
+      {/* Right side: login form */}
+      <View style={[isSmallScreen ? styles.rightContainerSmall : styles.rightContainerLarge]}>
+        {params.success === "true" && (
+          <Text style={{ color: "green", marginBottom: 10, fontWeight: "bold" }}>
+            {translatedTitle}
           </Text>
-        </Link>
-      </TouchableOpacity>
+        )}
+
+        <Text style={styles.welcomeTitle}>{translatedTitle}</Text>
+        <Text style={styles.subtitle}>{translatedSubtitle}</Text>
+
+        <TextInput
+          style={styles.welcomeInput}
+          placeholder={translatedEmailPlaceholder}
+          placeholderTextColor="#888"
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.welcomeInput}
+          placeholder={translatedPasswordPlaceholder}
+          placeholderTextColor="#888"
+          secureTextEntry
+          onChangeText={setPassword}
+        />
+
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+        <TouchableOpacity style={styles.welcomeLoginButton} onPress={handleLogin}>
+          <Text style={styles.welcomeButtonText}>{translatedLogin}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.welcomeSignUpButton}
+          onPress={() => router.push("/Sign_Up/Sign_up")}
+        >
+          <Text style={styles.welcomeSignUpButtonText}>{translatedSignUp}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.forgotPasswordButton}>
+          <Link href="/ForgotPassword/ForgotPassword">
+            <Text style={styles.forgotPasswordText}>{translatedForgotPassword}</Text>
+          </Link>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-};
-
-export default WelcomeScreen;
+}

@@ -24,7 +24,7 @@ const UploadVideos = () => {
   const [frequencyCompletion, setFrequencyCompletion] = useState("1");
 
   //https://8c85-2605-8d80-6a3-89f8-ede5-a0d7-df1c-55bf.ngrok-free.app
-  const backendUrl = "http://localhost:3000"; // Backend URL
+  const backendUrl = "https://exercisebackend.duckdns.org"; // Backend URL
 
   const bounceAnim = new Animated.Value(1);
   Animated.loop(

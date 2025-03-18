@@ -21,7 +21,7 @@ import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-const apiURLBackend = "http://localhost:3000"; // Replace with actual backend URL
+const apiURLBackend = "https://exercisebackend.duckdns.org"; // Replace with actual backend URL
 
 const ProgressChart = () => {
   const router = useRouter(); // Get router for navigation
