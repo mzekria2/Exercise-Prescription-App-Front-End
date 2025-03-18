@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
+import { View, Text, TouchableOpacity, Animated, Alert } from "react-native";
 import { homePageStyles } from "./HomePage.style";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useKidMode } from "../context/KidModeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfettiCannon from "react-native-confetti-cannon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "../TranslationContext";
 
 // Animated kid mode title component
@@ -83,6 +84,18 @@ const HomePage: React.FC = () => {
   }, [translate]);
 
   const { isKidMode, toggleKidMode } = useKidMode();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("token"); // Remove token from storage
+      window.alert("You have successfuly logged Out");
+      router.push("/WelcomeScreen/Welcomescreen"); // Redirect to login screen
+    } catch (error) {
+      console.error("Error logging out:", error);
+      window.alert("Error: Something went wrong. Try again.");
+    }
+  };
 
   return (
     <LinearGradient
@@ -225,19 +238,26 @@ const HomePage: React.FC = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Bottom Navigation Bar */}
-        <View style={homePageStyles.navBar}>
-          <TouchableOpacity style={homePageStyles.navItem}>
-            <Text style={homePageStyles.navTextActive}>
-              {translatedText.home}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={homePageStyles.navItem}>
-            <Text style={homePageStyles.navText}>
-              {translatedText.profile}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {/* Logout Button */}
+        <TouchableOpacity
+          style={{
+            backgroundColor: isKidMode ? "#ff4444" : "#FF0000",
+            padding: 15,
+            borderRadius: 50,
+            alignSelf: "center",
+            marginBottom: 20,
+            shadowColor: "#000",
+            shadowOpacity: 0.2,
+            shadowRadius: 5,
+            elevation: 5,
+            transform: [{ scale: isKidMode ? 1.1 : 1 }],
+          }}
+          onPress={handleLogout}
+        >
+          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
+            {isKidMode ? "🚪 Bye Bye!" : "🔒 Sign Out"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
