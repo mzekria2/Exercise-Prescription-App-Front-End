@@ -1,100 +1,188 @@
-import React, { useEffect, useState, createContext} from "react";
-import { View, Text, StyleSheet, Alert, Platform } from "react-native";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { useColorScheme } from "@/hooks/useColorScheme"; 
-import { Link } from "expo-router";
-import * as Notifications from "expo-notifications";
-import * as Device from "expo-device";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { useRouter, Link } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import ModalSelector from "react-native-modal-selector"; 
+import { useTranslation } from "./TranslationContext"; 
 import { PushTokenProvider } from "./PushTokenProvider";
-//export const PushTokenContext = createContext<string | null>(null);
 
-// const registerForPushNotificationsAsync = async (): Promise<string | null> => {
-//   if (!Device.isDevice) {
-//     Alert.alert("Error", "Must use a physical device for notifications.");
-//     return null;
-//   }
+const supportedLanguages = [
+  { key: "en", label: "🇺🇸 English", value: "en" },
+  { key: "es", label: "🇪🇸 Español", value: "es" },
+  { key: "fr", label: "🇫🇷 Français", value: "fr" },
+  { key: "de", label: "🇩🇪 Deutsch", value: "de" },
+  { key: "it", label: "🇮🇹 Italiano", value: "it" },
+  { key: "pt", label: "🇵🇹 Português", value: "pt" },
+];
 
-//   const { status: existingStatus } = await Notifications.getPermissionsAsync();
-//   let finalStatus = existingStatus;
+export default function Index() {
+  const { language, setLanguage, translate } = useTranslation();
+  const router = useRouter();
+  const [translatedText, setTranslatedText] = useState({
+    title: "Hand Therapy Canada",
+    loginText: "Log In",
+    signUpText: "Sign Up",
+  });
 
-//   if (existingStatus !== "granted") {
-//     const { status } = await Notifications.requestPermissionsAsync();
-//     finalStatus = status;
-//   }
+  const fetchTranslations = useCallback(async () => {
+    setTranslatedText({
+      title: await translate("Hand Therapy Canada"),
+      loginText: await translate("Log In"),
+      signUpText: await translate("Sign Up"),
+    });
+  }, [translate]);
 
-//   if (finalStatus !== "granted") {
-//     Alert.alert("Error", "Push notifications permissions denied.");
-//     return null;
-//   }
-
-//   const token = (await Notifications.getExpoPushTokenAsync({
-//     projectId: "a029abd1-73d4-4569-affd-b92af1be7aa1"
-//   })).data;
-//   console.log("Expo Push Token:", token);
-//   return token;
-// };
-
-function Index() {
-  const colorScheme = useColorScheme();
-  //const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   if (Platform.OS === "ios" || Platform.OS === "android") {
-  //     // Register for push notifications only on iOS and Android
-  //     registerForPushNotificationsAsync()
-  //       .then((token) => {
-  //         setExpoPushToken(token);
-  //         console.log("here token:" +token);
-  //         if (token) {
-  //           // Send the token to the backend for registration
-  //           fetch("http://192.168.2.36:3000/api/schedule/register-token", {
-  //             method: "POST",
-  //             headers: { "Content-Type": "application/json" },
-  //             body: JSON.stringify({ userId: "testUser123", expoPushToken: token }),
-  //           })
-  //             .then((response) => response.json())
-  //             .then((data) => {
-  //               if (data.error) {
-  //                 console.error("Failed to register token:", data.error);
-  //               } else {
-  //                 console.log("Push token registered successfully:", data);
-  //               }
-  //             })
-  //             .catch((error) => console.error("Error registering push token:", error));
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error during push notification registration:", error);
-  //       });
-  //   } else {
-  //     console.error("Push notifications are not supported on this platform.");
-  //   }
-  // }, []);
+  useEffect(() => {
+    fetchTranslations();
+  }, [language, fetchTranslations]);
 
   return (
-  <PushTokenProvider>
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome to the HTC app</Text>
-        <Link href="/WelcomeScreen/Welcomescreen">Tap to get Started</Link>
-        <Link href="/Notifs/notifications">Notifs</Link>
-      </View>
-    </ThemeProvider>
-   </PushTokenProvider>
+    <PushTokenProvider>
+      <LinearGradient colors={["#F8D6A9", "#EFA550"]} style={styles.gradientBackground}>
+        <View style={styles.languageContainer}>
+          <TouchableOpacity style={styles.languageButton}>
+            <ModalSelector
+              data={supportedLanguages}
+              initValue="🌍 Select Language"
+              onChange={(option) => setLanguage(option.value)}
+              selectStyle={styles.pickerStyle}
+              selectTextStyle={styles.pickerText}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.container}>
+          <Text style={styles.title}>{translatedText.title}</Text>
+
+          <View style={styles.imageCircleContainer}>
+            <Image
+              source={require("../assets/images/handremovebg.jpg")}
+              style={styles.backgroundPhoto}
+              resizeMode="contain"
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => router.push("/WelcomeScreen/Welcomescreen")}
+          >
+            <Text style={styles.loginButtonText}>{translatedText.loginText}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.signUpButton}
+            onPress={() => router.push("/Sign_Up/Sign_up")}
+          >
+            <Text style={styles.signUpButtonText}>{translatedText.signUpText}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.title}>Welcome to the HTC app</Text>
+          <Link href="/WelcomeScreen/Welcomescreen">Tap to get Started</Link>
+          <Link href="/Notifs/notifications">Notifs</Link>
+        </View>
+      </LinearGradient>
+    </PushTokenProvider>
   );
 }
 
 const styles = StyleSheet.create({
+  gradientBackground: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 50,
+  },
+  languageContainer: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 10,
+  },
+  languageButton: {
+    backgroundColor: "#EFA560",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  pickerStyle: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+  },
+  pickerText: {
+    color: "#222",
+    fontSize: 14,
+    fontFamily: 'Georgia',
+  },
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 20,
+    fontSize: 40,
+    fontFamily: 'Georgia',
+    fontWeight: "700",
+    color: "#2C3E50",
+    marginBottom: 10,
+    textAlign: "center",
+    paddingBottom: 30,
+  },
+  imageCircleContainer: {
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "#F2F2F2",
+    borderWidth: 3,
+    borderColor: "#EFA560",
+    overflow: "hidden",
     marginBottom: 20,
   },
+  backgroundPhoto: {
+    width: "100%",
+    height: "100%",
+  },
+  loginButton: {
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    borderColor: '#000',
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    width: "100%",
+    alignItems: "center",
+  },
+  loginButtonText: {
+    color: "#EFA550",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    fontFamily: 'Georgia',
+  },
+  signUpButton: {
+    backgroundColor: "#2C3E50",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    width: "100%",
+    alignItems: "center",
+  },
+  signUpButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    fontFamily: 'Georgia',
+  },
 });
-
-export default Index;

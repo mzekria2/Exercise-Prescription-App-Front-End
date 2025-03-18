@@ -1,14 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { signUpScreenStyles } from './Sign_up.styles';
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { signUpScreenStyles } from "./Sign_up.styles";
+import { useRouter } from "expo-router"; // For navigation
 
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
+  const backendUrl = "https://exercisebackend.duckdns.org";
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const router = useRouter();
+
+  // New state for animated title text
+  const fullAnimatedTitle = "Create Your Account";
+  const [animatedTitle, setAnimatedTitle] = useState("");
+
+  // Animate the title on mount
+  useEffect(() => {
+    setAnimatedTitle(""); // Clear on mount
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      // Use slicing to prevent "undefined" from appending
+      setAnimatedTitle(fullAnimatedTitle.slice(0, i));
+      if (i >= fullAnimatedTitle.length) {
+        clearInterval(interval);
+      }
+    }, 60);
+    return () => clearInterval(interval);
+  }, [fullAnimatedTitle]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,36 +49,36 @@ const SignUp = () => {
 
   const onSignUp = async () => {
     const newErrors = {
-      email: '',
-      password: '',
-      confirmPassword: '',
+      email: "",
+      password: "",
+      confirmPassword: "",
     };
 
     if (!validateEmail(email)) {
-      newErrors.email = 'Please enter a valid email address.';
+      newErrors.email = "Please enter a valid email address.";
     }
 
     if (!validatePassword(password)) {
       newErrors.password =
-        'Password must be at least 8 characters, include uppercase, lowercase, numbers, and special characters.';
+        "Password must be at least 8 characters, include uppercase, lowercase, numbers, and special characters.";
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match.';
+      newErrors.confirmPassword = "Passwords do not match.";
     }
 
     setErrors(newErrors);
 
-    // If any errors exist, don't submit the form
+    // If any errors exist, do not proceed
     if (newErrors.email || newErrors.password || newErrors.confirmPassword) {
       return;
     }
 
     try {
-      const response = await fetch('http://172.30.112.148:3000/api/auth/register', {
-        method: 'POST',
+      const response = await fetch(`${backendUrl}/api/auth/register`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, name }),
       });
@@ -60,47 +86,31 @@ const SignUp = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setIsSuccess(true);
+        router.push("/WelcomeScreen/Welcomescreen?success=true");
       } else {
-        setErrors({ ...errors, email: data.message || 'Something went wrong.' });
+        setErrors({
+          ...errors,
+          email: data.message || "Something went wrong.",
+        });
       }
     } catch (error) {
-      setErrors({ ...errors, email: 'Unable to register. Please try again.' });
+      setErrors({ ...errors, email: "Unable to register. Please try again." });
     }
   };
 
-  if (isSuccess) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'green' }}>
-          User Created Successfully!
-        </Text>
-        <TouchableOpacity
-          style={{
-            marginTop: 20,
-            padding: 10,
-            backgroundColor: '#0066cc',
-            borderRadius: 5,
-          }}
-          onPress={() => setIsSuccess(false)}
-        >
-          <Text style={{ color: '#fff' }}>Back to Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
     <View style={signUpScreenStyles.signUpContainer}>
-      <Text style={signUpScreenStyles.signUpTitle}>Create Your Account</Text>
+      <Text style={signUpScreenStyles.signUpTitle}>{animatedTitle}</Text>
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Enter your Name"
+        placeholderTextColor="#888"
         onChangeText={setName}
       />
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Enter your Email Address"
+        placeholderTextColor="#888"
         onChangeText={setEmail}
       />
       {errors.email ? (
@@ -109,6 +119,7 @@ const SignUp = () => {
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Create a Password"
+        placeholderTextColor="#888"
         secureTextEntry
         onChangeText={setPassword}
       />
@@ -118,14 +129,20 @@ const SignUp = () => {
       <TextInput
         style={signUpScreenStyles.signUpInput}
         placeholder="Confirm your Password"
+        placeholderTextColor="#888"
         secureTextEntry
         onChangeText={setConfirmPassword}
       />
       {errors.confirmPassword ? (
-        <Text style={signUpScreenStyles.errorText}>{errors.confirmPassword}</Text>
+        <Text style={signUpScreenStyles.errorText}>
+          {errors.confirmPassword}
+        </Text>
       ) : null}
-      <TouchableOpacity style={signUpScreenStyles.signUpButton} onPress={onSignUp}>
-        <Text style={{ color: '#fff' }}>Create Account</Text>
+      <TouchableOpacity
+        style={signUpScreenStyles.signUpButton}
+        onPress={onSignUp}
+      >
+        <Text style={signUpScreenStyles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
     </View>
   );

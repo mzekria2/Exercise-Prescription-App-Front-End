@@ -1,112 +1,149 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const welcomeScreenStyles = StyleSheet.create({
-  welcomeContainer: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
+    backgroundColor: "#F5F5F5",
   },
-  welcomeTitle: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    marginBottom: 32,
-    color: '#000',
-  },
-  welcomeInput: {
-    width: '80%',
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#f9f9f9',
-    color: '#000',
-  },
-  welcomeForgotPassword: {
-    color: '#00AEEF',
-    alignSelf: 'flex-end',
-    marginRight: '10%',
-    marginBottom: 32,
-    fontSize: 14,
-  },
-  welcomeLoginButton: {
-    backgroundColor: '#00AEEF',
-    paddingVertical: 15,
-    paddingHorizontal: 80,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  welcomeLoginText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  welcomeSignUpButton: {
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 80,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#00AEEF',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  welcomeSignUpText: {
-    color: '#00AEEF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  welcomeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
 
-export const indexPageStyles = StyleSheet.create({
-  indexContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+  // For small screens (column layout)
+  leftContainerSmall: {
+    flex: 0.3,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  rightContainerSmall: {
+    flex: 0.5,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingHorizontal: 40,
+    paddingTop: 50,
+  },
+
+  // For large screens (row layout)
+  leftContainerLarge: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
-  indexLogo: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
+  rightContainerLarge: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "flex-start",
   },
-  indexTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
+
+  // Animated text for small screens
+  animatedTextSmall: {
+    fontSize: 30,
+    lineHeight: 34,
+    color: "#2C3E50",       // Same color as "Welcome Back"
+    textAlign: "center",
+    fontFamily: "Georgia", // or any loaded custom font
+    fontWeight: "500",
+    fontStyle: "italic",
+    marginHorizontal: 20,
     marginBottom: 10,
   },
-  indexSubtitle: {
-    fontSize: 20,
-    color: '#555',
-    textAlign: 'center',
+  // Animated text for large screens
+  animatedTextLarge: {
+    fontSize: 36,
+    lineHeight: 44,
+    color: "#2C3E50",           // Same color as "Welcome Back"
+    textAlign: "center",
+    fontFamily: "Italiana", // or any loaded custom font
+    fontWeight: "500",
+    fontStyle: "italic",
+    marginHorizontal: 40,
+    marginBottom: 10,
+  },
+
+  welcomeTitle: {
+    fontSize: 32,
+    fontFamily: 'Georgia',
+    fontWeight: "700",
+    color: "#2C3E50",
+    marginBottom: 10,
+    alignSelf: "center",
+  },
+  subtitle: {
+    fontSize: 16,
+    fontFamily: 'Georgia',
+    color: "#34495E",
     marginBottom: 20,
-    padding: 20
+    alignSelf: "center",
   },
-  indexButton: {
-    backgroundColor: '#007BFF',
-    padding: 15,
-    borderRadius: 8,
-    width: '100%',
+  welcomeInput: {
+    width: "100%",
+    fontFamily: 'Georgia',
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 30,
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 15,
+    // Subtle shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  indexButtonText: {
+  errorText: {
+    color: "red",
+    fontFamily: 'Georgia',
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  welcomeLoginButton: {
+    backgroundColor: "#fff",
+    width: "100%",
+    paddingVertical: 15,
+    borderRadius: 30,
+    alignItems: "center",
+    marginBottom: 15,
+    // Shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  welcomeButtonText: {
+    color: "#EFA550",
+    fontFamily: 'Georgia',
     fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "600",
+  },
+  welcomeSignUpButton: {
+    backgroundColor: "#2C3E50",
+    fontFamily: 'Georgia',
+    width: "100%",
+    paddingVertical: 15,
+    borderRadius: 30,
+    alignItems: "center",
+    marginBottom: 15,
+    // Shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  welcomeSignUpButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  forgotPasswordButton: {
+    marginTop: 5,
+  },
+  forgotPasswordText: {
+    color: "#444",
+    fontFamily: 'Georgia',
+    fontSize: 16,
+    textDecorationLine: "underline",
   },
 });

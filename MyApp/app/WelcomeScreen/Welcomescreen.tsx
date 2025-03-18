@@ -1,111 +1,160 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button } from 'react-native';
-import { welcomeScreenStyles, indexPageStyles } from './Welcomescreen.styles';  
-import { Link } from 'expo-router';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
+import { Link, useRouter, useLocalSearchParams } from "expo-router";
+import { useTranslation } from "../TranslationContext";
+import { welcomeScreenStyles as styles } from "./Welcomescreen.styles";
 
-const WelcomeScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+const backendUrl = "https://exercisebackend.duckdns.org";
+
+export default function WelcomeScreen() {
+  const { translate } = useTranslation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const params = useLocalSearchParams();
+  const router = useRouter();
+
+  // Text to animate
+  const fullText = "Together Towards Recovery";
+  const [animatedText, setAnimatedText] = useState("");
+
+  // Translated text states
+  const [translatedTitle, setTranslatedTitle] = useState("Welcome Back");
+  const [translatedSubtitle, setTranslatedSubtitle] = useState("Log in to access your account");
+  const [translatedEmailPlaceholder, setTranslatedEmailPlaceholder] = useState("Email");
+  const [translatedPasswordPlaceholder, setTranslatedPasswordPlaceholder] = useState("Password");
+  const [translatedLogin, setTranslatedLogin] = useState("Log In");
+  const [translatedSignUp, setTranslatedSignUp] = useState("Sign Up");
+  const [translatedForgotPassword, setTranslatedForgotPassword] = useState("Forgot Password?");
+
+  // Responsive layout
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 600; // Adjust as needed
+
+  // Animate text on mount, using slicing to avoid "undefined"
+  useEffect(() => {
+    setAnimatedText("");
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      // Slice the string from 0 to i, ensuring no out-of-range index
+      setAnimatedText(fullText.slice(0, i));
+
+      if (i >= fullText.length) {
+        clearInterval(interval);
+      }
+    }, 60);
+
+    return () => clearInterval(interval);
+  }, [fullText]);
+
+  // Translate text on mount
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      setTranslatedTitle(await translate("Welcome Back"));
+      setTranslatedSubtitle(await translate("Log in to access your account"));
+      setTranslatedEmailPlaceholder(await translate("Email"));
+      setTranslatedPasswordPlaceholder(await translate("Password"));
+      setTranslatedLogin(await translate("Log In"));
+      setTranslatedSignUp(await translate("Sign Up"));
+      setTranslatedForgotPassword(await translate("Forgot Password?"));
+    };
+    fetchTranslations();
+  }, [translate]);
 
   const handleLogin = async () => {
-    setErrorMessage(''); // Reset error message
+    setErrorMessage("");
+    const normalizedEmail = email.trim().toLowerCase();
 
-    // Check if email or password is empty
-    if (!email || !password) {
-      setErrorMessage('Please fill in both email and password.');
+    if (!normalizedEmail || !password) {
+      setErrorMessage(await translate("Please fill in both email and password."));
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await fetch(`${backendUrl}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail, password }),
+        credentials: "include",
       });
 
       const data = await response.json();
-
       if (response.ok) {
-        setIsLoggedIn(true);
-        console.log('Login successful:', data.token);
+        router.push("/HomePage/HomePage");
       } else {
-        setErrorMessage(data.message || 'Invalid email or password.');
+        setErrorMessage(await translate(data.message || "Invalid email or password."));
       }
     } catch (error) {
-      setErrorMessage('Unable to login. Please try again later.');
+      setErrorMessage(await translate("Unable to login. Please try again later."));
     }
   };
 
-  if (isLoggedIn) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'green' }}>
-          Login Successful!
+  return (
+    <View
+      style={[
+        styles.mainContainer,
+        { flexDirection: isSmallScreen ? "column" : "row" },
+      ]}
+    >
+      {/* Left side: Animated text */}
+      <View style={[isSmallScreen ? styles.leftContainerSmall : styles.leftContainerLarge]}>
+        {/* On smaller screens, use a smaller font for legibility */}
+        <Text style={isSmallScreen ? styles.animatedTextSmall : styles.animatedTextLarge}>
+          {animatedText}
         </Text>
+      </View>
+
+      {/* Right side: login form */}
+      <View style={[isSmallScreen ? styles.rightContainerSmall : styles.rightContainerLarge]}>
+        {params.success === "true" && (
+          <Text style={{ color: "green", marginBottom: 10, fontWeight: "bold" }}>
+            {translatedTitle}
+          </Text>
+        )}
+
+        <Text style={styles.welcomeTitle}>{translatedTitle}</Text>
+        <Text style={styles.subtitle}>{translatedSubtitle}</Text>
+
+        <TextInput
+          style={styles.welcomeInput}
+          placeholder={translatedEmailPlaceholder}
+          placeholderTextColor="#888"
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.welcomeInput}
+          placeholder={translatedPasswordPlaceholder}
+          placeholderTextColor="#888"
+          secureTextEntry
+          onChangeText={setPassword}
+        />
+
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+        <TouchableOpacity style={styles.welcomeLoginButton} onPress={handleLogin}>
+          <Text style={styles.welcomeButtonText}>{translatedLogin}</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
-          style={{
-            marginTop: 20,
-            padding: 10,
-            backgroundColor: '#0066cc',
-            borderRadius: 5,
-          }}
-          onPress={() => setIsLoggedIn(false)} 
+          style={styles.welcomeSignUpButton}
+          onPress={() => router.push("/Sign_Up/Sign_up")}
         >
-          <Text style={{ color: '#fff' }}>Back to Login</Text>
+          <Text style={styles.welcomeSignUpButtonText}>{translatedSignUp}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.forgotPasswordButton}>
+          <Link href="/ForgotPassword/ForgotPassword">
+            <Text style={styles.forgotPasswordText}>{translatedForgotPassword}</Text>
+          </Link>
         </TouchableOpacity>
       </View>
-    );
-  }
-
-  return (
-    <View style={welcomeScreenStyles.welcomeContainer}>    
-      <Text style={indexPageStyles.indexTitle}>
-        Welcome to the Hand Therapy Canada Exercise Prescription App!
-      </Text>
-      <Text style={indexPageStyles.indexSubtitle}>
-        Helping you recover with personalized exercise routines.
-      </Text>
-      <Text style={welcomeScreenStyles.welcomeTitle}>HTC APP</Text>
-
-      {/* Input fields */}
-      <TextInput
-        style={welcomeScreenStyles.welcomeInput}
-        placeholder="Enter your Email Address"
-        placeholderTextColor="#666"
-        onChangeText={setEmail}
-        value={email}
-      />
-      <TextInput
-        style={welcomeScreenStyles.welcomeInput}
-        placeholder="Enter your Password"
-        placeholderTextColor="#666"
-        secureTextEntry
-        onChangeText={setPassword}
-        value={password}
-      />
-
-      {/* Error message */}
-      {errorMessage ? (
-        <Text style={welcomeScreenStyles.errorText}>{errorMessage}</Text>
-      ) : null}
-
-      {/* Forgot password and Login button */}
-      <Text style={welcomeScreenStyles.welcomeForgotPassword}>Forgot Password?</Text>
-      <TouchableOpacity
-        style={welcomeScreenStyles.welcomeLoginButton}
-        onPress={handleLogin}
-      >
-        <Text style={{ color: '#fff' }}>Login</Text>
-      </TouchableOpacity>
-
-      {/* Link to sign-up */}
-      <Link href="/Sign_Up/Sign_up">Don't have an account? Sign up</Link>
     </View>
   );
-};
-
-export default WelcomeScreen;
+}

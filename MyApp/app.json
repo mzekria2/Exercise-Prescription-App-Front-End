@@ -7,20 +7,17 @@
     "icon": "./assets/images/icon.png",
 
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.capstone.htc",
+      "bundleIdentifier": "capstone",
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         }
     },
     "android": {
+      "package": "com.yourcompany.myapp",  
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -33,7 +30,23 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -43,10 +56,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "a029abd1-73d4-4569-affd-b92af1be7aa1"
+        "projectId": "1f22c4bb-6dba-4706-b5d0-e8e0880d8f75"
       }
-    },
-    "owner": "msothyn"
+    }
   }
 }
 }
