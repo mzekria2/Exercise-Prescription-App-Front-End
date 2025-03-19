@@ -6,8 +6,7 @@ const normalUploadVideoStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 50,
     justifyContent: "flex-start",
   },
   backButton: {
@@ -20,30 +19,34 @@ const normalUploadVideoStyles = StyleSheet.create({
     fontFamily: "Georgia",
   },
   sectionTitle: {
-    fontSize: 28,
+    fontSize: 40,
     fontWeight: "700",
     color: "#2C3E50",
     fontFamily: "Georgia",
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
+    paddingTop: 50,
+    paddingBottom: 50,
   },
   actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 30,
   },
-  card: {
-    flex: 0.48,
-    backgroundColor: "#3949AB",
-    paddingVertical: 20,
-    borderRadius: 20,
+  actionCard: {
+    width: "100%",
+    backgroundColor: "#2C3E50",
+    paddingVertical: 40,
+    padding: 10,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 30,
+    marginBottom: 30,
   },
-  cardText: {
+  actionCardText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 25,
     fontFamily: "Georgia",
     fontWeight: "bold",
     textAlign: "center",
@@ -71,7 +74,7 @@ const normalUploadVideoStyles = StyleSheet.create({
     fontFamily: "Georgia",
   },
   button: {
-    backgroundColor: "#3949AB",
+    backgroundColor: "#2C3E50",
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: "center",
@@ -83,6 +86,7 @@ const normalUploadVideoStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Georgia",
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
@@ -97,7 +101,7 @@ const kidModeUploadVideoStyles = StyleSheet.create({
   },
   backButton: {
     alignSelf: "flex-start",
-    marginBottom: 10,
+    margin: 20,
   },
   backButtonText: {
     fontSize: 16,
@@ -109,24 +113,24 @@ const kidModeUploadVideoStyles = StyleSheet.create({
     fontWeight: "700",
     color: "#7E57C2",
     fontFamily: "Georgia",
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
   },
   actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
     width: "100%",
     marginBottom: 20,
   },
-  card: {
-    flex: 0.48,
+  actionCard: {
+    width: "100%",
     backgroundColor: "#3949AB",
     paddingVertical: 20,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 15,
   },
-  cardText: {
+  actionCardText: {
     color: "#fff",
     fontSize: 16,
     fontFamily: "Georgia",
@@ -168,6 +172,7 @@ const kidModeUploadVideoStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Georgia",
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

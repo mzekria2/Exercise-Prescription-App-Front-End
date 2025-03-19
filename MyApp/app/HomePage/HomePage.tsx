@@ -1,49 +1,51 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, Animated, Alert } from "react-native";
-import { homePageStyles } from "./HomePage.style";
-import { Link, useRouter } from "expo-router";
-import { useKidMode } from "../context/KidModeContext";
+import { View, Text, TouchableOpacity, Animated, Dimensions, StyleSheet } from "react-native";
+import { useRouter, Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfettiCannon from "react-native-confetti-cannon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "../TranslationContext";
+import { useKidMode } from "../context/KidModeContext";
+import ProgressChart from "../progress/progress_display";
+import { normalHomePageStyles } from "./HomePage.style";
+import { kidModeHomePageStyles } from "./HomePage.style";
 
-// Animated kid mode title component
-const WigglyText = ({ text }: { text: string }) => {
+const screenWidth = Dimensions.get("window").width;
+
+// Animated Kid Mode Title Component
+const WigglyText = ({ text }) => {
   const wiggle = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(wiggle, {
-          toValue: 10,
-          duration: 200,
+          toValue: 5,
+          duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(wiggle, {
-          toValue: -10,
-          duration: 200,
+          toValue: -5,
+          duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(wiggle, {
           toValue: 0,
-          duration: 200,
+          duration: 300,
           useNativeDriver: true,
         }),
       ])
     ).start();
   }, [wiggle]);
-
   return (
     <Animated.Text
       style={[
-        homePageStyles.kidModeTitle,
+        kidModeHomePageStyles.kidModeTitle,
         {
           transform: [
             {
               rotate: wiggle.interpolate({
-                inputRange: [-10, 10],
-                outputRange: ["-5deg", "5deg"],
+                inputRange: [-5, 5],
+                outputRange: ["-3deg", "3deg"],
               }),
             },
           ],
@@ -55,7 +57,7 @@ const WigglyText = ({ text }: { text: string }) => {
   );
 };
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   const { translate } = useTranslation();
   const [translatedText, setTranslatedText] = useState({
     welcome: "Welcome back!",
@@ -79,7 +81,6 @@ const HomePage: React.FC = () => {
         profile: await translate("Profile"),
       });
     };
-
     fetchTranslations();
   }, [translate]);
 
@@ -88,14 +89,17 @@ const HomePage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("token"); // Remove token from storage
-      window.alert("You have successfuly logged Out");
-      router.push("/WelcomeScreen/Welcomescreen"); // Redirect to login screen
+      await AsyncStorage.removeItem("token");
+      alert("You have successfully logged out");
+      router.push("/WelcomeScreen/Welcomescreen");
     } catch (error) {
       console.error("Error logging out:", error);
-      window.alert("Error: Something went wrong. Try again.");
+      alert("Error: Something went wrong. Try again.");
     }
   };
+
+  // Choose the appropriate styles object based on Kid Mode flag.
+  const styles = isKidMode ? kidModeHomePageStyles : normalHomePageStyles;
 
   return (
     <LinearGradient
@@ -106,155 +110,120 @@ const HomePage: React.FC = () => {
       }
       style={{ flex: 1 }}
     >
-      <View style={homePageStyles.container}>
+      <View style={styles.container}>
         {/* Header Section */}
-        <View style={homePageStyles.header}>
-          <View style={homePageStyles.userInfo}>
+        <View style={styles.header}>
+          <View style={styles.userInfo}>
             {isKidMode ? (
               <WigglyText text="🎈 Welcome to the FUN ZONE! 🎉" />
             ) : (
-              <Text style={homePageStyles.greeting}>
-                {translatedText.welcome}
-              </Text>
+              <Text style={styles.greeting}>{translatedText.welcome}</Text>
             )}
             {isKidMode ? (
-              <Text style={homePageStyles.subtitle}>
-                Get ready for an adventure! 🚀
-              </Text>
+              <Text style={styles.subtitle}>Get ready for an adventure! 🚀</Text>
             ) : (
-              <Text style={homePageStyles.subtitle}>
-                {translatedText.subtitle}
-              </Text>
+              <Text style={styles.subtitle}>{translatedText.subtitle}</Text>
             )}
           </View>
         </View>
 
         {/* Cards Section */}
-        <View style={homePageStyles.cardsContainer}>
-          <View style={homePageStyles.row}>
+        <View style={styles.cardsContainer}>
+          <View style={styles.row}>
             <TouchableOpacity
               style={[
-                homePageStyles.card,
+                styles.card,
                 isKidMode && {
-                  backgroundColor: "#ff4757",
-                  borderColor: "#ff7f50",
-                  borderWidth: 5,
+                  backgroundColor: "#f8bbd0", // pastel pink
+                  borderColor: "#f48fb1",
+                  borderWidth: screenWidth * 0.001,
                   borderRadius: 20,
                 },
               ]}
+              onPress={() => router.push("/video/upload_video")}
             >
-              <Link href="/video/upload_video">
-                <Text
-                  style={[
-                    homePageStyles.cardTitle,
-                    { color: isKidMode ? "#fff" : "#000" },
-                  ]}
-                >
-                  {isKidMode
-                    ? "🎥 Upload a Super Cool Video!"
-                    : translatedText.uploadVideo}
-                </Text>
-              </Link>
+              <Text
+                style={[
+                  styles.cardTitle,
+                  { color: isKidMode ? "#fff" : "#000" },
+                ]}
+              >
+                {isKidMode
+                  ? "🎥 Upload a Super Cool Video!"
+                  : translatedText.uploadVideo}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
-                homePageStyles.card,
+                styles.card,
                 isKidMode && {
-                  backgroundColor: "#1e90ff",
-                  borderColor: "#00a8ff",
-                  borderWidth: 5,
+                  backgroundColor: "#aed6f1", // pastel blue
+                  borderColor: "#85c1e9",
+                  borderWidth: screenWidth * 0.001,
                   borderRadius: 20,
                 },
               ]}
+              onPress={() => router.push("/video/video_list")}
             >
-              <Link href="/video/video_list">
-                <Text
-                  style={[
-                    homePageStyles.cardTitle,
-                    { color: isKidMode ? "#fff" : "#000" },
-                  ]}
-                >
-                  {isKidMode
-                    ? "📺 Watch Amazing Videos!"
-                    : translatedText.viewVideos}
-                </Text>
-              </Link>
+              <Text
+                style={[
+                  styles.cardTitle,
+                  { color: isKidMode ? "#fff" : "#000" },
+                ]}
+              >
+                {isKidMode
+                  ? "📺 Watch Amazing Videos!"
+                  : translatedText.viewVideos}
+              </Text>
             </TouchableOpacity>
           </View>
 
-          <View style={homePageStyles.row}>
+          <View style={styles.row}>
             <TouchableOpacity
               style={[
-                homePageStyles.cardFull,
+                styles.cardFull,
                 isKidMode && {
-                  backgroundColor: "#ffcc00",
-                  borderColor: "#ffde59",
-                  borderWidth: 5,
+                  backgroundColor: "#dcedc8", // pastel green
+                  borderColor: "#c5e1a5",
+                  borderWidth: screenWidth * 0.001,
                   borderRadius: 20,
+                  marginBottom: 5,
                 },
               ]}
+              onPress={() => router.push("/progress/progress_display")}
             >
-              <Link href="/progress/progress_display">
-                <Text
-                  style={[
-                    homePageStyles.cardTitle,
-                    { color: isKidMode ? "#fff" : "#000" },
-                  ]}
-                >
-                  {isKidMode
-                    ? "🏆 See Your Crazy Achievements!"
-                    : translatedText.viewProgress}
-                </Text>
-              </Link>
+              <Text
+                style={[
+                  styles.cardTitle,
+                  { color: isKidMode ? "#fff" : "#000" },
+                ]}
+              >
+                {isKidMode
+                  ? "🏆 See Your Amazing Achievements!"
+                  : translatedText.viewProgress}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {isKidMode && (
-          <ConfettiCannon count={50} origin={{ x: 200, y: -10 }} fadeOut />
-        )}
+        {/* Mini Progress Chart for current week */}
+        <View style={styles.progressContainer}>
+          <ProgressChart isMini />
+        </View>
+
+        {isKidMode && <ConfettiCannon count={100} origin={{ x: 200, y: -10 }} fadeOut />}
 
         {/* Kid Mode Toggle Button */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: isKidMode ? "#ffcc00" : "#007BFF",
-            padding: 15,
-            borderRadius: 50,
-            alignSelf: "center",
-            marginBottom: 20,
-            shadowColor: "#000",
-            shadowOpacity: 0.2,
-            shadowRadius: 5,
-            elevation: 5,
-            transform: [{ scale: isKidMode ? 1.1 : 1 }],
-          }}
-          onPress={toggleKidMode}
-        >
-          <Text
-            style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}
-          >
+        <TouchableOpacity style={styles.toggleButton} onPress={toggleKidMode}>
+          <Text style={styles.toggleButtonText}>
             {isKidMode ? "🔙 Exit Fun Mode" : "🎉 Enable Fun Mode"}
           </Text>
         </TouchableOpacity>
 
         {/* Logout Button */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: isKidMode ? "#ff4444" : "#FF0000",
-            padding: 15,
-            borderRadius: 50,
-            alignSelf: "center",
-            marginBottom: 20,
-            shadowColor: "#000",
-            shadowOpacity: 0.2,
-            shadowRadius: 5,
-            elevation: 5,
-            transform: [{ scale: isKidMode ? 1.1 : 1 }],
-          }}
-          onPress={handleLogout}
-        >
-          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>
             {isKidMode ? "🚪 Bye Bye!" : "🔒 Sign Out"}
           </Text>
         </TouchableOpacity>
