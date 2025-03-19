@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   useWindowDimensions,
+  ScrollView,
 } from "react-native";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "../TranslationContext";
@@ -20,11 +21,11 @@ export default function WelcomeScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
 
-  // Text to animate
-  const fullText = "Together Towards Recovery";
+  // Animated text: full text to animate (translated)
+  const [fullAnimatedText, setFullAnimatedText] = useState("Together Towards Recovery");
   const [animatedText, setAnimatedText] = useState("");
 
-  // Translated text states
+  // Translated text states for all UI strings
   const [translatedTitle, setTranslatedTitle] = useState("Welcome Back");
   const [translatedSubtitle, setTranslatedSubtitle] = useState("Log in to access your account");
   const [translatedEmailPlaceholder, setTranslatedEmailPlaceholder] = useState("Email");
@@ -33,30 +34,10 @@ export default function WelcomeScreen() {
   const [translatedSignUp, setTranslatedSignUp] = useState("Sign Up");
   const [translatedForgotPassword, setTranslatedForgotPassword] = useState("Forgot Password?");
 
-  // Responsive layout
-  const { width } = useWindowDimensions();
-  const isSmallScreen = width < 600; // Adjust as needed
-
-  // Animate text on mount, using slicing to avoid "undefined"
-  useEffect(() => {
-    setAnimatedText("");
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      // Slice the string from 0 to i, ensuring no out-of-range index
-      setAnimatedText(fullText.slice(0, i));
-
-      if (i >= fullText.length) {
-        clearInterval(interval);
-      }
-    }, 60);
-
-    return () => clearInterval(interval);
-  }, [fullText]);
-
-  // Translate text on mount
+  // Translate all text on mount, including the animated text
   useEffect(() => {
     const fetchTranslations = async () => {
+      setFullAnimatedText(await translate("Together Towards Recovery"));
       setTranslatedTitle(await translate("Welcome Back"));
       setTranslatedSubtitle(await translate("Log in to access your account"));
       setTranslatedEmailPlaceholder(await translate("Email"));
@@ -67,6 +48,20 @@ export default function WelcomeScreen() {
     };
     fetchTranslations();
   }, [translate]);
+
+  // Animate the translated text letter by letter
+  useEffect(() => {
+    setAnimatedText("");
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setAnimatedText(fullAnimatedText.slice(0, i));
+      if (i >= fullAnimatedText.length) {
+        clearInterval(interval);
+      }
+    }, 60);
+    return () => clearInterval(interval);
+  }, [fullAnimatedText]);
 
   const handleLogin = async () => {
     setErrorMessage("");
@@ -89,7 +84,9 @@ export default function WelcomeScreen() {
       if (response.ok) {
         router.push("/HomePage/HomePage");
       } else {
-        setErrorMessage(await translate(data.message || "Invalid email or password."));
+        setErrorMessage(
+          await translate(data.message || "Invalid email or password.")
+        );
       }
     } catch (error) {
       setErrorMessage(await translate("Unable to login. Please try again later."));
@@ -97,64 +94,65 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        { flexDirection: isSmallScreen ? "column" : "row" },
-      ]}
-    >
-      {/* Left side: Animated text */}
-      <View style={[isSmallScreen ? styles.leftContainerSmall : styles.leftContainerLarge]}>
-        {/* On smaller screens, use a smaller font for legibility */}
-        <Text style={isSmallScreen ? styles.animatedTextSmall : styles.animatedTextLarge}>
-          {animatedText}
-        </Text>
-      </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Animated Text at the Top */}
+      <Text style={styles.animatedText}>{animatedText}</Text>
 
-      {/* Right side: login form */}
-      <View style={[isSmallScreen ? styles.rightContainerSmall : styles.rightContainerLarge]}>
+      {/* Card‐like container for the form */}
+      <View style={styles.card}>
         {params.success === "true" && (
-          <Text style={{ color: "green", marginBottom: 10, fontWeight: "bold" }}>
+          <Text style={[styles.subtitle, { color: "green", fontWeight: "bold" }]}>
             {translatedTitle}
           </Text>
         )}
 
-        <Text style={styles.welcomeTitle}>{translatedTitle}</Text>
+        <Text style={styles.title}>{translatedTitle}</Text>
         <Text style={styles.subtitle}>{translatedSubtitle}</Text>
 
+        {/* Email Input */}
         <TextInput
-          style={styles.welcomeInput}
+          style={styles.input}
           placeholder={translatedEmailPlaceholder}
           placeholderTextColor="#888"
           onChangeText={setEmail}
         />
+
+        {/* Password Input */}
         <TextInput
-          style={styles.welcomeInput}
+          style={styles.input}
           placeholder={translatedPasswordPlaceholder}
           placeholderTextColor="#888"
           secureTextEntry
           onChangeText={setPassword}
         />
 
-        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        {/* Error Message */}
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
 
-        <TouchableOpacity style={styles.welcomeLoginButton} onPress={handleLogin}>
-          <Text style={styles.welcomeButtonText}>{translatedLogin}</Text>
+        {/* Log In Button */}
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>{translatedLogin}</Text>
         </TouchableOpacity>
 
+        {/* Sign Up Button */}
         <TouchableOpacity
-          style={styles.welcomeSignUpButton}
+          style={styles.signUpButton}
           onPress={() => router.push("/Sign_Up/Sign_up")}
         >
-          <Text style={styles.welcomeSignUpButtonText}>{translatedSignUp}</Text>
+          <Text style={styles.signUpButtonText}>{translatedSignUp}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.forgotPasswordButton}>
+        {/* Forgot Password Link */}
+        <TouchableOpacity style={styles.forgotPassword}>
           <Link href="/ForgotPassword/ForgotPassword">
-            <Text style={styles.forgotPasswordText}>{translatedForgotPassword}</Text>
+            <Text style={styles.forgotPasswordText}>
+              {translatedForgotPassword}
+            </Text>
           </Link>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }

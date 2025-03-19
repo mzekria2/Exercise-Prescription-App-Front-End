@@ -4,29 +4,25 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useTranslation } from "../TranslationContext";
 
-const apiURLBackend = "https://exercisebackend.duckdns.org"; // Backend URL
+const apiURLBackend = "https://exercisebackend.duckdns.org";
 
 const VideoDisplay = () => {
   const { data } = useLocalSearchParams();
   const router = useRouter();
   const { language } = useTranslation();
-
-  const [captions, setCaptions] = useState<string>("Generating captions...");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [amountCompleted, setAmountCompleted] = useState(0);
-  const [progressTrackedMsg, setProgressTrackedMsg] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Parse video data
-  let parsedData: any = null;
+  let parsedData = null;
   try {
     if (typeof data === "string") {
       parsedData = JSON.parse(data);
@@ -40,20 +36,18 @@ const VideoDisplay = () => {
     }
   } catch (error) {
     console.error("Error parsing video data:", error);
-    return <Text>Error loading video.</Text>;
+    return <Text style={styles.errorText}>Error loading video.</Text>;
   }
 
   const videoSource = `${apiURLBackend}/videos/video/${parsedData._id}`;
-
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = false;
     player.play();
   });
 
-  // Track video progress and confirm when enough of the video has been viewed
   useEffect(() => {
     if (amountCompleted >= 0.6) {
-      confirmTrack();
+      setModalVisible(true);
     }
   }, [amountCompleted]);
 
@@ -61,64 +55,48 @@ const VideoDisplay = () => {
     setAmountCompleted(player.currentTime / (player.duration || 1));
   };
 
-  const confirmTrack = async () => {
-    setModalVisible(true);
-  };
-
   const trackVideoCompletion = async () => {
     try {
-      const trackResponse = await fetch(
-        `${apiURLBackend}/progress/markCompletedVideo`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            videoId: parsedData._id,
-            videoTitle: parsedData.title,
-          }),
-          credentials: "include",
-        }
-      );
+      const trackResponse = await fetch(`${apiURLBackend}/progress/markCompletedVideo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId: parsedData._id,
+          videoTitle: parsedData.title,
+        }),
+        credentials: "include",
+      });
       if (trackResponse.status === 401 || trackResponse.status === 403) {
-        console.warn("Token expired. Redirecting to sign-up...");
         router.replace("/WelcomeScreen/Welcomescreen");
         return;
       }
-      const responseData = await trackResponse.json();
-      setProgressTrackedMsg(
-        "Video completion tracked. Response: " + JSON.stringify(responseData)
-      );
+      await trackResponse.json();
     } catch (error) {
       console.error("Error tracking video completion:", error);
     }
     setModalVisible(false);
   };
 
-  // Listen for changes in the player's playing status
   useEffect(() => {
-    const subscription = player.addListener(
-      "playingChange",
-      ({ isPlaying }) => {
-        console.log("Player status changed:", isPlaying ? "Playing" : "Paused");
-        setIsPlaying(isPlaying);
-        if (!isPlaying) {
-          handleProgress();
-        }
+    const subscription = player.addListener("playingChange", ({ isPlaying }) => {
+      setIsPlaying(isPlaying);
+      if (!isPlaying) {
+        handleProgress();
       }
-    );
-
+    });
     return () => {
       subscription.remove();
     };
   }, [player]);
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>← Back</Text>
-      </TouchableOpacity>
 
+  return (
+    <View style={styles.mainContainer}>
+      <View style={styles.topBar}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>← Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.pageTitle}>{parsedData.title || "Video Display"}</Text>
+      </View>
       <View style={styles.videoView}>
         <VideoView
           style={styles.video}
@@ -127,30 +105,18 @@ const VideoDisplay = () => {
           allowsPictureInPicture
         />
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Do you want to track this video as completed?
-            </Text>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={trackVideoCompletion}
-            >
+      <View style={styles.bottomContainer}>
+        <Text style={styles.completionText}>{`Completion: ${(amountCompleted * 100).toFixed(0)}%`}</Text>
+      </View>
+      <Modal animationType="fade" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>You have watched at least 60% of this video. Track it as completed?</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={trackVideoCompletion}>
               <Text style={styles.modalButtonText}>Track Video</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.cancelButton]}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.modalButtonText}>
-                I Already Tracked My Video Today
-              </Text>
+            <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -159,79 +125,96 @@ const VideoDisplay = () => {
   );
 };
 
-
-export default VideoDisplay;
-
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F5F5F5",
+    padding: 20,
+  },
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 20,
   },
   backButton: {
-    position: "absolute",
-    top: 20,
-    left: 10,
-    padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    borderRadius: 5,
+    paddingTop: 30,
   },
   backButtonText: {
-    fontSize: 16,
-    color: "#004D40",
+    fontSize: 18,
+    fontFamily: "Georgia",
+    color: "#2C3E50",
+  },
+  pageTitle: {
+    fontSize: 25,
+    paddingTop: 15,
+    paddingLeft: 75,
+    fontFamily: "Georgia",
     fontWeight: "bold",
+    color: "#2C3E50",
+    flex: 1,
   },
   videoView: {
-    height: "50%",
-    backgroundColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  video: {
-    width: "100%",
-    height: "100%",
-  },
-  captionsContainer: {
-    marginTop: 20,
-    padding: 15,
-    alignItems: "center",
-  },
-  captions: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "#EAEAEA",
+    borderRadius: 30,
+    overflow: "hidden",
+    height: 50,
   },
-  modalContent: {
-    width: "80%",
+  video: {
+    width: "95%",
+    height: 600,
+  },
+  bottomContainer: {
+    alignItems: "center",
+    paddingVertical: 35,
+  },
+  completionText: {
+    fontSize: 18,
+    fontFamily: "Georgia",
+    color: "#34495E",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContainer: {
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     alignItems: "center",
   },
   modalText: {
     fontSize: 18,
-    marginBottom: 20,
+    fontFamily: "Georgia",
+    color: "#2C3E50",
     textAlign: "center",
+    marginBottom: 15,
   },
   modalButton: {
-    backgroundColor: "#004D40",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    width: "100%",
+    backgroundColor: "#EFA550",
+    padding: 12,
+    borderRadius: 10,
     alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#B0B0B0",
+    marginVertical: 5,
   },
   modalButtonText: {
     color: "white",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    backgroundColor: "#2C3E50",
+  },
+  errorText: {
+    color: "red",
     textAlign: "center",
+    marginTop: 20,
   },
 });
+
+export default VideoDisplay;
+ 

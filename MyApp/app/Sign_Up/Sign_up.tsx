@@ -1,10 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { signUpScreenStyles } from "./Sign_up.styles";
-import { useRouter } from "expo-router"; // For navigation
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { signUpScreenStyles as styles } from "./Sign_up.styles";
+import { useRouter } from "expo-router";
+import { useTranslation } from "../TranslationContext";
 
 const SignUp = () => {
   const backendUrl = "https://exercisebackend.duckdns.org";
+  const { translate } = useTranslation();
+  const router = useRouter();
+
+  // Default translated texts
+  const [translatedText, setTranslatedText] = useState({
+    signUpTitle: "Create Your Account",
+    namePlaceholder: "Enter your Name",
+    emailPlaceholder: "Enter your Email Address",
+    passwordPlaceholder: "Create a Password",
+    confirmPasswordPlaceholder: "Confirm your Password",
+    signUpButton: "Create Account",
+  });
+
+  // Animated title states
+  const [fullAnimatedTitle, setFullAnimatedTitle] = useState("Create Your Account");
+  const [animatedTitle, setAnimatedTitle] = useState("");
+
+  // Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,19 +40,37 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
-  const router = useRouter();
-
-  // New state for animated title text
-  const fullAnimatedTitle = "Create Your Account";
-  const [animatedTitle, setAnimatedTitle] = useState("");
-
-  // Animate the title on mount
+  // Fetch translations on mount
   useEffect(() => {
-    setAnimatedTitle(""); // Clear on mount
+    const fetchTranslations = async () => {
+      const signUpTitle = await translate("Create Your Account");
+      const namePlaceholder = await translate("Enter your Name");
+      const emailPlaceholder = await translate("Enter your Email Address");
+      const passwordPlaceholder = await translate("Create a Password");
+      const confirmPasswordPlaceholder = await translate("Confirm your Password");
+      const signUpButton = await translate("Create Account");
+
+      setTranslatedText({
+        signUpTitle,
+        namePlaceholder,
+        emailPlaceholder,
+        passwordPlaceholder,
+        confirmPasswordPlaceholder,
+        signUpButton,
+      });
+
+      // Use the translated title for the animation
+      setFullAnimatedTitle(signUpTitle);
+    };
+    fetchTranslations();
+  }, [translate]);
+
+  // Animate the title letter-by-letter
+  useEffect(() => {
+    setAnimatedTitle(""); // reset animated title
     let i = 0;
     const interval = setInterval(() => {
       i++;
-      // Use slicing to prevent "undefined" from appending
       setAnimatedTitle(fullAnimatedTitle.slice(0, i));
       if (i >= fullAnimatedTitle.length) {
         clearInterval(interval);
@@ -42,6 +85,7 @@ const SignUp = () => {
   };
 
   const validatePassword = (password) => {
+    // At least 8 chars, uppercase, lowercase, number, special char
     const strongPasswordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return strongPasswordRegex.test(password);
@@ -69,7 +113,7 @@ const SignUp = () => {
 
     setErrors(newErrors);
 
-    // If any errors exist, do not proceed
+    // If errors exist, do not proceed
     if (newErrors.email || newErrors.password || newErrors.confirmPassword) {
       return;
     }
@@ -99,52 +143,59 @@ const SignUp = () => {
   };
 
   return (
-    <View style={signUpScreenStyles.signUpContainer}>
-      <Text style={signUpScreenStyles.signUpTitle}>{animatedTitle}</Text>
-      <TextInput
-        style={signUpScreenStyles.signUpInput}
-        placeholder="Enter your Name"
-        placeholderTextColor="#888"
-        onChangeText={setName}
-      />
-      <TextInput
-        style={signUpScreenStyles.signUpInput}
-        placeholder="Enter your Email Address"
-        placeholderTextColor="#888"
-        onChangeText={setEmail}
-      />
-      {errors.email ? (
-        <Text style={signUpScreenStyles.errorText}>{errors.email}</Text>
-      ) : null}
-      <TextInput
-        style={signUpScreenStyles.signUpInput}
-        placeholder="Create a Password"
-        placeholderTextColor="#888"
-        secureTextEntry
-        onChangeText={setPassword}
-      />
-      {errors.password ? (
-        <Text style={signUpScreenStyles.errorText}>{errors.password}</Text>
-      ) : null}
-      <TextInput
-        style={signUpScreenStyles.signUpInput}
-        placeholder="Confirm your Password"
-        placeholderTextColor="#888"
-        secureTextEntry
-        onChangeText={setConfirmPassword}
-      />
-      {errors.confirmPassword ? (
-        <Text style={signUpScreenStyles.errorText}>
-          {errors.confirmPassword}
-        </Text>
-      ) : null}
-      <TouchableOpacity
-        style={signUpScreenStyles.signUpButton}
-        onPress={onSignUp}
-      >
-        <Text style={signUpScreenStyles.signUpButtonText}>Create Account</Text>
-      </TouchableOpacity>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Animated Title at the Top */}
+      <Text style={styles.animatedText}>{animatedTitle}</Text>
+
+      {/* Card Container for the Form */}
+      <View style={styles.card}>
+        {/* (Optional) Static Title inside the card; remove if you only want the animated text */}
+        {/* <Text style={styles.title}>{translatedText.signUpTitle}</Text> */}
+
+        <TextInput
+          style={styles.input}
+          placeholder={translatedText.namePlaceholder}
+          placeholderTextColor="#888"
+          onChangeText={setName}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder={translatedText.emailPlaceholder}
+          placeholderTextColor="#888"
+          onChangeText={setEmail}
+        />
+        {errors.email ? (
+          <Text style={styles.errorText}>{errors.email}</Text>
+        ) : null}
+
+        <TextInput
+          style={styles.input}
+          placeholder={translatedText.passwordPlaceholder}
+          placeholderTextColor="#888"
+          secureTextEntry
+          onChangeText={setPassword}
+        />
+        {errors.password ? (
+          <Text style={styles.errorText}>{errors.password}</Text>
+        ) : null}
+
+        <TextInput
+          style={styles.input}
+          placeholder={translatedText.confirmPasswordPlaceholder}
+          placeholderTextColor="#888"
+          secureTextEntry
+          onChangeText={setConfirmPassword}
+        />
+        {errors.confirmPassword ? (
+          <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+        ) : null}
+
+        <TouchableOpacity style={styles.button} onPress={onSignUp}>
+          <Text style={styles.buttonText}>{translatedText.signUpButton}</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
