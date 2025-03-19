@@ -60,8 +60,8 @@ const WigglyText = ({ text }) => {
 const HomePage = () => {
   const { translate } = useTranslation();
   const [translatedText, setTranslatedText] = useState({
-    welcome: "Welcome back!",
-    subtitle: "Continue your hand therapy journey.",
+    welcome: "Your Dashboard",
+    subtitle: "Welcome Back!",
     uploadVideo: "Upload a Video",
     viewVideos: "View Videos",
     viewProgress: "View Progress",
@@ -72,8 +72,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchTranslations = async () => {
       setTranslatedText({
-        welcome: await translate("Welcome back!"),
-        subtitle: await translate("Continue your hand therapy journey."),
+        welcome: await translate("Your Dashboard"),
+        subtitle: await translate("Welcome Back!"),
         uploadVideo: await translate("Upload a Video"),
         viewVideos: await translate("View Videos"),
         viewProgress: await translate("View Progress"),
@@ -214,19 +214,21 @@ const HomePage = () => {
 
         {isKidMode && <ConfettiCannon count={100} origin={{ x: 200, y: -10 }} fadeOut />}
 
-        {/* Kid Mode Toggle Button */}
-        <TouchableOpacity style={styles.toggleButton} onPress={toggleKidMode}>
-          <Text style={styles.toggleButtonText}>
-            {isKidMode ? "🔙 Exit Fun Mode" : "🎉 Enable Fun Mode"}
-          </Text>
-        </TouchableOpacity>
+        {/* Horizontal container for buttons */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
+          <TouchableOpacity style={styles.toggleButton} onPress={toggleKidMode}>
+            <Text style={styles.toggleButtonText}>
+              {isKidMode ? "🔙 Exit Fun Mode" : "🎉 Enable Fun Mode"}
+            </Text>
+          </TouchableOpacity>
 
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>
-            {isKidMode ? "🚪 Bye Bye!" : "🔒 Sign Out"}
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>
+              {isKidMode ? "🚪 Bye Bye!" : "🔒 Sign Out"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
       </View>
     </LinearGradient>
   );

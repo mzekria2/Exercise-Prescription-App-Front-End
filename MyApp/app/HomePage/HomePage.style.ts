@@ -5,7 +5,7 @@ const normalHomePageStyles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 70,
+    paddingTop: 80,
     paddingBottom: 80,
     backgroundColor: "#F5F5F5",
   },
@@ -16,7 +16,7 @@ const normalHomePageStyles = StyleSheet.create({
     alignItems: "center",
   },
   greeting: {
-    fontSize: 35,
+    fontSize: 40,
     fontWeight: "700",
     color: "#2C3E50",
     textAlign: "center",
@@ -28,10 +28,10 @@ const normalHomePageStyles = StyleSheet.create({
     color: "#34495E",
     textAlign: "center",
     fontFamily: "Georgia",
-    marginBottom: 20,
   },
   cardsContainer: {
     flex: 1,
+    
   },
   row: {
     flexDirection: "row",
@@ -40,9 +40,9 @@ const normalHomePageStyles = StyleSheet.create({
     marginHorizontal: 10,
   },
   card: {
-    flex: 0.48,
+    flex: 0.8,
     backgroundColor: "#fff",
-    padding: 15,
+    padding: 20,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -51,17 +51,18 @@ const normalHomePageStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 4,
-    marginHorizontal: 10,
+    marginHorizontal: 5,
+
+  
   },
   cardFull: {
+    flex: 0.8,
     backgroundColor: "#fff",
-    padding: 20,
-    paddingBottom: 20,
+    padding: 25,
     marginTop: 10,
     borderRadius: 20,
-    alignSelf: "center",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: 'center',
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -70,7 +71,7 @@ const normalHomePageStyles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "800",
     textAlign: "center",
     fontFamily: "Georgia",
   },
@@ -84,11 +85,10 @@ const normalHomePageStyles = StyleSheet.create({
   },
   toggleButton: {
     backgroundColor: "#3949AB",
-    padding: 12,
     borderRadius: 50,
-    alignSelf: "flex-end",
-    marginTop: 10,
-    marginBottom: 5,
+    padding: 12,
+    alignSelf: 'flex-start',
+    marginTop: 5,
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -98,7 +98,7 @@ const normalHomePageStyles = StyleSheet.create({
   toggleButtonText: {
     fontFamily: "Georgia",
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
   },
   logoutButton: {
@@ -115,11 +115,11 @@ const normalHomePageStyles = StyleSheet.create({
   logoutButtonText: {
     fontFamily: "Georgia",
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
   },
   progressContainer: {
-    marginVertical: 25,
+    paddingBottom: 25,
     alignItems: "center",
     width: screenWidth * 0.9,
   },

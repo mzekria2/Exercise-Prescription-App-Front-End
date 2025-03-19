@@ -6,8 +6,8 @@ export const progressStyles = StyleSheet.create({
   chartContainer: {
     width: "100%",
     alignItems: "center",
-    marginVertical: 10,
-      },
+    marginVertical: 30,
+  },
   chartCard: {
     width: "95%",
     backgroundColor: "#fff",
@@ -27,7 +27,7 @@ export const progressStyles = StyleSheet.create({
     color: "#2C3E50",
     textAlign: "center",
     marginBottom: 20,
-    paddingTop:40
+    paddingTop: 40,
   },
   kidTitle: {
     fontSize: 24,
@@ -45,6 +45,7 @@ export const progressStyles = StyleSheet.create({
     color: "#2C3E50",
     textAlign: "center",
     marginTop: 10,
+    fontFamily: "Georgia",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -58,29 +59,33 @@ export const progressStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#2C3E50",
+    fontFamily: "Georgia",
   },
-  streakContainer: {
-    marginTop: 20,
-    padding: 15,
+  /* New styles for the bottom stats cards */
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 30,
     width: "90%",
-    backgroundColor: "#FFF",
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: "#fff",
     borderRadius: 15,
     alignItems: "center",
+    marginHorizontal: 5,
+    padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
   },
-  streakText: {
+  statText: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#2C3E50",
     fontFamily: "Georgia",
     textAlign: "center",
-  },
-  fireEmoji: {
-    fontSize: 24,
-    marginVertical: 5,
   },
 });

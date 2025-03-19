@@ -50,6 +50,7 @@ const ProgressChart = ({ isMini = false }) => {
   // Use current week if mini, otherwise allow navigation
   const effectiveWeekOffset = isMini ? 0 : weekOffset;
 
+  // Kid Mode: whimsical labels; normal mode: standard labels
   const daysOfWeek = isKidMode
     ? ["🌞 Sun", "🚀 Mon", "🎨 Tue", "📚 Wed", "🎶 Thu", "🎮 Fri", "🌈 Sat"]
     : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -58,8 +59,10 @@ const ProgressChart = ({ isMini = false }) => {
   const start = startOfWeek(subWeeks(today, effectiveWeekOffset));
   const end = endOfWeek(subWeeks(today, effectiveWeekOffset));
 
+  // Initialize each day with zero
   const countsByDay = daysOfWeek.reduce((acc, day) => ({ ...acc, [day]: 0 }), {});
 
+  // Tally up completions for each day of the selected week
   progressData.forEach((item) => {
     if (item.dateCompleted && Array.isArray(item.dateCompleted)) {
       item.dateCompleted.forEach((date) => {
@@ -72,22 +75,33 @@ const ProgressChart = ({ isMini = false }) => {
     }
   });
 
+  // Prepare chart data
   const chartData = {
     labels: daysOfWeek,
     datasets: [{ data: daysOfWeek.map((day) => countsByDay[day] ?? 0) }],
   };
 
+  // Determine max Y segments
   const maxYValue = Math.max(...Object.values(countsByDay), 2);
 
   // Use smaller dimensions if mini
   const chartWidth = isMini ? screenWidth * 0.85 : screenWidth * 0.9;
   const chartHeight = isMini ? 180 : 300;
 
+  // Calculate total videos watched across all time
+  const totalVideosWatched = progressData.reduce((acc, item) => {
+    if (item.dateCompleted && Array.isArray(item.dateCompleted)) {
+      return acc + item.dateCompleted.length;
+    }
+    return acc;
+  }, 0);
+
   return (
     <View style={progressStyles.chartContainer}>
       <Text style={isKidMode ? progressStyles.kidTitle : progressStyles.chartTitle}>
         {isKidMode ? "🎯 Your Amazing Progress! 🚀" : "Progress Over Time"}
       </Text>
+
       <View style={progressStyles.chartCard}>
         <BarChart
           data={chartData}
@@ -113,6 +127,8 @@ const ProgressChart = ({ isMini = false }) => {
           style={progressStyles.chartStyle}
         />
       </View>
+
+      {/* Only show these controls/cards in non-mini mode */}
       {!isMini && (
         <>
           <Text style={progressStyles.daysLabel}>Days of the Week</Text>
@@ -120,9 +136,11 @@ const ProgressChart = ({ isMini = false }) => {
             <TouchableOpacity onPress={() => setWeekOffset(weekOffset + 1)}>
               <FontAwesomeIcon name="arrow-left" size={16} color="#2C3E50" />
             </TouchableOpacity>
+
             <Text style={progressStyles.weekText}>
               {start.toDateString()} - {end.toDateString()}
             </Text>
+
             <TouchableOpacity
               onPress={() => {
                 if (weekOffset > 0) {
@@ -138,12 +156,22 @@ const ProgressChart = ({ isMini = false }) => {
               />
             </TouchableOpacity>
           </View>
-          {/* Streak Counter Section */}
-          <View style={progressStyles.streakContainer}>
-            <Text style={progressStyles.streakText}>
-              🔥 Current Streak: {progressData.length} Days 🔥
-            </Text>
-            <Text style={progressStyles.fireEmoji}>🔥🔥🔥</Text>
+
+          {/* Two side-by-side cards for Streak and Videos Watched */}
+          <View style={progressStyles.statsContainer}>
+            {/* Streak Card */}
+            <View style={progressStyles.statCard}>
+              <Text style={progressStyles.statText}>
+                Current Streak 🔥: {progressData.length} Days
+              </Text>
+            </View>
+
+            {/* Total Videos Watched Card */}
+            <View style={progressStyles.statCard}>
+              <Text style={progressStyles.statText}>
+                Videos Watched 🎉: {totalVideosWatched}
+              </Text>
+            </View>
           </View>
         </>
       )}

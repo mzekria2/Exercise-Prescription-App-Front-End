@@ -1,174 +1,48 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
 
-const normalUploadVideoStyles = StyleSheet.create({
+export const forgotPasswordStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 20,
-    justifyContent: "flex-start",
+    paddingTop: 60,
+    paddingBottom: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  backButton: {
-    alignSelf: "flex-start",
-    marginBottom: 10,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#3949AB",
-    fontFamily: "Georgia",
-  },
-  sectionTitle: {
-    fontSize: 28,
+  title: {
+    fontSize: 32,
     fontWeight: "700",
     color: "#2C3E50",
     fontFamily: "Georgia",
     marginBottom: 20,
     textAlign: "center",
   },
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 20,
-  },
-  card: {
-    flex: 0.48,
-    backgroundColor: "#3949AB",
-    paddingVertical: 20,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cardText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: "Georgia",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  inputGroup: {
-    width: "100%",
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 18,
-    fontFamily: "Georgia",
-    color: "#2C3E50",
-    marginBottom: 5,
-  },
   input: {
     width: "100%",
     height: 50,
     borderWidth: 1,
-    borderColor: "#B0C4DE",
+    borderColor: "#2C3E50",
     borderRadius: 25,
     paddingHorizontal: 15,
+    marginBottom: 20,
     backgroundColor: "#F7F7F7",
     fontSize: 16,
     color: "#333",
     fontFamily: "Georgia",
   },
   button: {
-    backgroundColor: "#3949AB",
+    backgroundColor: "#2C3E50",
     paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 25,
     alignItems: "center",
     width: "100%",
-    marginBottom: 15,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: "Georgia",
-    fontWeight: "bold",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
 });
-
-const kidModeUploadVideoStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#EDE7F6",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 20,
-    justifyContent: "flex-start",
-  },
-  backButton: {
-    alignSelf: "flex-start",
-    marginBottom: 10,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#7E57C2",
-    fontFamily: "Georgia",
-  },
-  sectionTitle: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: "#7E57C2",
-    fontFamily: "Georgia",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 20,
-  },
-  card: {
-    flex: 0.48,
-    backgroundColor: "#3949AB",
-    paddingVertical: 20,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cardText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: "Georgia",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  inputGroup: {
-    width: "100%",
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 20,
-    fontFamily: "Georgia",
-    color: "#7E57C2",
-    marginBottom: 5,
-  },
-  input: {
-    width: "100%",
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#B39DDB",
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    backgroundColor: "#F3E5F5",
-    fontSize: 16,
-    color: "#2C3E50",
-    fontFamily: "Georgia",
-  },
-  button: {
-    backgroundColor: "#3949AB",
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: "center",
-    width: "100%",
-    marginBottom: 15,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: "Georgia",
-    fontWeight: "bold",
-  },
-});
-
-export { normalUploadVideoStyles, kidModeUploadVideoStyles };

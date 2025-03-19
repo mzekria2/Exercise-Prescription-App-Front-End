@@ -42,7 +42,7 @@ const ForgotPassword = () => {
       <TextInput
         style={forgotPasswordStyles.input}
         placeholder="Enter your Email Address"
-        placeholderTextColor="#3949AB"
+        placeholderTextColor="#2C3E50"
         onChangeText={setEmail}
       />
       <TouchableOpacity style={forgotPasswordStyles.button} onPress={handleForgotPassword}>

@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
   },
   backButton: {
     marginBottom: 10,
+    marginTop: 25,
     padding: 10,
   },
   backButtonText: {
