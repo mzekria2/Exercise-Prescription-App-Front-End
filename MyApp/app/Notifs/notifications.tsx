@@ -23,11 +23,12 @@ import { PushTokenContext } from "../PushTokenProvider";
 import { useRouter } from 'expo-router';
 import * as Notifications from "expo-notifications";
 
-const API_URL = "http://192.168.2.36:3000/api/schedule/schedule";
+const backendUrl = "https://exercisebackend.duckdns.org";
+const API_URL = `${backendUrl}/api/schedule/schedule`;
 
 const testConnection = async () => {
   try {
-    const response = await fetch("http://192.168.2.36:3000/api/schedule/test");
+    const response = await fetch(`${backendUrl}/api/schedule/test`);
     console.log("Server response status:", response.status);
     Alert.alert(
       "Connection Test",
@@ -115,9 +116,9 @@ const MessagePickerComponent: React.FC<MessagePickerProps> = ({ message, onMessa
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<string>(message || "");
   const [items, setItems] = useState([
-    { label: "Reminder 1: It's time for your hand therapy exercises!", value: 'Reminder 1' },
-    { label: 'Reminder 2: Take a break and stretch!', value: 'Reminder 2' },
-    { label: 'Reminder 3: Time for Exercise!', value: 'Reminder 3' },
+    { label: "Reminder 1: It's time for your hand therapy exercises!", value: "It's time for your hand therapy exercises!" },
+    { label: 'Reminder 2: Take a break and stretch!', value: " Take a break and stretch!" },
+    { label: 'Reminder 3: Time for Exercise!', value: "Time for Exercise!" },
     { label: 'Custom Message', value: 'custom' },
   ]);
 
@@ -282,9 +283,34 @@ const App: React.FC = () => {
   const [times, setTimes] = useState<{ [key: string]: (string | null)[] }>({});
   const [messages, setMessages] = useState<{ [key: string]: string[] }>({});
   const [customMessages, setCustomMessages] = useState<{ [key: string]: string[] }>({});
+  const [userId, setUserId] = useState<string | null>(null);
 
   const expoPushToken = useContext(PushTokenContext);
   const router = useRouter();
+
+  // -----------------------
+  // Fetch user profile to get userId
+  // -----------------------
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/auth/profile`, {
+          method: 'GET',
+          credentials: 'include', // send cookies
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          setUserId(userData._id);
+          console.log("Fetched User ID:", userData._id);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   const handleDayToggle = (day: string) => {
     setSelectedDays((prev) =>
@@ -356,11 +382,20 @@ const App: React.FC = () => {
     });
   };
 
+  const convertESTtoUTC = (localTime: string) => {
+    const estDate = new Date(`1970-01-01T${localTime}:00-05:00`); // -05:00 for EST
+    return estDate.toISOString().slice(0, 19); // "YYYY-MM-DDTHH:MM:SS"
+  };
+
   const scheduleNotifications = async () => {
     const token = expoPushToken;
     console.log("Current expoPushToken in notifs.tsx:", token);
     if (!token) {
       Alert.alert("Error", "Push token not available. Please enable notifications.");
+      return;
+    }
+    if (!userId) {
+      Alert.alert("Error", "User ID not available. Please log in.");
       return;
     }
     if (selectedDays.length === 0) {
@@ -376,7 +411,7 @@ const App: React.FC = () => {
       }
     }
     const requestBody = {
-      userId: "testUser123",
+      userId: userId, // Dynamically fetched user ID
       pushToken: token,
       notifications: selectedDays.map((day) => ({
         dayOfWeek: daysOfWeek.indexOf(day) + 1,
@@ -444,7 +479,6 @@ const App: React.FC = () => {
       >
         Back
       </Button>
-
     </View>
   );
 
@@ -558,7 +592,6 @@ const styles = StyleSheet.create({
   dropdown: {
     borderColor: "#ccc",
   },
-  // This style positions the dropdown container above the trigger
   dropdownContainerUp: {
     position: 'absolute',
     bottom: '100%',
@@ -598,7 +631,6 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     width: "100%",
   },
-  
 });
 
 export default App;

@@ -11,7 +11,9 @@ import { Button, Card, Title, Provider as PaperProvider, DefaultTheme } from "re
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
 
-const API_URL = "http://192.168.2.36:3000/api/schedule";
+
+const backendUrl = "https://exercisebackend.duckdns.org/";
+const API_URL = backendUrl+"api/schedule";
 
 const daysOfWeekMap: { [key: number]: string } = {
   1: "Monday",
@@ -42,17 +44,42 @@ const lightTheme = {
 const DeleteNotifications: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchNotifications();
+    fetchUserProfile();
   }, []);
 
-  const fetchNotifications = async () => {
+  useEffect(() => {
+    if (userId) {
+      fetchNotifications();
+    }
+  }, [userId]);
+
+  const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`${API_URL}/testUser123`);
+      const response = await fetch(`${backendUrl}api/auth/profile`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
-        console.log("Raw notifications:", data.notifications);
+        setUserId(data._id);
+        console.log("User ID fetched:", data._id);
+      } else {
+        console.error("Failed to fetch user profile");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+  const fetchNotifications = async () => {
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`${API_URL}/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
         const filteredNotifications = data.notifications.filter(
           (n: any) => n.dayOfWeek && n.times && n.times.length > 0
         );
@@ -65,8 +92,82 @@ const DeleteNotifications: React.FC = () => {
       Alert.alert("Error", "Failed to fetch notifications.");
     }
   };
+  // useEffect(() => {
+  //   fetchNotifications();
+  // }, []);
+
+  // const fetchNotifications = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/testUser123`);
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       console.log("Raw notifications:", data.notifications);
+  //       const filteredNotifications = data.notifications.filter(
+  //         (n: any) => n.dayOfWeek && n.times && n.times.length > 0
+  //       );
+  //       setNotifications(filteredNotifications);
+  //     } else {
+  //       Alert.alert("Error", "Failed to fetch notifications.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Fetch error", error);
+  //     Alert.alert("Error", "Failed to fetch notifications.");
+  //   }
+  // };
+
+  //GOOD DELETE
+  // const deleteNotification = async (dayOfWeek: number, time: string, index: number) => {
+  //   if (!userId) return;
+  //   Alert.alert(
+  //     "Confirm Deletion",
+  //     `Are you sure you want to delete the notification for ${daysOfWeekMap[dayOfWeek]} at ${time}?`,
+  //     [
+  //       { text: "Cancel", style: "cancel" },
+  //       {
+  //         text: "Delete",
+  //         onPress: async () => {
+  //           try {
+  //             const formattedTime = encodeURIComponent(time);
+  //             const response = await fetch(
+  //               `${API_URL}/delete/${userId}/${dayOfWeek}/${formattedTime}/${index}`,
+  //               { method: "DELETE" }
+  //             );
+  //             if (response.ok) {
+  //               setNotifications((prev) =>
+  //                 prev
+  //                   .map((n) => {
+  //                     if (n.dayOfWeek === dayOfWeek) {
+  //                       const newTimes: string[] = [];
+  //                       const newMessages: string[] = [];
+  //                       n.times.forEach((t, idx) => {
+  //                         if (idx !== index) {
+  //                           newTimes.push(t);
+  //                           newMessages.push(n.messages[idx]);
+  //                         }
+  //                       });
+  //                       return { ...n, times: newTimes, messages: newMessages };
+  //                     }
+  //                     return n;
+  //                   })
+  //                   .filter((n) => n.times.length > 0)
+  //               );
+  //               Alert.alert("Success", "Notification deleted successfully!");
+  //             } else {
+  //               const errorData = await response.json();
+  //               Alert.alert("Error", errorData.error || "Failed to delete notification.");
+  //             }
+  //           } catch (error) {
+  //             Alert.alert("Error", "Failed to delete notification.");
+  //           }
+  //         },
+  //       },
+  //     ]
+  //   );
+  // };
 
   const deleteNotification = async (dayOfWeek: number, time: string, index: number) => {
+    if (!userId) return;
+  
     Alert.alert(
       "Confirm Deletion",
       `Are you sure you want to delete the notification for ${daysOfWeekMap[dayOfWeek]} at ${time}?`,
@@ -78,28 +179,30 @@ const DeleteNotifications: React.FC = () => {
             try {
               const formattedTime = encodeURIComponent(time);
               const response = await fetch(
-                `${API_URL}/delete/testUser123/${dayOfWeek}/${formattedTime}/${index}`,
+                `${API_URL}/delete/${userId}/${dayOfWeek}/${formattedTime}/${index}`,
                 { method: "DELETE" }
               );
+  
               if (response.ok) {
-                setNotifications((prev) =>
-                  prev
-                    .map((n) => {
-                      if (n.dayOfWeek === dayOfWeek) {
-                        const newTimes: string[] = [];
-                        const newMessages: string[] = [];
-                        n.times.forEach((t, idx) => {
-                          if (idx !== index) {
-                            newTimes.push(t);
-                            newMessages.push(n.messages[idx]);
-                          }
-                        });
-                        return { ...n, times: newTimes, messages: newMessages };
-                      }
-                      return n;
-                    })
-                    .filter((n) => n.times.length > 0)
-                );
+                fetchNotifications(); // Re-fetch from the backend after deletion
+                // setNotifications((prev) =>
+                //   prev
+                //     .map((notif) => {
+                //       if (notif.dayOfWeek === dayOfWeek) {
+                //         // Remove only the deleted time and its corresponding message
+                //         const updatedTimes = notif.times.filter((_, i) => i !== index);
+                //         const updatedMessages = notif.messages.filter((_, i) => i !== index);
+  
+                //         // If no times remain, remove this entire notification object
+                //         return updatedTimes.length > 0
+                //           ? { ...notif, times: updatedTimes, messages: updatedMessages }
+                //           : null;
+                //       }
+                //       return notif;
+                //     })
+                //     .filter((notif) => notif !== null) // Remove any null values from the array
+                // );
+  
                 Alert.alert("Success", "Notification deleted successfully!");
               } else {
                 const errorData = await response.json();
@@ -113,13 +216,14 @@ const DeleteNotifications: React.FC = () => {
       ]
     );
   };
+  
 
   const snoozeNotification = async (title: string, body: string) => {
     console.log("Snoozing notification:", title, body);
     await Notifications.scheduleNotificationAsync({
       content: { title, body, sound: "default" },
       trigger: {
-        seconds: 15 * 60, // Snooze for 15 minutes
+        seconds: 1 * 60, // Snooze for 15 minutes
         repeats: false,
       } as Notifications.TimeIntervalTriggerInput,
     });

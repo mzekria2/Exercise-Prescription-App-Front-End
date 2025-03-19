@@ -76,9 +76,9 @@ export default function Index() {
           </TouchableOpacity>
         </View>
         <View style={styles.container}>
-          <Text style={styles.title}>Welcome to the HTC app</Text>
-          <Link href="/WelcomeScreen/Welcomescreen">Tap to get Started</Link>
-          <Link href="/Notifs/notifications">Notifs</Link>
+          {/* <Text style={styles.title}>Welcome to the HTC app</Text> */}
+          {/* <Link href="/WelcomeScreen/Welcomescreen">Tap to get Started</Link> */}
+          {/* <Link href="/Notifs/notifications">Notifs</Link> */}
         </View>
       </LinearGradient>
     </PushTokenProvider>

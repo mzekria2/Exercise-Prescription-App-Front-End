@@ -8,6 +8,8 @@ import ConfettiCannon from "react-native-confetti-cannon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "../TranslationContext";
 
+
+const backendUrl = "https://exercisebackend.duckdns.org";
 // Animated kid mode title component
 const WigglyText = ({ text }: { text: string }) => {
   const wiggle = useRef(new Animated.Value(0)).current;
@@ -66,6 +68,7 @@ const HomePage: React.FC = () => {
     home: "Home",
     profile: "Profile",
   });
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTranslations = async () => {
@@ -82,6 +85,28 @@ const HomePage: React.FC = () => {
 
     fetchTranslations();
   }, [translate]);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/auth/profile`, {
+          method: "GET",
+          credentials: "include", // sends cookies for authentication
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUserId(data._id);
+          console.log("Fetched User ID:", data._id);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
 
   const { isKidMode, toggleKidMode } = useKidMode();
   const router = useRouter();
@@ -210,6 +235,26 @@ const HomePage: React.FC = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <TouchableOpacity
+          style={{
+            backgroundColor: isKidMode ? "#28a745" : "#007BFF",
+            padding: 15,
+            borderRadius: 50,
+            alignSelf: "center",
+            marginVertical: 20,
+            shadowColor: "#000",
+            shadowOpacity: 0.2,
+            shadowRadius: 5,
+            elevation: 5,
+            transform: [{ scale: isKidMode ? 1.1 : 1 }],
+          }}
+          onPress={() => router.push("/Notifs/notifications")}
+        >
+          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
+            Notifications
+          </Text>
+        </TouchableOpacity>
 
         {isKidMode && (
           <ConfettiCannon count={50} origin={{ x: 200, y: -10 }} fadeOut />

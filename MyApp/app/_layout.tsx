@@ -10,7 +10,7 @@ export default function RootLayout() {
     <PushTokenProvider>
         <TranslationProvider>
         <KidModeProvider>
-            <Slot />
+            {/* <Slot /> */}
             <Stack screenOptions={{ headerShown: false }} />
         </KidModeProvider>
         </TranslationProvider>
