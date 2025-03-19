@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, Animated, Dimensions, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { useRouter, Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfettiCannon from "react-native-confetti-cannon";
@@ -7,9 +7,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "../TranslationContext";
 import { useKidMode } from "../context/KidModeContext";
 import ProgressChart from "../progress/progress_display";
-import { normalHomePageStyles } from "./HomePage.style";
-import { kidModeHomePageStyles } from "./HomePage.style";
+import { normalHomePageStyles, kidModeHomePageStyles } from "./HomePage.style";
 
+const backendUrl = "https://exercisebackend.duckdns.org";
 const screenWidth = Dimensions.get("window").width;
 
 // Animated Kid Mode Title Component
@@ -68,7 +68,9 @@ const HomePage = () => {
     home: "Home",
     profile: "Profile",
   });
+  const [userId, setUserId] = useState(null);
 
+  // Fetch translated text
   useEffect(() => {
     const fetchTranslations = async () => {
       setTranslatedText({
@@ -84,6 +86,28 @@ const HomePage = () => {
     fetchTranslations();
   }, [translate]);
 
+  // Fetch user profile data (for example, to get the user ID)
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/auth/profile`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUserId(data._id);
+          console.log("Fetched User ID:", data._id);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
   const { isKidMode, toggleKidMode } = useKidMode();
   const router = useRouter();
 
@@ -98,7 +122,7 @@ const HomePage = () => {
     }
   };
 
-  // Choose the appropriate styles object based on Kid Mode flag.
+  // Choose appropriate style based on mode
   const styles = isKidMode ? kidModeHomePageStyles : normalHomePageStyles;
 
   return (
@@ -134,101 +158,109 @@ const HomePage = () => {
               style={[
                 styles.card,
                 isKidMode && {
-                  backgroundColor: "#f8bbd0", // pastel pink
+                  backgroundColor: "#f8bbd0", // pastel pink for Kid Mode
                   borderColor: "#f48fb1",
-                  borderWidth: screenWidth * 0.001,
+                  borderWidth: 1,
                   borderRadius: 20,
                 },
               ]}
               onPress={() => router.push("/video/upload_video")}
             >
-              <Text
-                style={[
-                  styles.cardTitle,
-                  { color: isKidMode ? "#fff" : "#000" },
-                ]}
-              >
-                {isKidMode
-                  ? "🎥 Upload a Super Cool Video!"
-                  : translatedText.uploadVideo}
-              </Text>
+              <Link href="/video/upload_video">
+                <Text style={[styles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+                  {isKidMode
+                    ? "🎥 Upload a Super Cool Video!"
+                    : translatedText.uploadVideo}
+                </Text>
+              </Link>
             </TouchableOpacity>
-
             <TouchableOpacity
               style={[
                 styles.card,
                 isKidMode && {
-                  backgroundColor: "#aed6f1", // pastel blue
+                  backgroundColor: "#aed6f1", // pastel blue for Kid Mode
                   borderColor: "#85c1e9",
-                  borderWidth: screenWidth * 0.001,
+                  borderWidth: 1,
                   borderRadius: 20,
                 },
               ]}
               onPress={() => router.push("/video/video_list")}
             >
-              <Text
-                style={[
-                  styles.cardTitle,
-                  { color: isKidMode ? "#fff" : "#000" },
-                ]}
-              >
-                {isKidMode
-                  ? "📺 Watch Amazing Videos!"
-                  : translatedText.viewVideos}
-              </Text>
+              <Link href="/video/video_list">
+                <Text style={[styles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+                  {isKidMode
+                    ? "📺 Watch Amazing Videos!"
+                    : translatedText.viewVideos}
+                </Text>
+              </Link>
             </TouchableOpacity>
           </View>
-
           <View style={styles.row}>
             <TouchableOpacity
               style={[
                 styles.cardFull,
                 isKidMode && {
-                  backgroundColor: "#dcedc8", // pastel green
+                  backgroundColor: "#dcedc8", // pastel green for Kid Mode
                   borderColor: "#c5e1a5",
-                  borderWidth: screenWidth * 0.001,
+                  borderWidth: 1,
                   borderRadius: 20,
                   marginBottom: 5,
                 },
               ]}
               onPress={() => router.push("/progress/progress_display")}
             >
-              <Text
-                style={[
-                  styles.cardTitle,
-                  { color: isKidMode ? "#fff" : "#000" },
-                ]}
-              >
-                {isKidMode
-                  ? "🏆 See Your Amazing Achievements!"
-                  : translatedText.viewProgress}
-              </Text>
+              <Link href="/progress/progress_display">
+                <Text style={[styles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+                  {isKidMode
+                    ? "🏆 See Your Amazing Achievements!"
+                    : translatedText.viewProgress}
+                </Text>
+              </Link>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Mini Progress Chart for current week */}
+        {/* Mini Progress Chart */}
         <View style={styles.progressContainer}>
           <ProgressChart isMini />
         </View>
 
+        {/* Notifications Button */}
+        <TouchableOpacity
+          style={{
+            backgroundColor: isKidMode ? "#28a745" : "#007BFF",
+            padding: 15,
+            borderRadius: 50,
+            alignSelf: "center",
+            marginVertical: 20,
+            shadowColor: "#000",
+            shadowOpacity: 0.2,
+            shadowRadius: 5,
+            elevation: 5,
+            transform: [{ scale: isKidMode ? 1.1 : 1 }],
+          }}
+          onPress={() => router.push("/Notifs/notifications")}
+        >
+          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
+            Notifications
+          </Text>
+        </TouchableOpacity>
+
         {isKidMode && <ConfettiCannon count={100} origin={{ x: 200, y: -10 }} fadeOut />}
 
-        {/* Horizontal container for buttons */}
+        {/* Horizontal container for Kid Mode toggle and Logout buttons */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
           <TouchableOpacity style={styles.toggleButton} onPress={toggleKidMode}>
             <Text style={styles.toggleButtonText}>
               {isKidMode ? "🔙 Exit Fun Mode" : "🎉 Enable Fun Mode"}
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>
               {isKidMode ? "🚪 Bye Bye!" : "🔒 Sign Out"}
             </Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </LinearGradient>
   );
