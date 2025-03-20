@@ -79,7 +79,7 @@ const SignUp = () => {
     return () => clearInterval(interval);
   }, [fullAnimatedTitle]);
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };

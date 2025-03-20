@@ -98,3 +98,4 @@ export const signUpScreenStyles = StyleSheet.create({
     fontFamily: "Georgia",
   },
 });
+

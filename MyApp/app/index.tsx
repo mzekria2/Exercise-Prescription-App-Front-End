@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import ModalSelector from "react-native-modal-selector"; 
 import { useTranslation } from "./TranslationContext"; 
+import { PushTokenProvider } from "./PushTokenProvider";
 
 const supportedLanguages = [
   { key: "en", label: "🇺🇸 English", value: "en" },
@@ -36,44 +37,51 @@ export default function Index() {
   }, [language, fetchTranslations]);
 
   return (
-    <LinearGradient colors={["#F8D6A9", "#EFA550"]} style={styles.gradientBackground}>
-      <View style={styles.languageContainer}>
-        <TouchableOpacity style={styles.languageButton}>
-          <ModalSelector
-            data={supportedLanguages}
-            initValue="🌍 Select Language"
-            onChange={(option) => setLanguage(option.value)}
-            selectStyle={styles.pickerStyle}
-            selectTextStyle={styles.pickerText}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.container}>
-        <Text style={styles.title}>{translatedText.title}</Text>
-
-        <View style={styles.imageCircleContainer}>
-          <Image
-            source={require("../assets/images/handremovebg.jpg")}
-            style={styles.backgroundPhoto}
-            resizeMode="contain"
-          />
+    <PushTokenProvider>
+      <LinearGradient colors={["#F8D6A9", "#EFA550"]} style={styles.gradientBackground}>
+        <View style={styles.languageContainer}>
+          <TouchableOpacity style={styles.languageButton}>
+            <ModalSelector
+              data={supportedLanguages}
+              initValue="🌍 Select Language"
+              onChange={(option) => setLanguage(option.value)}
+              selectStyle={styles.pickerStyle}
+              selectTextStyle={styles.pickerText}
+            />
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => router.push("/WelcomeScreen/Welcomescreen")}
-        >
-          <Text style={styles.loginButtonText}>{translatedText.loginText}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.signUpButton}
-          onPress={() => router.push("/Sign_Up/Sign_up")}
-        >
-          <Text style={styles.signUpButtonText}>{translatedText.signUpText}</Text>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+        <View style={styles.container}>
+          <Text style={styles.title}>{translatedText.title}</Text>
+
+          <View style={styles.imageCircleContainer}>
+            <Image
+              source={require("../assets/images/handremovebg.jpg")}
+              style={styles.backgroundPhoto}
+              resizeMode="contain"
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => router.push("/WelcomeScreen/Welcomescreen")}
+          >
+            <Text style={styles.loginButtonText}>{translatedText.loginText}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.signUpButton}
+            onPress={() => router.push("/Sign_Up/Sign_up")}
+          >
+            <Text style={styles.signUpButtonText}>{translatedText.signUpText}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.container}>
+          {/* <Text style={styles.title}>Welcome to the HTC app</Text> */}
+          {/* <Link href="/WelcomeScreen/Welcomescreen">Tap to get Started</Link> */}
+          {/* <Link href="/Notifs/notifications">Notifs</Link> */}
+        </View>
+      </LinearGradient>
+    </PushTokenProvider>
   );
 }
 
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
   },
   languageContainer: {
     position: "absolute",
-    top: 50,
+    top: 70,
     right: 20,
     zIndex: 10,
   },
@@ -105,10 +113,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Georgia',
   },
   container: {
-    flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    padding: 40,
     paddingHorizontal: 20,
+    marginTop: 50
   },
   title: {
     fontSize: 40,

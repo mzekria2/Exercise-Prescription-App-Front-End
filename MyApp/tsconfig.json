@@ -13,7 +13,6 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "app/AppNavigator.tsx"]
+    "app/AppNavigator.tsx"
+  ]
 }
