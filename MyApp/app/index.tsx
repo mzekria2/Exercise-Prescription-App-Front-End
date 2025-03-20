@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   languageContainer: {
     position: "absolute",
-    top: 50,
+    top: 70,
     right: 20,
     zIndex: 10,
   },
@@ -113,11 +113,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Georgia',
   },
   container: {
-    flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: 40,
     paddingHorizontal: 20,
+    marginTop: 50
   },
   title: {
     fontSize: 40,

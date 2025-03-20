@@ -226,24 +226,8 @@ const HomePage = () => {
         </View>
 
         {/* Notifications Button */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: isKidMode ? "#28a745" : "#007BFF",
-            padding: 15,
-            borderRadius: 50,
-            alignSelf: "center",
-            marginVertical: 20,
-            shadowColor: "#000",
-            shadowOpacity: 0.2,
-            shadowRadius: 5,
-            elevation: 5,
-            transform: [{ scale: isKidMode ? 1.1 : 1 }],
-          }}
-          onPress={() => router.push("/Notifs/notifications")}
-        >
-          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
-            Notifications
-          </Text>
+        <TouchableOpacity style={styles.notificationsButton} onPress={() => router.push("/Notifs/notifications")}>
+          <Text style={styles.notificationsButtonText}>Notifications</Text>
         </TouchableOpacity>
 
         {isKidMode && <ConfettiCannon count={100} origin={{ x: 200, y: -10 }} fadeOut />}

@@ -36,7 +36,7 @@ const normalHomePageStyles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom:10,
     marginHorizontal: 10,
   },
   card: {
@@ -84,7 +84,7 @@ const normalHomePageStyles = StyleSheet.create({
     marginBottom: 10,
   },
   toggleButton: {
-    backgroundColor: "#3949AB",
+    backgroundColor: "#2C3E50",
     borderRadius: 50,
     padding: 12,
     alignSelf: 'flex-start',
@@ -102,7 +102,7 @@ const normalHomePageStyles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoutButton: {
-    backgroundColor: "#C62828",
+    backgroundColor: "#2C3E50",
     padding: 12,
     borderRadius: 50,
     alignSelf: "flex-end",
@@ -119,9 +119,28 @@ const normalHomePageStyles = StyleSheet.create({
     fontWeight: "bold",
   },
   progressContainer: {
-    paddingBottom: 25,
+    top: 25,
     alignItems: "center",
     width: screenWidth * 0.9,
+  },
+  notificationsButton: {
+    top: 15,
+    backgroundColor: "#2C3E50",
+    padding: 15,
+    borderRadius: 50,
+    alignSelf: "flex-start",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    transform: [{ scale: 1 }],
+  },
+  notificationsButtonText: {
+    fontFamily: "Georgia",
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
@@ -247,6 +266,25 @@ const kidModeHomePageStyles = StyleSheet.create({
   progressContainer: {
     alignItems: "center",
     width: screenWidth * 0.9,
+  },
+  notificationsButton: {
+    backgroundColor: "#28a745",
+    padding: 15,
+    borderRadius: 50,
+    alignSelf: "center",
+    marginVertical: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    transform: [{ scale: 1 }],
+  },
+  notificationsButtonText: {
+    fontFamily: "Georgia",
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
