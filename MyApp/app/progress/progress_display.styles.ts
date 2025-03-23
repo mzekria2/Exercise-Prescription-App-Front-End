@@ -2,6 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
 
+// Normal Mode styles
 export const progressStyles = StyleSheet.create({
   chartContainer: {
     width: "100%",
@@ -11,8 +12,8 @@ export const progressStyles = StyleSheet.create({
   chartCard: {
     width: "95%",
     backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingVertical: 10,
+    borderRadius: 15,
+    paddingVertical: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -28,13 +29,6 @@ export const progressStyles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     paddingTop: 40,
-  },
-  kidTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ff6b6b",
-    textAlign: "center",
-    marginBottom: 10,
   },
   chartStyle: {
     borderRadius: 15,
@@ -61,7 +55,6 @@ export const progressStyles = StyleSheet.create({
     color: "#2C3E50",
     fontFamily: "Georgia",
   },
-  /* New styles for the bottom stats cards */
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
@@ -85,6 +78,87 @@ export const progressStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#2C3E50",
+    fontFamily: "Georgia",
+    textAlign: "center",
+  },
+});
+
+// Kid Mode styles
+export const kidProgressStyles = StyleSheet.create({
+  chartContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginVertical: 24,
+  },
+  chartCard: {
+    width: "95%",
+    backgroundColor: "#FFE4E1", // Playful tone
+    borderRadius: 15,
+    paddingVertical: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  kidTitle: {
+    fontFamily: "Georgia",
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#ff6b6b",
+    textAlign: "center",
+    marginBottom: 20,
+    paddingTop: 40,
+  },
+  chartStyle: {
+    borderRadius: 15,
+    paddingVertical: 10,
+  },
+  daysLabel: {
+    fontSize: 16,
+    color: "#ff6b6b",
+    textAlign: "center",
+    marginTop: 10,
+    fontFamily: "Georgia",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "90%",
+    paddingHorizontal: 10,
+    marginTop: 15,
+  },
+  weekText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#ff6b6b",
+    fontFamily: "Georgia",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 30,
+    width: "90%",
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: "#FFF0F5",
+    borderRadius: 15,
+    alignItems: "center",
+    marginHorizontal: 5,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  statText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#ff6b6b",
     fontFamily: "Georgia",
     textAlign: "center",
   },

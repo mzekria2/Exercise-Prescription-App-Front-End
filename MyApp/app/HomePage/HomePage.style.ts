@@ -6,7 +6,7 @@ const normalHomePageStyles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 80,
-    paddingBottom: 80,
+    paddingBottom: 40,
     backgroundColor: "#F5F5F5",
   },
   header: {
@@ -36,13 +36,13 @@ const normalHomePageStyles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom:10,
-    marginHorizontal: 10,
+    marginBottom: 10,
   },
   card: {
-    flex: 0.8,
+    flex: 0.48,
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 21,
+    marginBottom: 10,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -53,13 +53,11 @@ const normalHomePageStyles = StyleSheet.create({
     elevation: 4,
     marginHorizontal: 5,
 
-  
   },
   cardFull: {
-    flex: 0.8,
+    flex: 0.48,
     backgroundColor: "#fff",
-    padding: 25,
-    marginTop: 10,
+    padding: 20,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: 'center',
@@ -231,8 +229,7 @@ const kidModeHomePageStyles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     alignSelf: "flex-end", // Centered in Kid Mode
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 5,
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -264,15 +261,16 @@ const kidModeHomePageStyles = StyleSheet.create({
     fontWeight: "bold",
   },
   progressContainer: {
+    top: 30,
     alignItems: "center",
     width: screenWidth * 0.9,
   },
   notificationsButton: {
+    top: 15,
     backgroundColor: "#28a745",
     padding: 15,
     borderRadius: 50,
-    alignSelf: "center",
-    marginVertical: 15,
+    alignSelf: "flex-start",
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 5,

@@ -9,6 +9,7 @@ import { useKidMode } from "../context/KidModeContext";
 import ProgressChart from "../progress/progress_display";
 import { normalHomePageStyles, kidModeHomePageStyles } from "./HomePage.style";
 
+
 const backendUrl = "https://exercisebackend.duckdns.org";
 const screenWidth = Dimensions.get("window").width;
 
@@ -139,7 +140,7 @@ const HomePage = () => {
         <View style={styles.header}>
           <View style={styles.userInfo}>
             {isKidMode ? (
-              <WigglyText text="🎈 Welcome to the FUN ZONE! 🎉" />
+              <WigglyText text="🎈 FUN ZONE! 🎉" />
             ) : (
               <Text style={styles.greeting}>{translatedText.welcome}</Text>
             )}

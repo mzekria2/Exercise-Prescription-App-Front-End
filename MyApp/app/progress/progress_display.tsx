@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { useKidMode } from "../context/KidModeContext";
 import { useRouter } from "expo-router";
@@ -11,7 +11,8 @@ import {
   parseISO,
 } from "date-fns";
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
-import { progressStyles } from "./progress_display.styles";
+import { progressStyles, kidProgressStyles } from "./progress_display.styles";
+
 
 const screenWidth = Dimensions.get("window").width;
 const apiURLBackend = "https://exercisebackend.duckdns.org";
@@ -52,7 +53,7 @@ const ProgressChart = ({ isMini = false }) => {
 
   // Kid Mode: whimsical labels; normal mode: standard labels
   const daysOfWeek = isKidMode
-    ? ["🌞 Sun", "🚀 Mon", "🎨 Tue", "📚 Wed", "🎶 Thu", "🎮 Fri", "🌈 Sat"]
+    ? ["🌞Sun", "🚀Mon", "🎨Tue", "📚Wed", "🎶Thu", "🎮Fri", "🌈Sat"]
     : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const today = new Date();
@@ -86,7 +87,7 @@ const ProgressChart = ({ isMini = false }) => {
 
   // Use smaller dimensions if mini
   const chartWidth = isMini ? screenWidth * 0.85 : screenWidth * 0.9;
-  const chartHeight = isMini ? 180 : 300;
+  const chartHeight = isMini ? 205 : 300;
 
   // Calculate total videos watched across all time
   const totalVideosWatched = progressData.reduce((acc, item) => {
@@ -96,13 +97,22 @@ const ProgressChart = ({ isMini = false }) => {
     return acc;
   }, 0);
 
+  // Select appropriate styles based on Kid Mode
+  const currentStyles = isKidMode ? kidProgressStyles : progressStyles;
+
   return (
-    <View style={progressStyles.chartContainer}>
-      <Text style={isKidMode ? progressStyles.kidTitle : progressStyles.chartTitle}>
+    <View style={currentStyles.chartContainer}>
+      <Text
+        style={
+          isKidMode
+            ? currentStyles.kidTitle || currentStyles.chartTitle
+            : currentStyles.chartTitle
+        }
+      >
         {isKidMode ? "🎯 Your Amazing Progress! 🚀" : "Progress Over Time"}
       </Text>
 
-      <View style={progressStyles.chartCard}>
+      <View style={currentStyles.chartCard}>
         <BarChart
           data={chartData}
           width={chartWidth}
@@ -124,28 +134,26 @@ const ProgressChart = ({ isMini = false }) => {
             barPercentage: 0.6,
           }}
           segments={maxYValue}
-          style={progressStyles.chartStyle}
+          style={currentStyles.chartStyle}
         />
       </View>
 
       {/* Only show these controls/cards in non-mini mode */}
       {!isMini && (
         <>
-          <Text style={progressStyles.daysLabel}>Days of the Week</Text>
-          <View style={progressStyles.buttonContainer}>
+          <Text style={currentStyles.daysLabel}>Days of the Week</Text>
+          <View style={currentStyles.buttonContainer}>
             <TouchableOpacity onPress={() => setWeekOffset(weekOffset + 1)}>
               <FontAwesomeIcon name="arrow-left" size={16} color="#2C3E50" />
             </TouchableOpacity>
 
-            <Text style={progressStyles.weekText}>
+            <Text style={currentStyles.weekText}>
               {start.toDateString()} - {end.toDateString()}
             </Text>
 
             <TouchableOpacity
               onPress={() => {
-                if (weekOffset > 0) {
-                  setWeekOffset(weekOffset - 1);
-                }
+                if (weekOffset > 0) setWeekOffset(weekOffset - 1);
               }}
               disabled={weekOffset === 0}
             >
@@ -158,17 +166,15 @@ const ProgressChart = ({ isMini = false }) => {
           </View>
 
           {/* Two side-by-side cards for Streak and Videos Watched */}
-          <View style={progressStyles.statsContainer}>
-            {/* Streak Card */}
-            <View style={progressStyles.statCard}>
-              <Text style={progressStyles.statText}>
+          <View style={currentStyles.statsContainer}>
+            <View style={currentStyles.statCard}>
+              <Text style={currentStyles.statText}>
                 Current Streak 🔥: {progressData.length} Days
               </Text>
             </View>
 
-            {/* Total Videos Watched Card */}
-            <View style={progressStyles.statCard}>
-              <Text style={progressStyles.statText}>
+            <View style={currentStyles.statCard}>
+              <Text style={currentStyles.statText}>
                 Videos Watched 🎉: {totalVideosWatched}
               </Text>
             </View>
