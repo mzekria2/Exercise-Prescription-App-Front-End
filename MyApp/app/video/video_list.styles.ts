@@ -65,7 +65,17 @@ export const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 10,
-    zIndex: 1,
+
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center", // center the child (icon or Text)
+    alignItems: "center",
+
+    zIndex: 100,
+    elevation: 100, // make sure on Android it floats above the card
   },
   modalOverlay: {
     flex: 1,

@@ -4,14 +4,14 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   ScrollView,
 } from "react-native";
 import { Link, useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "../TranslationContext";
 import { welcomeScreenStyles as styles } from "./Welcomescreen.styles";
-
-const backendUrl = "https://exercisebackend.duckdns.org";
+import { blindIndex } from "../utils/encryption";
+const backendUrl = "http://10.0.0.86:3000";
+//const backendUrl = "https://exercisebackend.duckdns.org";
 
 export default function WelcomeScreen() {
   const { translate } = useTranslation();
@@ -22,17 +22,24 @@ export default function WelcomeScreen() {
   const router = useRouter();
 
   // Animated text: full text to animate (translated)
-  const [fullAnimatedText, setFullAnimatedText] = useState("Together Towards Recovery");
+  const [fullAnimatedText, setFullAnimatedText] = useState(
+    "Together Towards Recovery"
+  );
   const [animatedText, setAnimatedText] = useState("");
 
   // Translated text states for all UI strings
   const [translatedTitle, setTranslatedTitle] = useState("Welcome Back");
-  const [translatedSubtitle, setTranslatedSubtitle] = useState("Log in to access your account");
-  const [translatedEmailPlaceholder, setTranslatedEmailPlaceholder] = useState("Email");
-  const [translatedPasswordPlaceholder, setTranslatedPasswordPlaceholder] = useState("Password");
+  const [translatedSubtitle, setTranslatedSubtitle] = useState(
+    "Log in to access your account"
+  );
+  const [translatedEmailPlaceholder, setTranslatedEmailPlaceholder] =
+    useState("Email");
+  const [translatedPasswordPlaceholder, setTranslatedPasswordPlaceholder] =
+    useState("Password");
   const [translatedLogin, setTranslatedLogin] = useState("Log In");
   const [translatedSignUp, setTranslatedSignUp] = useState("Sign Up");
-  const [translatedForgotPassword, setTranslatedForgotPassword] = useState("Forgot Password?");
+  const [translatedForgotPassword, setTranslatedForgotPassword] =
+    useState("Forgot Password?");
 
   // Translate all text on mount, including the animated text
   useEffect(() => {
@@ -68,15 +75,18 @@ export default function WelcomeScreen() {
     const normalizedEmail = email.trim().toLowerCase();
 
     if (!normalizedEmail || !password) {
-      setErrorMessage(await translate("Please fill in both email and password."));
+      setErrorMessage(
+        await translate("Please fill in both email and password.")
+      );
       return;
     }
 
     try {
+      const idx = await blindIndex(email);
       const response = await fetch(`${backendUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: normalizedEmail, password }),
+        body: JSON.stringify({ index: idx, password }),
         credentials: "include",
       });
 
@@ -89,7 +99,9 @@ export default function WelcomeScreen() {
         );
       }
     } catch (error) {
-      setErrorMessage(await translate("Unable to login. Please try again later."));
+      setErrorMessage(
+        await translate("Unable to login. Please try again later.")
+      );
     }
   };
 
@@ -101,7 +113,9 @@ export default function WelcomeScreen() {
       {/* Card‐like container for the form */}
       <View style={styles.card}>
         {params.success === "true" && (
-          <Text style={[styles.subtitle, { color: "green", fontWeight: "bold" }]}>
+          <Text
+            style={[styles.subtitle, { color: "green", fontWeight: "bold" }]}
+          >
             {translatedTitle}
           </Text>
         )}

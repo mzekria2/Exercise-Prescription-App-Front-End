@@ -17,7 +17,8 @@ import {
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
 
-const backendUrl = "https://exercisebackend.duckdns.org/";
+// const backendUrl = "https://exercisebackend.duckdns.org/";
+const backendUrl = "http://10.0.0.86:3000";
 const API_URL = backendUrl + "api/schedule";
 
 const daysOfWeekMap: { [key: number]: string } = {
@@ -170,7 +171,10 @@ const DeleteNotifications: React.FC = () => {
                     {daysOfWeekMap[item.dayOfWeek]}
                   </Title>
                   {item.times.map((time, index) => (
-                    <View key={`${item._id}-${index}`} style={styles.notificationRow}>
+                    <View
+                      key={`${item._id}-${index}`}
+                      style={styles.notificationRow}
+                    >
                       <Text style={styles.notificationText}>
                         {time} - {item.messages[index]}
                       </Text>
@@ -222,7 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     marginTop: 70,
-    backgroundColor: "#F5F5F5", 
+    backgroundColor: "#F5F5F5",
   },
   header: {
     fontSize: 24,

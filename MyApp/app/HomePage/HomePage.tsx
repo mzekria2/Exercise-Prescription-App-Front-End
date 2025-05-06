@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, Animated, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+} from "react-native";
 import { useRouter, Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import ConfettiCannon from "react-native-confetti-cannon";
@@ -9,7 +15,8 @@ import { useKidMode } from "../context/KidModeContext";
 import ProgressChart from "../progress/progress_display";
 import { normalHomePageStyles, kidModeHomePageStyles } from "./HomePage.style";
 
-const backendUrl = "https://exercisebackend.duckdns.org";
+// const backendUrl = "https://exercisebackend.duckdns.org";
+const backendUrl = "http://10.0.0.86:3000";
 const screenWidth = Dimensions.get("window").width;
 
 // Animated Kid Mode Title Component
@@ -144,7 +151,9 @@ const HomePage = () => {
               <Text style={styles.greeting}>{translatedText.welcome}</Text>
             )}
             {isKidMode ? (
-              <Text style={styles.subtitle}>Get ready for an adventure! 🚀</Text>
+              <Text style={styles.subtitle}>
+                Get ready for an adventure! 🚀
+              </Text>
             ) : (
               <Text style={styles.subtitle}>{translatedText.subtitle}</Text>
             )}
@@ -167,7 +176,12 @@ const HomePage = () => {
               onPress={() => router.push("/video/upload_video")}
             >
               <Link href="/video/upload_video">
-                <Text style={[styles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+                <Text
+                  style={[
+                    styles.cardTitle,
+                    { color: isKidMode ? "#fff" : "#000" },
+                  ]}
+                >
                   {isKidMode
                     ? "🎥 Upload a Super Cool Video!"
                     : translatedText.uploadVideo}
@@ -187,7 +201,12 @@ const HomePage = () => {
               onPress={() => router.push("/video/video_list")}
             >
               <Link href="/video/video_list">
-                <Text style={[styles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+                <Text
+                  style={[
+                    styles.cardTitle,
+                    { color: isKidMode ? "#fff" : "#000" },
+                  ]}
+                >
                   {isKidMode
                     ? "📺 Watch Amazing Videos!"
                     : translatedText.viewVideos}
@@ -210,7 +229,12 @@ const HomePage = () => {
               onPress={() => router.push("/progress/progress_display")}
             >
               <Link href="/progress/progress_display">
-                <Text style={[styles.cardTitle, { color: isKidMode ? "#fff" : "#000" }]}>
+                <Text
+                  style={[
+                    styles.cardTitle,
+                    { color: isKidMode ? "#fff" : "#000" },
+                  ]}
+                >
                   {isKidMode
                     ? "🏆 See Your Amazing Achievements!"
                     : translatedText.viewProgress}
@@ -226,14 +250,25 @@ const HomePage = () => {
         </View>
 
         {/* Notifications Button */}
-        <TouchableOpacity style={styles.notificationsButton} onPress={() => router.push("/Notifs/notifications")}>
+        <TouchableOpacity
+          style={styles.notificationsButton}
+          onPress={() => router.push("/Notifs/notifications")}
+        >
           <Text style={styles.notificationsButtonText}>Notifications</Text>
         </TouchableOpacity>
 
-        {isKidMode && <ConfettiCannon count={100} origin={{ x: 200, y: -10 }} fadeOut />}
+        {isKidMode && (
+          <ConfettiCannon count={100} origin={{ x: 200, y: -10 }} fadeOut />
+        )}
 
         {/* Horizontal container for Kid Mode toggle and Logout buttons */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
+        >
           <TouchableOpacity style={styles.toggleButton} onPress={toggleKidMode}>
             <Text style={styles.toggleButtonText}>
               {isKidMode ? "🔙 Exit Fun Mode" : "🎉 Enable Fun Mode"}

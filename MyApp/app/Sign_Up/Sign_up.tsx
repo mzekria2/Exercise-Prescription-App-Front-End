@@ -9,16 +9,17 @@ import {
 import { signUpScreenStyles as styles } from "./Sign_up.styles";
 import { useRouter } from "expo-router";
 import { useTranslation } from "../TranslationContext";
-
+import { blindIndex, encryptEmail } from "../utils/encryption";
 const SignUp = () => {
-  const backendUrl = "https://exercisebackend.duckdns.org";
+  // const backendUrl = "https://exercisebackend.duckdns.org";
+  const backendUrl = "http://10.0.0.86:3000";
   const { translate } = useTranslation();
   const router = useRouter();
 
   // Default translated texts
   const [translatedText, setTranslatedText] = useState({
     signUpTitle: "Create Your Account",
-    namePlaceholder: "Enter your Name",
+    // namePlaceholder: "Enter your Name",
     emailPlaceholder: "Enter your Email Address",
     passwordPlaceholder: "Create a Password",
     confirmPasswordPlaceholder: "Confirm your Password",
@@ -26,14 +27,16 @@ const SignUp = () => {
   });
 
   // Animated title states
-  const [fullAnimatedTitle, setFullAnimatedTitle] = useState("Create Your Account");
+  const [fullAnimatedTitle, setFullAnimatedTitle] = useState(
+    "Create Your Account"
+  );
   const [animatedTitle, setAnimatedTitle] = useState("");
 
   // Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
+  // const [name, setName] = useState("");
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -44,15 +47,17 @@ const SignUp = () => {
   useEffect(() => {
     const fetchTranslations = async () => {
       const signUpTitle = await translate("Create Your Account");
-      const namePlaceholder = await translate("Enter your Name");
+      // const namePlaceholder = await translate("Enter your Name");
       const emailPlaceholder = await translate("Enter your Email Address");
       const passwordPlaceholder = await translate("Create a Password");
-      const confirmPasswordPlaceholder = await translate("Confirm your Password");
+      const confirmPasswordPlaceholder = await translate(
+        "Confirm your Password"
+      );
       const signUpButton = await translate("Create Account");
 
       setTranslatedText({
         signUpTitle,
-        namePlaceholder,
+        // namePlaceholder,
         emailPlaceholder,
         passwordPlaceholder,
         confirmPasswordPlaceholder,
@@ -119,12 +124,23 @@ const SignUp = () => {
     }
 
     try {
+      console.log("in try");
+      const idx = await blindIndex(email);
+      console.log("Blind index:", idx);
+      const { iv, ct } = await encryptEmail(email);
+      console.log("Encrypted email:", { iv, ct });
+
       const response = await fetch(`${backendUrl}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({
+          index: idx,
+          emailCipher: { iv, ct },
+          password,
+          plainEmail: email,
+        }),
       });
 
       const data = await response.json();
@@ -152,12 +168,12 @@ const SignUp = () => {
         {/* (Optional) Static Title inside the card; remove if you only want the animated text */}
         {/* <Text style={styles.title}>{translatedText.signUpTitle}</Text> */}
 
-        <TextInput
+        {/* <TextInput
           style={styles.input}
-          placeholder={translatedText.namePlaceholder}
+          // placeholder={translatedText.namePlaceholder}
           placeholderTextColor="#888"
           onChangeText={setName}
-        />
+        /> */}
 
         <TextInput
           style={styles.input}
