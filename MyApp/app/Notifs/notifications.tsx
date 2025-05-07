@@ -1,11 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  Modal,
-  Alert,
-} from 'react-native';
+import React, { useContext, useState, useEffect } from "react";
+import { View, FlatList, TouchableOpacity, Modal, Alert } from "react-native";
 import {
   Button,
   Text,
@@ -13,15 +7,16 @@ import {
   Card,
   Title,
   Provider as PaperProvider,
-} from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
+} from "react-native-paper";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import DropDownPicker from "react-native-dropdown-picker";
 import { PushTokenContext } from "../PushTokenProvider";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
-import { styles, lightTheme } from './notifications.styles';
+import { styles, lightTheme } from "./notifications.styles";
 
-const backendUrl = "https://exercisebackend.duckdns.org";
+// const backendUrl = "https://exercisebackend.duckdns.org";
+const backendUrl = "http://10.0.0.86:3000";
 const API_URL = `${backendUrl}/api/schedule/schedule`;
 
 const testConnection = async () => {
@@ -45,7 +40,10 @@ interface TimePickerProps {
   time: string | null;
   onTimeSelected: (time: string) => void;
 }
-const TimePickerComponent: React.FC<TimePickerProps> = ({ time, onTimeSelected }) => {
+const TimePickerComponent: React.FC<TimePickerProps> = ({
+  time,
+  onTimeSelected,
+}) => {
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const initialDate = time ? new Date(`1970-01-01T${time}:00`) : new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
@@ -58,8 +56,8 @@ const TimePickerComponent: React.FC<TimePickerProps> = ({ time, onTimeSelected }
 
   const confirmTime = () => {
     const formattedTime = selectedDate.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
       hour12: true,
     });
     onTimeSelected(formattedTime);
@@ -68,8 +66,11 @@ const TimePickerComponent: React.FC<TimePickerProps> = ({ time, onTimeSelected }
 
   return (
     <View>
-      <TouchableOpacity style={styles.timeInput} onPress={() => setShowPicker(true)}>
-        <Text style={styles.timeText}>{time ? time : 'Select Time'}</Text>
+      <TouchableOpacity
+        style={styles.timeInput}
+        onPress={() => setShowPicker(true)}
+      >
+        <Text style={styles.timeText}>{time ? time : "Select Time"}</Text>
       </TouchableOpacity>
       {showPicker && (
         <Modal transparent={true} animationType="slide">
@@ -83,7 +84,11 @@ const TimePickerComponent: React.FC<TimePickerProps> = ({ time, onTimeSelected }
                 onChange={handleChange}
                 textColor={lightTheme.colors.text}
               />
-              <Button mode="contained" onPress={confirmTime} style={styles.confirmButton}>
+              <Button
+                mode="contained"
+                onPress={confirmTime}
+                style={styles.confirmButton}
+              >
                 Confirm
               </Button>
             </View>
@@ -101,14 +106,23 @@ interface MessagePickerProps {
   message: string;
   onMessageSelected: (message: string) => void;
 }
-const MessagePickerComponent: React.FC<MessagePickerProps> = ({ message, onMessageSelected }) => {
+const MessagePickerComponent: React.FC<MessagePickerProps> = ({
+  message,
+  onMessageSelected,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<string>(message || "");
   const [items, setItems] = useState([
-    { label: "Reminder 1: It's time for your hand therapy exercises!", value: "It's time for your hand therapy exercises!" },
-    { label: 'Reminder 2: Take a break and stretch!', value: "Take a break and stretch!" },
-    { label: 'Reminder 3: Time for Exercise!', value: "Time for Exercise!" },
-    { label: 'Custom Message', value: 'custom' },
+    {
+      label: "Reminder 1: It's time for your hand therapy exercises!",
+      value: "It's time for your hand therapy exercises!",
+    },
+    {
+      label: "Reminder 2: Take a break and stretch!",
+      value: "Take a break and stretch!",
+    },
+    { label: "Reminder 3: Time for Exercise!", value: "Time for Exercise!" },
+    { label: "Custom Message", value: "custom" },
   ]);
 
   useEffect(() => {
@@ -146,7 +160,11 @@ interface HeaderProps {
   onDayToggle: (day: string) => void;
   selectedDays: string[];
 }
-const HeaderComponent: React.FC<HeaderProps> = ({ daysOfWeek, onDayToggle, selectedDays }) => {
+const HeaderComponent: React.FC<HeaderProps> = ({
+  daysOfWeek,
+  onDayToggle,
+  selectedDays,
+}) => {
   return (
     <View style={styles.headerWrapper}>
       <Title style={styles.headerTitle}>Schedule Notifications</Title>
@@ -159,7 +177,11 @@ const HeaderComponent: React.FC<HeaderProps> = ({ daysOfWeek, onDayToggle, selec
             style={styles.dayButton}
           >
             <Text style={styles.dayText}>{day}</Text>
-            <SquareCheckbox day={day} selectedDays={selectedDays} onToggle={onDayToggle} />
+            <SquareCheckbox
+              day={day}
+              selectedDays={selectedDays}
+              onToggle={onDayToggle}
+            />
           </TouchableOpacity>
         ))}
       </View>
@@ -175,7 +197,11 @@ interface SquareCheckboxProps {
   selectedDays: string[];
   onToggle: (day: string) => void;
 }
-const SquareCheckbox: React.FC<SquareCheckboxProps> = ({ day, selectedDays, onToggle }) => {
+const SquareCheckbox: React.FC<SquareCheckboxProps> = ({
+  day,
+  selectedDays,
+  onToggle,
+}) => {
   const isChecked = selectedDays.includes(day);
   return (
     <TouchableOpacity
@@ -218,26 +244,41 @@ const DayCard: React.FC<DayCardProps> = ({
         <Title style={styles.cardTitle}>{day}</Title>
         <Text style={styles.label}>Number of Notifications</Text>
         <View style={styles.notificationCount}>
-          <Button mode="outlined" onPress={() => onCountChange(false)} style={styles.countButton}>
+          <Button
+            mode="outlined"
+            onPress={() => onCountChange(false)}
+            style={styles.countButton}
+          >
             -
           </Button>
           <Text style={styles.countText}>{notificationCount}</Text>
-          <Button mode="outlined" onPress={() => onCountChange(true)} style={styles.countButton}>
+          <Button
+            mode="outlined"
+            onPress={() => onCountChange(true)}
+            style={styles.countButton}
+          >
             +
           </Button>
         </View>
         <Text style={styles.label}>Set Notification Times and Messages</Text>
         {Array.from({ length: notificationCount }).map((_, index) => (
-          <View key={index} style={[styles.notificationInput, { zIndex: 1000 - index }]}>
+          <View
+            key={index}
+            style={[styles.notificationInput, { zIndex: 1000 - index }]}
+          >
             <TimePickerComponent
               time={times[index]}
-              onTimeSelected={(selectedTime) => onTimeChange(index, selectedTime)}
+              onTimeSelected={(selectedTime) =>
+                onTimeChange(index, selectedTime)
+              }
             />
             <MessagePickerComponent
               message={messages[index] || ""}
-              onMessageSelected={(selectedMsg) => onMessageChange(index, selectedMsg)}
+              onMessageSelected={(selectedMsg) =>
+                onMessageChange(index, selectedMsg)
+              }
             />
-            {messages[index] === 'custom' && (
+            {messages[index] === "custom" && (
               <TextInput
                 mode="outlined"
                 label="Custom Message"
@@ -256,14 +297,26 @@ const DayCard: React.FC<DayCardProps> = ({
 // -----------------------
 // Main App Component
 // -----------------------
-const daysOfWeek: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const daysOfWeek: string[] = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
 
 const App: React.FC = () => {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [notificationsPerDay, setNotificationsPerDay] = useState<{ [key: string]: number }>({});
+  const [notificationsPerDay, setNotificationsPerDay] = useState<{
+    [key: string]: number;
+  }>({});
   const [times, setTimes] = useState<{ [key: string]: (string | null)[] }>({});
   const [messages, setMessages] = useState<{ [key: string]: string[] }>({});
-  const [customMessages, setCustomMessages] = useState<{ [key: string]: string[] }>({});
+  const [customMessages, setCustomMessages] = useState<{
+    [key: string]: string[];
+  }>({});
   const [userId, setUserId] = useState<string | null>(null);
 
   const expoPushToken = useContext(PushTokenContext);
@@ -273,8 +326,8 @@ const App: React.FC = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(`${backendUrl}/api/auth/profile`, {
-          method: 'GET',
-          credentials: 'include',
+          method: "GET",
+          credentials: "include",
         });
         if (response.ok) {
           const userData = await response.json();
@@ -352,7 +405,11 @@ const App: React.FC = () => {
     });
   };
 
-  const handleCustomMessageChange = (day: string, index: number, text: string) => {
+  const handleCustomMessageChange = (
+    day: string,
+    index: number,
+    text: string
+  ) => {
     setCustomMessages((prev) => {
       const newCustoms = [...(prev[day] || [""])];
       newCustoms[index] = text;
@@ -364,7 +421,10 @@ const App: React.FC = () => {
     const token = expoPushToken;
     console.log("Current expoPushToken:", token);
     if (!token) {
-      Alert.alert("Error", "Push token not available. Please enable notifications.");
+      Alert.alert(
+        "Error",
+        "Push token not available. Please enable notifications."
+      );
       return;
     }
     if (!userId) {
@@ -379,7 +439,10 @@ const App: React.FC = () => {
       const dayMessages = messages[day] || [];
       const dayTimes = times[day] || [];
       if (dayTimes.some((t) => !t) || dayMessages.some((m) => !m)) {
-        Alert.alert("Validation Error", `Please complete all fields for ${day}`);
+        Alert.alert(
+          "Validation Error",
+          `Please complete all fields for ${day}`
+        );
         return;
       }
     }
@@ -418,11 +481,17 @@ const App: React.FC = () => {
       notificationCount={notificationsPerDay[day]}
       times={times[day]}
       messages={messages[day]}
-      onCountChange={(increment) => handleNotificationCountChange(day, increment)}
+      onCountChange={(increment) =>
+        handleNotificationCountChange(day, increment)
+      }
       onTimeChange={(index, time) => handleTimeChange(day, index, time)}
-      onMessageChange={(index, message) => handleMessageChange(day, index, message)}
+      onMessageChange={(index, message) =>
+        handleMessageChange(day, index, message)
+      }
       customMessages={customMessages[day] || [""]}
-      setCustomMessage={(index, text) => handleCustomMessageChange(day, index, text)}
+      setCustomMessage={(index, text) =>
+        handleCustomMessageChange(day, index, text)
+      }
     />
   );
 
@@ -439,16 +508,24 @@ const App: React.FC = () => {
       <TouchableOpacity style={styles.footerButton} onPress={testConnection}>
         <Text style={styles.footerButtonText}>Test Server Connection</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.footerButton} onPress={scheduleNotifications}>
+      <TouchableOpacity
+        style={styles.footerButton}
+        onPress={scheduleNotifications}
+      >
         <Text style={styles.footerButtonText}>Schedule Notifications</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.footerButton} onPress={() => router.push('./deleteNotifications')}>
+      <TouchableOpacity
+        style={styles.footerButton}
+        onPress={() => router.push("./deleteNotifications")}
+      >
         <Text style={styles.footerButtonText}>Delete Notifications</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.footerButton} onPress={() => router.push("/HomePage/HomePage")}>
+      <TouchableOpacity
+        style={styles.footerButton}
+        onPress={() => router.push("/HomePage/HomePage")}
+      >
         <Text style={styles.footerButtonText}>Back</Text>
       </TouchableOpacity>
-
     </View>
   );
 

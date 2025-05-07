@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Dimensions, TouchableOpacity } from "react-native";
+import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { useKidMode } from "../context/KidModeContext";
 import { useRouter } from "expo-router";
@@ -12,10 +13,12 @@ import {
 } from "date-fns";
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 import { progressStyles, kidProgressStyles } from "./progress_display.styles";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const PROGRESS_KEY = "videoProgress";
 
 const screenWidth = Dimensions.get("window").width;
-const apiURLBackend = "https://exercisebackend.duckdns.org";
+// const backendUrl = "https://exercisebackend.duckdns.org";
+const backendUrl = "http://10.0.0.86:3000";
 
 const ProgressChart = ({ isMini = false }) => {
   const router = useRouter();
@@ -29,22 +32,17 @@ const ProgressChart = ({ isMini = false }) => {
 
   const getProgress = async () => {
     try {
-      const response = await fetch(`${apiURLBackend}/progress/progressData`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const raw = await AsyncStorage.getItem(PROGRESS_KEY);
+      const store: Record<string, any>[] = JSON.parse(raw || "[]");
 
-      if (response.status === 401 || response.status === 403) {
-        console.warn("Token expired. Redirecting to sign-up...");
-        router.replace("/WelcomeScreen/Welcomescreen");
-        return;
-      }
-
-      const progressDataResponse = await response.json();
-      setProgressData(progressDataResponse);
+      //Convert store into the shape you need for the chart:
+      const progressData = Object.entries(store).map(([videoId, dates]) => ({
+        videoId,
+        dateCompleted: dates,
+      }));
+      setProgressData(progressData);
     } catch (error) {
-      console.error("Error fetching progress data:", error);
+      console.error("Error loading local progress:", error);
     }
   };
 
@@ -61,7 +59,10 @@ const ProgressChart = ({ isMini = false }) => {
   const end = endOfWeek(subWeeks(today, effectiveWeekOffset));
 
   // Initialize each day with zero
-  const countsByDay = daysOfWeek.reduce((acc, day) => ({ ...acc, [day]: 0 }), {});
+  const countsByDay = daysOfWeek.reduce(
+    (acc, day) => ({ ...acc, [day]: 0 }),
+    {}
+  );
 
   // Tally up completions for each day of the selected week
   progressData.forEach((item) => {
@@ -117,9 +118,11 @@ const ProgressChart = ({ isMini = false }) => {
           data={chartData}
           width={chartWidth}
           height={chartHeight}
-          fromZero
-          showValuesOnTopOfBars
-          withHorizontalLabels
+          fromZero={true}
+          showValuesOnTopOfBars={false}
+          withHorizontalLabels={true}
+          yAxisLabel=""
+          segments={maxYValue}
           chartConfig={{
             backgroundColor: "#fff",
             backgroundGradientFrom: "#fff",
@@ -133,8 +136,9 @@ const ProgressChart = ({ isMini = false }) => {
             barRadius: 4,
             barPercentage: 0.6,
           }}
-          segments={maxYValue}
-          style={currentStyles.chartStyle}
+          showBarTops={false}
+          yAxisInterval={1} // Ensure even spacing
+          style={progressStyles.chartStyle}
         />
       </View>
 

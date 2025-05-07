@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { forgotPasswordStyles } from "../ForgotPassword/ForgotPassword.styles";
+// const backendUrl = "https://exercisebackend.duckdns.org";
+const backendUrl = "http://10.0.0.86:3000";
 
 const ResetPassword = () => {
   // Manually extract query parameters from the URL
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token") || "";
-  const email = urlParams.get("email") || "";
+  const index = urlParams.get("index") || "";
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,7 +31,7 @@ const ResetPassword = () => {
 
     try {
       const response = await fetch(
-        `https://exercisebackend.duckdns.org/api/auth/reset-password?token=${token}&email=${email}`,
+        `${backendUrl}/api/auth/reset-password?token=${token}&index=${index}`,
         {
           method: "POST",
           headers: {

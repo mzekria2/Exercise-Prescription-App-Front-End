@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Modal } from "react-native";
 import { Link, useRouter } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { AntDesign } from "@expo/vector-icons";
 import { useKidMode } from "../context/KidModeContext"; // Import Kid Mode
 import { LinearGradient } from "expo-linear-gradient"; // Fun background
+import * as FileSystem from "expo-file-system";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "./video_list.styles";
 
-const apiURLBackend = "https://exercisebackend.duckdns.org"; // for web
+const backendUrl = "http://10.0.0.86:3000";
+// const backendUrl = "https://exercisebackend.duckdns.org"; // for web
 
 type Video = {
-  _id: string;
+  id: string;
   title: string;
   description?: string;
-  filename: string;
-  path: string;
-  size: number;
-  format: string;
+  uri: string;
 };
 
 const VideoList: React.FC = () => {
@@ -32,33 +26,14 @@ const VideoList: React.FC = () => {
   const { isKidMode } = useKidMode(); // Get Kid Mode state
 
   useEffect(() => {
-    const fetchVideos = async () => {
+    (async () => {
       try {
-        const response = await fetch(`${apiURLBackend}/videos/allVideos`, {
-          method: "GET",
-          headers: { "ngrok-skip-browser-warning": "true" },
-          credentials: "include",
-        });
-
-        if (response.status === 401 || response.status === 403) {
-          console.warn("Token expired. Redirecting to sign-up...");
-          router.replace("/WelcomeScreen/Welcomescreen"); // Redirect user to sign-up page
-          return;
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Unauthorized");
-        }
-        const data: Video[] = await response.json();
-
-        setVideos(data);
-      } catch (error) {
-        console.error("Error fetching videos:", error);
+        const json = await AsyncStorage.getItem("localVideos");
+        setVideos(json ? JSON.parse(json) : []);
+      } catch (err) {
+        console.error("Error loading local videos:", err);
       }
-    };
-
-    fetchVideos();
+    })();
   }, []);
 
   const handleDelete = (video: Video) => {
@@ -69,43 +44,35 @@ const VideoList: React.FC = () => {
   const confirmDelete = async () => {
     if (!selectedVideo) return;
     try {
-      const response = await fetch(
-        `${apiURLBackend}/videos/delete/${selectedVideo._id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      // remove file from disk
+      await FileSystem.deleteAsync(selectedVideo.uri, { idempotent: true });
 
-      if (response.ok) {
-        setVideos((prevVideos) =>
-          prevVideos.filter((video) => video._id !== selectedVideo._id)
-        );
+      // filter out from stored list
+      const jsonList = await AsyncStorage.getItem("localVideos");
+      const list = jsonList ? JSON.parse(jsonList) : [];
+      const updated = list.filter((v: Video) => v.id !== selectedVideo.id);
 
-        const deleteProgressResponse = await fetch(
-          `${apiURLBackend}/progress/delete/${selectedVideo._id}`,
-          {
-            method: "DELETE",
-            credentials: "include",
-          }
-        );
+      // save back
+      await AsyncStorage.setItem("localVideos", JSON.stringify(updated));
 
-        if (!deleteProgressResponse.ok) {
-          console.error("Failed to delete progress.");
-        }
-      } else {
-        console.error("Failed to delete video.");
-      }
+      // update UI
+      setVideos(updated);
     } catch (error) {
       console.error("Error deleting video:", error);
+      alert("Failed to delete video.");
+    } finally {
+      setModalVisible(false);
+      setSelectedVideo(null);
     }
-
-    setModalVisible(false);
   };
 
   return (
     <LinearGradient
-      colors={isKidMode ? ["#ff9ff3", "#feca57", "#ff6b6b", "#48dbfb"] : ["#ffffff", "#ffffff"]}
+      colors={
+        isKidMode
+          ? ["#ff9ff3", "#feca57", "#ff6b6b", "#48dbfb"]
+          : ["#ffffff", "#ffffff"]
+      }
       style={styles.container}
     >
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -119,11 +86,19 @@ const VideoList: React.FC = () => {
       <FlatList
         style={styles.videoContainer}
         data={videos}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity style={[styles.card, isKidMode && styles.kidCard]}>
-            <TouchableOpacity onPress={() => handleDelete(item)} style={styles.deleteIcon}>
-              <AntDesign name="close" size={16} color={isKidMode ? "#ff4757" : "red"} />
+            <TouchableOpacity
+              onPress={() => handleDelete(item)}
+              style={styles.deleteIcon}
+            >
+              <AntDesign
+                name="close"
+                size={20}
+                color={isKidMode ? "#ff4757" : "red"}
+              />
             </TouchableOpacity>
             <Link
               href={{
@@ -139,9 +114,11 @@ const VideoList: React.FC = () => {
         )}
       />
 
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+      <Modal animationType="slide" transparent visible={modalVisible}>
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, isKidMode && styles.kidModalContent]}>
+          <View
+            style={[styles.modalContent, isKidMode && styles.kidModalContent]}
+          >
             <Text style={isKidMode ? styles.kidModalText : styles.modalText}>
               {isKidMode
                 ? `🚨 Are you sure? 😱\nSay bye to "${selectedVideo?.title}"?`
